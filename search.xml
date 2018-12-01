@@ -1,53 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-    
-    <entry>
-      <title>独立手游开发记录-11月</title>
-      <link href="/2018/11/30/MyGame-Nov/"/>
-      <url>/2018/11/30/MyGame-Nov/</url>
-      
-        <content type="html"><![CDATA[<!-- ttoc --> <p>[TOC]</p><h3 id="本月主要开发内容"><a href="#本月主要开发内容" class="headerlink" title="本月主要开发内容"></a>本月主要开发内容</h3><p>绘制大部分UI界面所用的素材、绘制主角样板和一些动画，然后对原来的UI布局根据像素风进行了一些修改。</p><h3 id="成果图片以及描述"><a href="#成果图片以及描述" class="headerlink" title="成果图片以及描述"></a>成果图片以及描述</h3><p>板子用的是ctl672，绘制软件有PS和piskel，没有什么美术功底强上，在piskel上不支持压感，所以画主角样板的时候都是现在PS上画 再转到piskel做帧动画的。</p><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/69300899.jpg" alt=""><br><em>总览</em><br><a id="more"></a></p><h4 id="1-人物属性表"><a href="#1-人物属性表" class="headerlink" title="1.人物属性表"></a><strong>1.人物属性表</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/55821958.jpg" alt=""><br><em>每个两张，一张填满一张空，用填充分那个是控制数值</em></p><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/62814793.jpg" alt=""><br><em>空san</em></p><hr><h4 id="2-电子表预览"><a href="#2-电子表预览" class="headerlink" title="2.电子表预览"></a><strong>2.电子表预览</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/28929937.jpg" alt=""><br><em>打算6/12min现实时间为游戏的一天，用uv动画去控制时间流动</em></p><hr><h4 id="3-人物待机图"><a href="#3-人物待机图" class="headerlink" title="3.人物待机图"></a><strong>3.人物待机图</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/5299326.jpg" alt=""><br><em>在piskel上绘制帧动画，导出x</em>y行列的图集，然后在Unity上自己分割，拖动就可以形成动画<em><br><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/27537244.jpg" alt=""></em>人物待机图*</p><hr><p><em>待更新完毕</em></p>]]></content>
-      
-      
+<search>
+  <entry>
+    <title><![CDATA[独立手游开发记录-11月]]></title>
+    <url>%2F2018%2F11%2F30%2FMyGame-Nov%2F</url>
+    <content type="text"><![CDATA[[TOC] 本月主要开发内容绘制大部分UI界面所用的素材、绘制主角样板和一些动画，然后对原来的UI布局根据像素风进行了一些修改。 成果图片以及描述板子用的是ctl672，绘制软件有PS和piskel，没有什么美术功底强上，在piskel上不支持压感，所以画主角样板的时候都是现在PS上画 再转到piskel做帧动画的。 总览 1.人物属性表每个两张，一张填满一张空，用填充分那个是控制数值 空san 2.电子表预览打算6/12min现实时间为游戏的一天，用uv动画去控制时间流动 3.人物待机图在piskel上绘制帧动画，导出xy行列的图集，然后在Unity上自己分割，拖动就可以形成动画 人物待机图* 待更新完毕]]></content>
       <categories>
-          
-          <category> 开发记录 </category>
-          
+        <category>开发记录</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 独立游戏 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>独立手游开发记录-10月</title>
-      <link href="/2018/10/30/MyGame-Oct/"/>
-      <url>/2018/10/30/MyGame-Oct/</url>
-      
-        <content type="html"><![CDATA[<!-- ttoc --> <p>[TOC]</p><h3 id="本月主要开发内容"><a href="#本月主要开发内容" class="headerlink" title="本月主要开发内容"></a>本月主要开发内容</h3><p>UI框架、UI布局、美术制作、游戏物品数据json化、主角存档格式等</p><h3 id="成果图片以及描述"><a href="#成果图片以及描述" class="headerlink" title="成果图片以及描述"></a>成果图片以及描述</h3><p>对于一个没有美术资源的游戏开发前期，打算先从UI入手<br>由于截图软件问题，上面有大概0.5cm的高度矩形被截出了 但不影响观看</p><a id="more"></a><h4 id="1-操作方式预览"><a href="#1-操作方式预览" class="headerlink" title="1.操作方式预览"></a><strong>1.操作方式预览</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/82185343.jpg" alt=""></p><p><em>左手移动 范围为2/5的左边屏幕<br>右手攻击 范围固定</em></p><hr><h4 id="2-背包预览"><a href="#2-背包预览" class="headerlink" title="2.背包预览"></a><strong>2.背包预览</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/48181651.jpg" alt=""><br><em>还没在主角数据里添加，所以暂时为空</em></p><hr><h4 id="3-合成系统预览"><a href="#3-合成系统预览" class="headerlink" title="3.合成系统预览"></a><strong>3.合成系统预览</strong></h4><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/7190698.jpg" alt=""><br><em>主要用到Toggle来选择合成表<br>点击目标物品，右侧会出现详情和合成所需的物品预览以及对应的消耗个数和已有个数</em></p><hr><h4 id="4-数据持久化"><a href="#4-数据持久化" class="headerlink" title="4.数据持久化"></a><strong>4.数据持久化</strong></h4><p>JSON我也只是刚接触不久，用的litjson，因为我把所有物品都一股脑写入一个json里（手写。。。），解析不能用泛型，只好手动针对性解析(可能是我没学会其他更方便的方法)<br>顺便加了AES加密<br>主角的存档数据我也写了初版，并且加了脚本测试<br>测试为：向主角数据添加物品持有、然后在背包中查阅</p><p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/35071897.jpg" alt=""><br><em>(在电脑上编辑器中的测试，在电脑录制的gif 比手机的更清晰顺滑一些)</em></p><hr><h3 id="本月总结"><a href="#本月总结" class="headerlink" title="本月总结"></a>本月总结</h3><ol><li>其实说是本月，不如说是9月和10月:grimacing:，这些是用了两个月的课余时间慢慢写的，但考虑到现在才开通博客记录，所以合二为一了。</li><li>设计这些低端UI还是相对容易的，因为轻量级的UI框架之前看视频学过<br>倒是卡了摇杆设计上，EasyTouch要付费，网上找了一些别人的源码，自己照着造了一次适合的轮子，发现左右手不能同时使用，会卡住，最后知道了安卓有多点触控。。。用了Torch去判断才可以</li><li>在json数据的定义上，也许是开发经验太少，我甚至用到了伤害计算弄成数组。。。<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"id"</span>: <span class="number">304</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"bullet"</span>,</span><br><span class="line">    <span class="attr">"pose"</span>: <span class="number">4</span>,</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"毒箭"</span>,</span><br><span class="line">    <span class="attr">"compose"</span>: [ <span class="number">2</span>, <span class="number">1</span>, <span class="number">14</span>, <span class="number">1</span>, <span class="number">39</span>, <span class="number">1</span>, <span class="number">62</span>, <span class="number">1</span> ],</span><br><span class="line">    <span class="attr">"effect"</span>: <span class="string">""</span>,</span><br><span class="line">    <span class="attr">"intro"</span>: <span class="string">"不要舔它"</span>,</span><br><span class="line">    <span class="attr">"isRealinjury"</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">"dT"</span>: [ <span class="number">60</span>, <span class="number">0</span>, <span class="number">20</span>, <span class="number">1</span>, <span class="number">20</span>, <span class="number">1</span> ],</span><br><span class="line">    <span class="attr">"san"</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">"repair"</span>: [],</span><br><span class="line">    <span class="attr">"durability"</span>: <span class="number">1</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li></ol><p>就比如上面的。。。dT就是damageTime缩写，0为基础伤害，1为一秒的持续伤害:expressionless:</p><p>不在意这些细节啦，双11买了数位板，准备开肝素材，顺便贴下自己做的个人logo:yum:<br><img src="http://47.106.99.0/blog/wp-content/uploads/2018/11/My-LOGO.png" alt=""></p>]]></content>
-      
-      
+      <tags>
+        <tag>独立游戏</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[独立手游开发记录-10月]]></title>
+    <url>%2F2018%2F10%2F30%2FMyGame-Oct%2F</url>
+    <content type="text"><![CDATA[[TOC] 本月主要开发内容UI框架、UI布局、美术制作、游戏物品数据json化、主角存档格式等 成果图片以及描述对于一个没有美术资源的游戏开发前期，打算先从UI入手由于截图软件问题，上面有大概0.5cm的高度矩形被截出了 但不影响观看 1.操作方式预览 左手移动 范围为2/5的左边屏幕右手攻击 范围固定 2.背包预览还没在主角数据里添加，所以暂时为空 3.合成系统预览主要用到Toggle来选择合成表点击目标物品，右侧会出现详情和合成所需的物品预览以及对应的消耗个数和已有个数 4.数据持久化JSON我也只是刚接触不久，用的litjson，因为我把所有物品都一股脑写入一个json里（手写。。。），解析不能用泛型，只好手动针对性解析(可能是我没学会其他更方便的方法)顺便加了AES加密主角的存档数据我也写了初版，并且加了脚本测试测试为：向主角数据添加物品持有、然后在背包中查阅 (在电脑上编辑器中的测试，在电脑录制的gif 比手机的更清晰顺滑一些) 本月总结 其实说是本月，不如说是9月和10月:grimacing:，这些是用了两个月的课余时间慢慢写的，但考虑到现在才开通博客记录，所以合二为一了。 设计这些低端UI还是相对容易的，因为轻量级的UI框架之前看视频学过倒是卡了摇杆设计上，EasyTouch要付费，网上找了一些别人的源码，自己照着造了一次适合的轮子，发现左右手不能同时使用，会卡住，最后知道了安卓有多点触控。。。用了Torch去判断才可以 在json数据的定义上，也许是开发经验太少，我甚至用到了伤害计算弄成数组。。。1234567891011121314&#123; "id": 304, "type": "bullet", "pose": 4, "name": "毒箭", "compose": [ 2, 1, 14, 1, 39, 1, 62, 1 ], "effect": "", "intro": "不要舔它", "isRealinjury": 1, "dT": [ 60, 0, 20, 1, 20, 1 ], "san": 0, "repair": [], "durability": 1 &#125; 就比如上面的。。。dT就是damageTime缩写，0为基础伤害，1为一秒的持续伤害:expressionless: 不在意这些细节啦，双11买了数位板，准备开肝素材，顺便贴下自己做的个人logo:yum:]]></content>
       <categories>
-          
-          <category> 开发记录 </category>
-          
+        <category>开发记录</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 独立游戏 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-  
-  
+      <tags>
+        <tag>独立游戏</tag>
+      </tags>
+  </entry>
 </search>
