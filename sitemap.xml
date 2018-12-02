@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://confusel.tech/about/index.html</loc>
+    
+    <lastmod>2018-12-02T08:15:00.987Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://confusel.tech/2018/12/02/LearningRecords-AnimationEditor/</loc>
     
     <lastmod>2018-12-02T08:01:58.044Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>https://confusel.tech/2018/10/30/MyGame-Oct/</loc>
     
     <lastmod>2018-12-01T02:09:41.852Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://confusel.tech/about/index.html</loc>
-    
-    <lastmod>2018-11-30T10:54:32.538Z</lastmod>
     
   </url>
   
