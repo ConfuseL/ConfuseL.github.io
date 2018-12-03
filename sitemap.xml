@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://confusel.tech/2018/11/30/MyGame-Nov/</loc>
+    <loc>https://confusel.tech/2018/MyGame-Oct/</loc>
     
-    <lastmod>2018-12-02T11:52:59.480Z</lastmod>
+    <lastmod>2018-12-03T04:54:35.641Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://confusel.tech/2018/10/30/MyGame-Oct/</loc>
+    <loc>https://confusel.tech/2018/MyGame-Nov/</loc>
     
-    <lastmod>2018-12-02T11:52:50.423Z</lastmod>
+    <lastmod>2018-12-03T04:54:07.230Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://confusel.tech/2018/LearningRecords-AnimationEditor/</loc>
+    
+    <lastmod>2018-12-03T04:51:21.800Z</lastmod>
     
   </url>
   
@@ -19,13 +26,6 @@
     <loc>https://confusel.tech/about/index.html</loc>
     
     <lastmod>2018-12-02T08:15:00.987Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://confusel.tech/2018/12/02/LearningRecords-AnimationEditor/</loc>
-    
-    <lastmod>2018-12-02T08:01:58.044Z</lastmod>
     
   </url>
   
