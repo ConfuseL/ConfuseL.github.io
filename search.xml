@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Unity Anima2D编辑器的轻量骨骼动画和换装使用]]></title>
+    <url>%2F2019%2FMyLearn-Anima2D%2F</url>
+    <content type="text"><![CDATA[[TOC] &lt;学习记录&gt;Unity Anima2D编辑器的轻量骨骼动画和换装使用前言​ 前不久觉得骨骼动画难弄而选择帧动画，现在发现，一个人制作帧动画的工作量真的大，特别是发现需要换肤功能的时候，目前没有找到可以让同一个帧动画替换特定像素达到换肤效果的简易方法（shader可以简单换色，但是如果要有特别的形状图案就很复杂了），于是乎找到了一些关于Unity5.x版本之后自带的anima2D骨骼动画系统的一些文档，决定弃用帧动画使用骨骼动画。 ​ 这篇来做一个简易演示。 图片准备​ 将精灵图拖到Unity之后设置属性，因为画的时候是以1像素为单位，所以选择了FilterMode为Point。随后通过SpriteEditor将图片切割好，注意这里一定要规定好切割区域的大小，也就是规定如所有头部、身体精灵图的共同切割大小，以便骨骼的绑定不会产生换肤的图片偏移，对碰撞体有要求的同样可以设置得精细一点。 精灵网格和骨骼设置​ 将必要的头、身体、腿的图片拖入视图后，摆好位置，创建父物体Player，对其一一设置精灵网格，右键2D Object-&gt;SpriteMesh ​ 随后可以在父物体Player下创建骨骼，右键2D Object-&gt;Bone ​ 将创建的骨骼与摆好的图片对齐，如果在骨骼下创建骨骼，会生成子骨骼，子骨骼会随着父骨骼移动。 ​ 骨骼绑定​ 设置好骨骼，图片也对应好之后，将网格与骨骼绑定，点击视图中的头，查看监视面板，创建了网格会绑定的两个组件分别是SpriteMeshInstance和SpriteMeshRenderer，本篇只讲解SpriteMeshInstance的用法，SpriteMesh是精灵网格，可以在面板上设置，也可以在代码上设置，这也是本篇换装的重要途径，随后是颜色、材质、层级、Set bones骨骼设置，我们将对应的骨骼拖入这里，注意，拖入带有子骨骼的骨骼，会将子骨骼一起绑定，若子骨骼需要与其他图片绑定，请删除掉，以免冲突。 ​ 拖入以后并没有直接绑定成功，这时候我们需要通过Anima2D编辑器绑定骨骼，菜单栏Winodws-&gt;Anima2D-&gt;SpriteMesh Editor，点击Bind按钮将自动的计算骨骼的权重。点击Apply即可绑定，也可以通过Weight Editor设置影响程度，在此之前也可以在编辑器上通过鼠标来划分你的蒙皮需求。如果一张图片上有多个骨骼，那么你就要设置每个骨骼在某些三角形上的权重，让骨骼动作时图片动作的更逼真。而个人不需要过于精细，因此本篇没有特定设置蒙皮划分。 ​ 绑定骨骼以后，可以在视图界面控制骨骼，查看是否绑定成功。 IK绑定​ 反向力学系统，一般我们是通过骨骼的动作去控制图片，设置IK并绑定骨骼的话，通过操作IK控件，骨骼也会随着移动。这样我们可以更方便的做一些动画了。（展示图没有绑定武器，所以效果并不明显，但是骨骼效果随着IK的移动而移动很直白） ​ IK动画分两种:IK CCD、IK Limb。​ IK Limb适合肢体骨骼动画。IK CCD适合更长的骨骼。本篇使用Limb，在父物体Player下创建IK，右键2D Object-&gt;IK Limb ，在视图将IK部件移动到合适的位置之后，监视面板绑定骨骼，在这里，我们可以想像IK为关节，我们人体控制关节，骨骼也会随之移动，所以将IK绑定到对应的骨骼就好了。 骨骼动画和换装​ 利用Animation编辑器，新建anim动画，对骨骼进行操作录制即可，然后播放的时候，通过改变对应SpriteMeshInstance的精灵网格即可。 ​ 注意，你要对所有提供换装的精灵网格对它对应骨骼进行单独的绑定！ ​ 以下为本篇的换装样例代码 1234567891011121314151617181920212223242526using Anima2D;using System.Collections;using System.Collections.Generic;using UnityEngine;public class DebugBone : MonoBehaviour &#123; private SpriteMeshInstance body; private Object[] clothesMesh; int key = 0; // Use this for initialization void Start () &#123; body = GameObject.Find(&quot;身体&quot;).GetComponent&lt;SpriteMeshInstance&gt;(); clothesMesh = Resources.LoadAll(&quot;SpriteMesh/clothes&quot;); &#125; // Update is called once per frame void Update () &#123; if (Input.GetKeyDown(KeyCode.A)) &#123; key++; key = key % 6; body.spriteMesh = (SpriteMesh)clothesMesh[key]; &#125; &#125;&#125; 参考文章和视频​ 视频： 【游戏美术难于上青天】 系列 ​ 文章： Anima2D官方中文使用手册（对应Anima2D1.1.4）]]></content>
+      <categories>
+        <category>Unity3D</category>
+      </categories>
+      <tags>
+        <tag>问题以及解决方案</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[关于Unity3D引用某些DLL发布之后可能出现的错误]]></title>
     <url>%2F2018%2FMyIssue-Solution-DLL%2F</url>
     <content type="text"><![CDATA[[TOC] 目的：在肝专业课设的时候，需要用的EPPLSUE.DLL写表格文件时，以及想用IRONPYTHON调用pyhton脚本时遇到了这些问题，在这里总结一下 主要问题：1.引用第三方类库之后，无法发布。提示引用的类库不支持。 2.发布之后，使用到对应第三方类库内容时，发生错误，但是在编辑器里却没错误。 问题可能原因和解决方法：问题1：可能原因：目前遇到的大部分是都是因为Unity的NET版本和要使用的类库不一致导致的，虽然目前Unity的设置中支持3.5和4.X，但实际上使用那些4.0以上NET支持的类库，大部分就会出现VS编译器里无报错，但Unity编辑器里报错的问题，或者如问题1那样，无法发布。 解决方法：1.尽量使用非4.XNET支持的第三方类库，总能找到课替代的或者低版本(最后我还是没用上iron Python ,选择把python写成web后端了= =)。 2.在发布页面的Player Setting中设置使用的NET版本，更改Unity为.NET 4.X ，但大部分第三方库依然不支持 3.老老实实使用.NET3.5，并选择API为.NET2.0而不是它的子集2.0 Subset 据说后面4.X会支持的更好，3.5也会被移除，希望能完全支持这些类库吧。 问题2：可能原因：我遇到的是在Unity编辑器里生成表格是可以的,但是发布之后，却失败了，通过异常捕获发现出现不支持IBM347编码，其实是缺少Unity编辑器里自带的一些文件。 解决方法：把Unity\Editor\Data\Mono\lib\mono\unity下的L18N相关的所有.dll赋值到当前项目的Assets文件夹下，保存再发布就可以解决了。 以上大部分分析来源于自己，因此可能不是百分百正确，勿在意。]]></content>
