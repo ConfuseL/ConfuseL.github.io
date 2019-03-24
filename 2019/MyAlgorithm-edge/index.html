@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="最短路径问题，最小生成树问题，最大匹配问题的基本算法学习。不定期更新。">
+<meta name="keywords" content="C++,图论,算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;常用算法的C++实现&gt;图论">
+<meta property="og:url" content="https://confusel.tech/2019/MyAlgorithm-edge/index.html">
+<meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="最短路径问题，最小生成树问题，最大匹配问题的基本算法学习。不定期更新。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://wiki.mbalib.com/w/images/6/65/Dijkstra%E7%AE%97%E6%B3%95%E5%9B%BE.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553341419376&di=6ec4836b72efa5b6776dbb8bd54b0e37&imgtype=0&src=http%3A%2F%2Fpic002.cnblogs.com%2Fimages%2F2011%2F282432%2F2011052215540276.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553341419376&di=6ec4836b72efa5b6776dbb8bd54b0e37&imgtype=0&src=http%3A%2F%2Fpic002.cnblogs.com%2Fimages%2F2011%2F282432%2F2011052215540276.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553344343733&di=3c4090aa5fbe76c7819d0577bcc38f64&imgtype=0&src=http%3A%2F%2Fwww.xdwy.com.cn%2FDOWN%2Fcourse%2Fsffxysj%2Fmnst%2Fmnst1.files%2Fimage011.gif">
+<meta property="og:image" content="https://img.renfei.org/2013/08/2.png">
+<meta property="og:image" content="https://img.renfei.org/2013/08/4.png">
+<meta property="og:updated_time" content="2019-03-24T06:06:00.699Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;常用算法的C++实现&gt;图论">
+<meta name="twitter:description" content="最短路径问题，最小生成树问题，最大匹配问题的基本算法学习。不定期更新。">
+<meta name="twitter:image" content="http://wiki.mbalib.com/w/images/6/65/Dijkstra%E7%AE%97%E6%B3%95%E5%9B%BE.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="https://confusel.tech/2019/MyAlgorithm-edge/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title><常用算法的c++实现>图论 | ConfuseL的个人博客</常用算法的c++实现></title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ConfuseL的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">独立精神</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyAlgorithm-edge/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><常用算法的c++实现>图论
+              
+            
+          </常用算法的c++实现></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-22 16:26:51" itemprop="dateCreated datePublished" datetime="2019-03-22T16:26:51+08:00">2019-03-22</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-24 14:06:00" itemprop="dateModified" datetime="2019-03-24T14:06:00+08:00">2019-03-24</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+              <div class="post-description">最短路径问题，最小生成树问题，最大匹配问题的基本算法学习。不定期更新。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="最短路径问题"><a href="#最短路径问题" class="headerlink" title="最短路径问题"></a>最短路径问题</h1><blockquote>
+<p>从文字上理解，就是求哪到哪儿的路径最短，题目会给多个点，点与点之间是否相连，权值是多少。一般来说需要我们计算一个节点到其他所有节点的最短路径。然后输出源点到某点的最短路径。</p>
+</blockquote>
+<h2 id="Dijkstra算法"><a href="#Dijkstra算法" class="headerlink" title="Dijkstra算法"></a>Dijkstra算法</h2><blockquote>
+<p>能解决的问题：无负边的单源最短路</p>
+</blockquote>
+<blockquote>
+<p>在带权图 G = (V, E) 中，每条边都有一个权值w[i]。路径的长度为路径上所有边权之和。</p>
+<p>求源点 s到图中其余各顶点的最短路径。</p>
+</blockquote>
+<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>解决单源最短路径问题常用 Dijkstra 算法，用于计算一个顶点到其他所有顶点的最短路径。Dijkstra 算法的主要特点是以起点为中心，逐层向外扩展，每次都会取一个最近点继续扩展，直到取完所有点为止。</p>
+</blockquote>
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<p>我们定义带权图 G所有顶点的集合为V，接着我们再定义已确定从源点出发的最短路径的顶点集合为 U，初始集合 U 为空，记从源点 s 出发到每个顶点 vv 的距离为 dist_v，初始 dist_s=0。接着执行以下操作：</p>
+<ol>
+<li>从 V-U 中找出一个距离源点最近的顶点 v，将 v 加入集合 U，并用 dist_v 和顶点 v 连出的边来更新和 v 相邻的、不在集合 U 中的顶点的 dist；</li>
+<li>重复第一步操作，直到 V=U或找不出一个从 s出发有路径到达的顶点，算法结束。<br>如果最后V≠U，说明有顶点无法从源点到达；否则每个 dist_i表示从 出发到顶点i 的最短距离。</li>
+</ol>
+</blockquote>
+<h3 id="算法优化"><a href="#算法优化" class="headerlink" title="算法优化"></a>算法优化</h3><blockquote>
+<p>Dijkstra最简单的版本就是使用一个数组当作上述的集合U，每一次遍历，找出目前最新且最短的边权，以它为新的源点，同时更新与它相关的最短路径的值。</p>
+<p>我们可以使用一个优先队列去代替数组承担集合U，这样可以保证每次取出队列头部的边权当前最小的。省去了遍历和对比的时间。</p>
+</blockquote>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><p><img src="http://wiki.mbalib.com/w/images/6/65/Dijkstra%E7%AE%97%E6%B3%95%E5%9B%BE.jpg" alt=""></p>
+<blockquote>
+<p>如上图 ，源点为左上角，黄色点内的数字代表源点到他们的距离。初始值都是无穷大99。</p>
+<p>先push源点，然后开始探索图，取得队列头，即源点，开始遍历，源点到右边的点边权为2，比之前的99要小，那么更新距离，同时把这个点push进去，同理对其他连接的两个点进行操作。更新后的最新距离分别为9和6，当前优先队列的值为：2,6,9。这个时候发现没有连接其他点了，结束当前循环。此时的图为第一行第二列。</p>
+<p>因为是优先队列，我们取得的头部是源点距离为2的点，也是除了源点到自身以外当前最短的点。同样进行上述操作。</p>
+<p>因为每一次循环，已经确定过最短路径的点不会再被push到优先队列中，所以在优先队列为空的时候，我们已经获得了源点到各点的最短距离。</p>
+<p>如果发现到某点的最短距离为99(无穷大)，说明无法到达这个点。</p>
+</blockquote>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">1e4</span>+<span class="number">1</span>;</span><br><span class="line"><span class="comment">//存储from点,to点,和权值</span></span><br><span class="line"><span class="comment">//pair是std中的一种数据结构，存储两个数据，分别用first、second取得。</span></span><br><span class="line"><span class="comment">//可以用结构体代替</span></span><br><span class="line"><span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; &gt;Edge[maxn];</span><br><span class="line"><span class="comment">//存储路径长度。</span></span><br><span class="line"><span class="keyword">int</span> s[maxn];</span><br><span class="line"><span class="comment">//根据节点数初始化。</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        Edge[i].clear();</span><br><span class="line">        <span class="comment">//因为求的是最小，所以初始值应该是无穷大，方便对比</span></span><br><span class="line">        s[i]=<span class="number">1e9</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dijkstraByQueue</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//点数目，边数目，源点</span></span><br><span class="line">    <span class="keyword">int</span> n,e,sourse;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n&gt;&gt;e&gt;&gt;sourse;</span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    init(n);</span><br><span class="line">    <span class="comment">//from,to,worth</span></span><br><span class="line">    <span class="keyword">int</span> x,y,w;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;e;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y&gt;&gt;w;</span><br><span class="line">        <span class="comment">//x-&gt;y=w</span></span><br><span class="line">        Edge[x].push_back(make_pair(y,w));</span><br><span class="line">        <span class="comment">//如果是无向图，那么反过来添加一次。</span></span><br><span class="line">        <span class="comment">//Edge[y].push_back(make_pair(x,w));</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//源点到自身的路径肯定为0</span></span><br><span class="line">    s[sourse]=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//优先队列 ，存储边权，目标点(to)，优先队列会默认按照边权从大到小排序</span></span><br><span class="line">    priority_queue&lt;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt;&gt; Q;</span><br><span class="line">    <span class="comment">//把源点到自身的距离(0)，以及自己的节点push到优先队列中</span></span><br><span class="line">    Q.push(make_pair(<span class="number">0</span>,sourse));</span><br><span class="line">    <span class="comment">//开始探索地图</span></span><br><span class="line">    <span class="keyword">while</span>(!Q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//获取当前相对最新点，然后从优先队列中弹出</span></span><br><span class="line">        <span class="keyword">int</span> cur=Q.top().second; Q.pop();</span><br><span class="line">        <span class="comment">//遍历当前点所连接的点(to)，判断他们之间的边权</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;Edge[cur].size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//取得点</span></span><br><span class="line">            <span class="keyword">int</span> target=Edge[cur][i].first;</span><br><span class="line">            <span class="comment">//判断当前记录的 源点到目标点的距离s[target] 和当前最新点与目标点的距离Edge[cur][i].second+s[cur]长度关系</span></span><br><span class="line">            <span class="keyword">if</span>(s[target]&gt;Edge[cur][i].second+s[cur])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//如果发现当前记录并不是最短距离，那么就更新它</span></span><br><span class="line">                s[target]=Edge[cur][i].second+s[cur];</span><br><span class="line">                <span class="comment">//把到达这个点的边权和点下标push到优先队列中，因为优先队列默认是按大到小排序，我们的需求是小到大，所以推入-1*边权就可以了。</span></span><br><span class="line">                <span class="comment">//如果使用自定义的结构体，可以另写一个cmp。</span></span><br><span class="line">                Q.push(make_pair(<span class="number">-1</span>*s[target],target));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//当上面的队列为空的时候，说明我们以及探索完整个图了，此时我们的s[]储存的就是源点到其他点的最短距离了。</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=n;i++)</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;s[i]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="SPFA算法"><a href="#SPFA算法" class="headerlink" title="SPFA算法"></a>SPFA算法</h2><blockquote>
+<p>能解决的问题：有负边的单源最短路</p>
+</blockquote>
+<h3 id="概述-1"><a href="#概述-1" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>其实 SPFA 本质是 Bellman-ford 算法的队列优化。由国内段凡丁教授发表，大家可以自行百度查阅相关信息。</p>
+<p>如果没有负权边的情况下还是使用堆/优先队列优化的dijkstra吧。</p>
+</blockquote>
+<h3 id="算法流程-1"><a href="#算法流程-1" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<p>在 SPFA 算法中，使用 d_i表示从源点到顶点 i 的最短路，额外用一个队列来保存即将进行拓展的顶点列表，并用 inq_i 来标识顶点 i是不是在队列中。</p>
+<ol>
+<li>初始队列中仅包含源点，且源点 s 的 d_s=0。</li>
+<li>取出队列头顶点 u，扫描从顶点 u 出发的每条边，设每条边的另一端为 v，边 &lt;u,v&gt; 权值为 w，若 d_u+w&lt;d_v，则</li>
+</ol>
+<ul>
+<li>将 d_v修改为 d_u+w</li>
+<li>若 vv不在队列中，则将 v入队</li>
+</ul>
+<ol>
+<li>重复步骤 2 直到队列为空<br>最终 dd数组就是从源点出发到每个顶点的最短路距离。如果一个顶点从没有入队，则说明没有从源点到该顶点的路径。</li>
+</ol>
+</blockquote>
+<h3 id="负环判断"><a href="#负环判断" class="headerlink" title="负环判断"></a>负环判断</h3><blockquote>
+<p>在进行 SPFA 时，用一个数组 cnt_i 来标记每个顶点入队次数。如果一个顶点入队次数 cnt_i大于顶点总数 n，则表示该图中包含负环。</p>
+</blockquote>
+<h3 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h3><blockquote>
+<p>在这里贴下最简单的spfa实现，至于lll和slf优化在日后了解后再更新。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; &gt;Edge[maxn];</span><br><span class="line"><span class="comment">//多出的inQueue是为了判断某点是否在队列中。</span></span><br><span class="line"><span class="keyword">int</span> s[maxn],inQueue[maxn];</span><br><span class="line"><span class="comment">//初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        Edge[i].clear();</span><br><span class="line">        s[i]=<span class="number">1e9</span>;</span><br><span class="line">        inQueue[i]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">spfa</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n,e,source;</span><br><span class="line">    <span class="keyword">int</span> x,y,w;</span><br><span class="line">    <span class="comment">//记录被推入队列的次数，如果超过点数目n，说明有负环。</span></span><br><span class="line">    <span class="keyword">int</span> pushCount[maxn];</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n&gt;&gt;e&gt;&gt;source;</span><br><span class="line">    init(n);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;e;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y&gt;&gt;w;</span><br><span class="line">        Edge[x].push_back(make_pair(y,w));</span><br><span class="line">        <span class="comment">//初始化推入次数为0</span></span><br><span class="line">        pushCount[x]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//在这里使用的是队列不是优先队列，lll和slf优化可以使用deque</span></span><br><span class="line">    <span class="built_in">queue</span>&lt;<span class="keyword">int</span>&gt; Q;</span><br><span class="line">    <span class="comment">//到自身距离为0</span></span><br><span class="line">    s[source]=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//推入次数更新</span></span><br><span class="line">    pushCount[source]=<span class="number">1</span>;</span><br><span class="line">    <span class="comment">//推入</span></span><br><span class="line">    Q.push(source);</span><br><span class="line">    <span class="comment">//开始探索</span></span><br><span class="line">    <span class="keyword">while</span>(!Q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//取队头</span></span><br><span class="line">        <span class="keyword">int</span> cur=Q.front();</span><br><span class="line">        Q.pop();</span><br><span class="line">        <span class="comment">//此时队头对应的点已经不在队列里了。</span></span><br><span class="line">        inQueue[cur]=<span class="number">0</span>;</span><br><span class="line">        <span class="comment">//和上面的dijkstra算法一样进行松弛处理</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;Edge[cur].size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> target=Edge[cur][i].first;</span><br><span class="line">            <span class="keyword">if</span>(s[target]&gt;Edge[cur][i].second+s[cur])</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//更新最短路径</span></span><br><span class="line">                s[target]=Edge[cur][i].second+s[cur];</span><br><span class="line">                <span class="comment">//如果这个点依然在队列里，那么就不需要推入</span></span><br><span class="line">                <span class="keyword">if</span>(inQueue[target])</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">               <span class="comment">//如果推入此时大于点的数目n，说明有负环</span></span><br><span class="line">                <span class="keyword">if</span>(++pushCount[target]&gt;=n)</span><br><span class="line">                &#123;</span><br><span class="line">                                     <span class="built_in">cout</span>&lt;&lt;<span class="string">"-1"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">                                     <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//再此将它推入</span></span><br><span class="line">                inQueue[target]=<span class="number">1</span>;</span><br><span class="line">                Q.push(target);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//输出最短距离</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;s[i]&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Floyd算法"><a href="#Floyd算法" class="headerlink" title="Floyd算法"></a>Floyd算法</h2><blockquote>
+<p>能解决的问题：多源点最短路径</p>
+<p>时间复杂度很高，毕竟要求出所有点到其他点的最短距离。</p>
+</blockquote>
+<h3 id="概述-2"><a href="#概述-2" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>Floyd 算法是一种利用动态规划的思想、计算给定的带权图中任意两个顶点之间最短路径的算法。相比于重复执行多次单源最短路算法，Floyd 具有高效、代码简短的优势，在解决图论最短路题目时比较常用。</p>
+</blockquote>
+<h3 id="算法流程-2"><a href="#算法流程-2" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<p>Floyd 的基本思想是：对于一个顶点个数为 n 的有向图，并有一个n×n 的E[][]，其中矩阵横列下标相等，代表自身到自身，对应的值应为0<br>对于其余任意两个顶点 i,j若它们之间存在有向边，则以此边权上的权值作为E[i][j]=w；<br>若两个顶点i,j 之间不存在有向边，则E[i][j]=INF。<br>对于循环阶段 ，尝试增加一个中继点 k，如果通过中间顶点使得最短路径变短了，就更新结果。<br>累加 k，重复遍历所有可能成为中继的点下标，直到 k=n。<br>算法结束后，矩阵 E[][]中的元素就代表着图中任意两点之间的最短路径长度。</p>
+</blockquote>
+<h3 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> inf = <span class="number">0x3f3f3f3f</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">1e4</span>+<span class="number">1</span>;</span><br><span class="line"><span class="comment">//用矩阵存储距离</span></span><br><span class="line"><span class="keyword">int</span> g[maxn][maxn]; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i == j) &#123;</span><br><span class="line">                <span class="comment">//到自身的距离为0</span></span><br><span class="line">                g[i][j] = <span class="number">0</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">//初始化为无穷大</span></span><br><span class="line">                g[i][j] = inf;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">floyd</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n,e;</span><br><span class="line">    <span class="keyword">int</span> x,y,w;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n&gt;&gt;e;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;e;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y&gt;&gt;w;</span><br><span class="line">        <span class="comment">//x到y的边权为w</span></span><br><span class="line">        g[x][y]=w;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//三重循环，分别代表中继点k、当前点i(from)，目标点j(to)</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; n; ++k) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; n; ++j) &#123;</span><br><span class="line">                <span class="comment">//如果i到k+k到j的距离比原来i直接到j的距离还短，就更新</span></span><br><span class="line">                <span class="keyword">if</span> (g[i][k] + g[k][j] &lt; g[i][j]) &#123;</span><br><span class="line">                    g[i][j] = g[i][k] + g[k][j];</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="最小生成树问题"><a href="#最小生成树问题" class="headerlink" title="最小生成树问题"></a>最小生成树问题</h1><blockquote>
+<p>一个有 n 个结点的<a href="https://baike.baidu.com/item/%E8%BF%9E%E9%80%9A%E5%9B%BE/6460995" target="_blank" rel="noopener">连通图</a>的生成树是原图的极小连通子图，且包含原图中的所有 n 个结点，并且有保持图连通的最少的边。</p>
+<p>一般常见题目是求道路如何建设，使得各个位置能够互通，并且花费最少。</p>
+</blockquote>
+<h2 id="prim算法"><a href="#prim算法" class="headerlink" title="prim算法"></a>prim算法</h2><h3 id="概述-3"><a href="#概述-3" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>Prim算法求最小生成树的时候和边数无关，和顶点数有关，所以适合求解稠密网的最小生成树。</p>
+<p>每一次从已经纳入最小生成树的点出发，找到所连接的未纳入的最短边权点，将其纳入生成树中，直到遍历所有点。</p>
+</blockquote>
+<h3 id="算法流程-3"><a href="#算法流程-3" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<ol>
+<li><p>将一个图分为两部分，一部分归为点集U，一部分归为点集V，U的初始集合为{V1}，V的初始集合为{ALL-V1}。</p>
+</li>
+<li><p>针对U开始找U中各节点的所有关联的边的权值最小的那个，然后将关联的节点Vi加入到U中，并且从V中删除（注意不能形成环）。</p>
+</li>
+<li><p>递归执行步骤2，直到V中的集合为空。</p>
+</li>
+<li><p>U中所有节点构成的树就是最小生成树。</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="例子-1"><a href="#例子-1" class="headerlink" title="例子"></a>例子</h3><p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1553341419376&amp;di=6ec4836b72efa5b6776dbb8bd54b0e37&amp;imgtype=0&amp;src=http%3A%2F%2Fpic002.cnblogs.com%2Fimages%2F2011%2F282432%2F2011052215540276.jpg" alt=""></p>
+<blockquote>
+<p>如上图，我们以点为单位，从V1点出发，找到它连接的点V2、V3、V4，其中最短边权为V1-&gt;V3=1，所以我们将V3纳入最小生成树(算法流程所述的集合U)，此时U为{V1、V3}。</p>
+<p>然后从V1、V3这个最小生成树所连接的点继续寻找，找到V3-&gt;V6的边权最小，为4，那么纳入最小生成树，继续以上操作，直到遍历完毕。</p>
+<p>如果遍历结束后，发现有些点没被访问，就说明无法构成生成树。</p>
+</blockquote>
+<h3 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn = <span class="number">4e+1</span>;</span><br><span class="line"><span class="comment">//和前面的算法一样使用vector&lt;pair&lt;int,int&gt; &gt;</span></span><br><span class="line"><span class="comment">//pair存储to,value</span></span><br><span class="line"><span class="comment">//G[i]的i代表from</span></span><br><span class="line"><span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; &gt;G[maxn];</span><br><span class="line"><span class="keyword">int</span> vis[maxn];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span>  <span class="title">Prim</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> n,e,x,y,z;</span><br><span class="line">    <span class="comment">//最小生成树的权值</span></span><br><span class="line">	<span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//输入点、边的数目</span></span><br><span class="line">	<span class="built_in">cin</span>&gt;&gt;n&gt;&gt;e;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;e;i++)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y&gt;&gt;z;</span><br><span class="line">        <span class="comment">//一般都是求无向图的最小生成树，有向图可以使用最小树形图。</span></span><br><span class="line">        <span class="comment">//-1*z 是因为优先队列默认从大到小，我们需要从小到大，随意推入取负的值。</span></span><br><span class="line">        <span class="comment">//自己实现结构体可以自己另写cmp</span></span><br><span class="line">		G[x].push_back(make_pair(y,<span class="number">-1</span>*z));</span><br><span class="line">		G[y].push_back(make_pair(x,<span class="number">-1</span>*z));</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//从第一个点开始，下标为0，或者定义为1，后面也要从1开始。</span></span><br><span class="line">	vis[<span class="number">0</span>]=<span class="number">1</span>;</span><br><span class="line">	priority_queue&lt;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; &gt; Q;</span><br><span class="line">    </span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;G[<span class="number">0</span>].size();i++)</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//遍历连接到的点，推入优先队列中，会自动按边权值排序。</span></span><br><span class="line">		Q.push(G[<span class="number">0</span>][i]);</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//开始探索</span></span><br><span class="line">	<span class="keyword">while</span>(!Q.empty())</span><br><span class="line">	&#123;</span><br><span class="line">        <span class="comment">//取得队头的点的连接目标点to和权值value</span></span><br><span class="line">		<span class="keyword">int</span> to=Q.top().first;</span><br><span class="line">		<span class="keyword">int</span> value=Q.top().second;</span><br><span class="line">        <span class="comment">///弹出</span></span><br><span class="line">		Q.pop();</span><br><span class="line">        <span class="comment">//如果已经访问过，也就是说，已经在当前的生成树中/集合U中</span></span><br><span class="line">		<span class="keyword">if</span>(vis[to])</span><br><span class="line">		<span class="keyword">continue</span>;</span><br><span class="line">        <span class="comment">//否则标记以访问/纳入</span></span><br><span class="line">		vis[to]=<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//加入最小生成树的权值，因为之前我们把每条边的权值当作负数推入，这里减到而不是加上，--得+</span></span><br><span class="line">		res-=value;</span><br><span class="line">        <span class="comment">//遍历当前点可以到达的所有点，推入优先队列。</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;G[to].size();i++)</span><br><span class="line">		&#123;</span><br><span class="line">		Q.push(G[to][i]);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">//如果有点没访问，说明无法构成最小生成树</span></span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">		<span class="keyword">if</span>(vis[i]==<span class="number">0</span>)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">cout</span>&lt;&lt;<span class="number">-1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">				<span class="keyword">return</span>;</span><br><span class="line">			&#125;</span><br><span class="line">    <span class="comment">//输出花费</span></span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;res&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Kruskal算法"><a href="#Kruskal算法" class="headerlink" title="Kruskal算法"></a>Kruskal算法</h2><h3 id="概述-4"><a href="#概述-4" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>与prim相反，kruskal算法的注重点是边而不是点，它每次取图中相对权值最小的边，然后将边的两端点纳入集合中。而它基于并查集的思想。（<a href="https://blog.csdn.net/qq_41593380/article/details/81146850" target="_blank" rel="noopener">什么是并查集</a>)</p>
+</blockquote>
+<h3 id="算法流程-4"><a href="#算法流程-4" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<p>创建一个数组，为每个节点存储自身的父节点，初始化为自身。也就是刚开始，每个人只指向自己。</p>
+<p>我们将边权按从小到大的顺序，排序好边权和对应的两端点。</p>
+<p>我们取当前最小边权，把其两端点合并，也就是让他们的存储父节点的数组对应的值指向同一个节点，换句话说，这就是一个两个点组合成的子树了。</p>
+<p>一直到所有点都纳入那个子树。</p>
+<p>注意的是，合并两个点时，不是简单的赋值点下标，而是应该找到点的最终父节点，再把其赋值给另一端点的数组索引中。</p>
+</blockquote>
+<h3 id="例子-2"><a href="#例子-2" class="headerlink" title="例子"></a>例子</h3><p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1553341419376&amp;di=6ec4836b72efa5b6776dbb8bd54b0e37&amp;imgtype=0&amp;src=http%3A%2F%2Fpic002.cnblogs.com%2Fimages%2F2011%2F282432%2F2011052215540276.jpg" alt=""></p>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1553344343733&amp;di=3c4090aa5fbe76c7819d0577bcc38f64&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.xdwy.com.cn%2FDOWN%2Fcourse%2Fsffxysj%2Fmnst%2Fmnst1.files%2Fimage011.gif" alt=""></p>
+<blockquote>
+<p>下图是kruskal算法，因为和prim算法用的是同一个原图，所以一起展示。</p>
+<p>将边权排序得：1-&gt;2-&gt;3-&gt;4-&gt;5-&gt;5-&gt;5-&gt;6-&gt;6</p>
+<p>这里采用按秩合并。</p>
+<p>我们取1，它的两端点是V1、V3 ，将他们合并 {V1,V3}，他们此时记录父节点的数组f[V1]=f[V3]=V1;</p>
+<p>同理取2，它的两端点是V4、V6， 将他们合并{V4，V6},他们此时记录父节点的数组f[V4]=f[V6]=V4;</p>
+<p>同理取3，它的两端点是V2、V5， 将他们合并{V2，V5},他们此时记录父节点的数组f[V2]=f[V5]=V2;</p>
+<p>同理取4，它的两端点是V3、V6， 将他们合并{V3，V6},注意，这时候，V3的父节点即f[V3]的值为V1，而V6的父节点即f[V6]的值为V4，将其赋值，得f[V3]=f[V4]=V1,而V6的父节点依然为V4，但是V6的祖父节点f[V4]是V1了。合并的集合也成{V1、V3 、V6、V4}</p>
+<p>此时树为：V1-&gt;V3</p>
+<p>​            \-&gt;V4-&gt;V6</p>
+<p>同理取5，把端点V3的祖父节点赋值给另一个断点的祖父节点f[V2]，最后得树：</p>
+<p>V1-&gt;V3-&gt;V2-&gt;V5</p>
+<p>​     \-&gt;V4-&gt;V6</p>
+</blockquote>
+<h3 id="代码-4"><a href="#代码-4" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxn=<span class="number">1e5</span>+<span class="number">1</span>;</span><br><span class="line"><span class="comment">//记录父亲节点</span></span><br><span class="line"><span class="keyword">int</span> father[maxn];</span><br><span class="line"><span class="comment">//因为我们需要对边权排序，并且需要获得两端点的下标，那么之前的vector&lt;pair&lt;,&gt;&gt; 在这里就用处不大了。</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Edge</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> from, to;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> value;</span><br><span class="line">    <span class="comment">//重写操作符，让它进入优先队列时自动按从小到大排序</span></span><br><span class="line">    <span class="keyword">friend</span> <span class="keyword">bool</span> <span class="keyword">operator</span> &lt;(<span class="keyword">const</span> Edge x,<span class="keyword">const</span> Edge y)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> x.value&gt;y.value;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;=n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">    <span class="comment">//初始化，让所有点的父节点为自身</span></span><br><span class="line">        father[i]=i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//查找组父节点</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">findRoot</span><span class="params">(<span class="keyword">int</span> target)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="comment">//如果父节点是自身，说明已经到头了，也就是找到祖父了。</span></span><br><span class="line">    <span class="keyword">return</span> father[target]==target ?target:findRoot(father[target]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//判断两个点x和y是不是指向同一个父亲节点，也就是是否在同一个集合中</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isUnion</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> findRoot(x)==findRoot(y);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//整合</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">comeTogeter</span><span class="params">(<span class="keyword">int</span> x,<span class="keyword">int</span> y)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(isUnion(x,y)) <span class="keyword">return</span> ;</span><br><span class="line">    <span class="comment">//把x的祖父节点的父节点设置为y的祖父节点。</span></span><br><span class="line">    father[findRoot(x)]=findRoot(y);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">kruskal</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//点、边</span></span><br><span class="line">    <span class="keyword">int</span> n,e;</span><br><span class="line">	<span class="comment">//to from worth</span></span><br><span class="line">    <span class="keyword">int</span> x,y,w;</span><br><span class="line">    <span class="comment">//花费</span></span><br><span class="line">    <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//临时Edge对象</span></span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n&gt;&gt;e;</span><br><span class="line">    <span class="comment">//初始化</span></span><br><span class="line">    init(n);</span><br><span class="line">    priority_queue&lt;Edge&gt; Q;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;e;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y&gt;&gt;w;</span><br><span class="line">        Edge temp;</span><br><span class="line">        temp.from=x;</span><br><span class="line">        temp.to=y;</span><br><span class="line">        temp.value=w;</span><br><span class="line">        Q.push(temp);</span><br><span class="line">    &#125;</span><br><span class="line">    Edge temp;</span><br><span class="line">    <span class="keyword">while</span>(!Q.empty())</span><br><span class="line">    &#123;</span><br><span class="line">    	<span class="comment">//取队列头，C++提供浅拷贝，直接赋值就好了</span></span><br><span class="line">        temp=Q.top();</span><br><span class="line">        Q.pop();</span><br><span class="line">        <span class="comment">//判断是否在同个集合里，如果在就跳过</span></span><br><span class="line">        <span class="keyword">if</span>(isUnion(temp.from,temp.to))</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">         <span class="comment">//不在，那么整合</span></span><br><span class="line">        comeTogeter(temp.from,temp.to);</span><br><span class="line">        <span class="comment">//加入边权</span></span><br><span class="line">        res+=temp.value;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//判断是不是所有点都在一个集合/生成树中</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)</span><br><span class="line">        <span class="keyword">if</span>(!isUnion(<span class="number">0</span>,i))</span><br><span class="line">    &#123;</span><br><span class="line">        res=<span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;res&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="最大匹配问题"><a href="#最大匹配问题" class="headerlink" title="最大匹配问题"></a>最大匹配问题</h1><blockquote>
+<p>把所有点分成两个左右集合，左右集合里的点可以与对面集合的多个点有边，但不与同集合的点有边。</p>
+<p>那么一般会问你求最大匹配和完美匹配。</p>
+<p>什么是最大匹配？</p>
+<p>​    上面谈到一个点可以与对面多个点有边，所以有可能出现左集合中的两点与对面集合的某点都有一条边，那么怎么分配，才能尽量让左右集合里的点一一对应且不重复呢。</p>
+<p>​    网上很多都是拿男女生牵手的例子，每个男生都对自己心仪的女生们发出牵手请求，如何安排使得尽量满足每个男生都能牵到心仪女生的手，并且不会出现两个男生抢一个女生的 情况。求能牵手成功的最大数量，就是最大匹配。</p>
+<p>​        </p>
+<p>什么时完美匹配？</p>
+<p>​    基于最大匹配，左右集合的所有点都与对面集合有且只有一条边。</p>
+<p>​    如图Fig.4 ，1-7；2-5；3-6‘4-8；一一对应且不占用同个右边的点。</p>
+</blockquote>
+<p><img src="https://img.renfei.org/2013/08/2.png" alt=""></p>
+<p><img src="https://img.renfei.org/2013/08/4.png" alt="Maximum Matching"></p>
+<h2 id="匈牙利算法"><a href="#匈牙利算法" class="headerlink" title="匈牙利算法"></a>匈牙利算法</h2><h3 id="概述-5"><a href="#概述-5" class="headerlink" title="概述"></a>概述</h3><blockquote>
+<p>发现概述不起来，直接看算法流程吧0 0</p>
+</blockquote>
+<h3 id="算法流程-5"><a href="#算法流程-5" class="headerlink" title="算法流程"></a>算法流程</h3><blockquote>
+<p>假设有集合UX、UY，其中UX有多个点连接UY中的n个点，n&gt;=1</p>
+<p>从UX的点xi开始遍历，找到它连接的第一个对面点yj，如果这个对面点yj没有被连接，那么我们将该点xi和对面点yi连接。</p>
+<p>如果对面点yj被连接了，这时候并不是直接放弃，我们获取对面点yj所连接的点xk,这时候我们对xk进行上述操作，也就是说，我们要找到xk能连接的下一个对面点(抛开yj)</p>
+<p>​    1.如果找不到，说明xk只能连接yj，那么xi只能找它的下一个可连接点。</p>
+<p>​    2.如果找得到，那么让xk放弃yj，连接其他的点，让xi与yj连接。</p>
+<p>OK，这就是主要流程，我们对所有UX中的点按顺序进行上述操作，直到最后一个点，我们就可以找出最大匹配的数量了。</p>
+</blockquote>
+<h3 id="代码-5"><a href="#代码-5" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//邻接矩阵 值为1 代表i和j可以连接</span></span><br><span class="line"><span class="keyword">int</span> e[maxn][maxn];</span><br><span class="line"><span class="comment">//记录当前X集合和Y集合里某点连接的点下标</span></span><br><span class="line"><span class="keyword">int</span> fromX[maxn],fromY[maxn];</span><br><span class="line"><span class="comment">//是否访问过</span></span><br><span class="line"><span class="keyword">int</span> vis[maxn];</span><br><span class="line"><span class="comment">//X集合的数目和Y的</span></span><br><span class="line"><span class="keyword">int</span> nX,nY;</span><br><span class="line"></span><br><span class="line"><span class="comment">//尝试搜寻连接 </span></span><br><span class="line"><span class="comment">//x：尝试连接的点下标</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">line</span><span class="params">(<span class="keyword">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//从1到nY遍历，也可以从0到ny-1，看输入情况</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> y=<span class="number">1</span>;y&lt;=nY;y++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//如果他们可以连接 并且 Y集合的y点没有被访问过(被连接过)</span></span><br><span class="line">        <span class="keyword">if</span>(e[x][y]&amp;&amp;!vis[y])</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//访问y</span></span><br><span class="line">            vis[y]=<span class="number">1</span>;</span><br><span class="line">            <span class="comment">//如果y连接的点=-1，-1代表还没和任何点连接</span></span><br><span class="line">            <span class="comment">//或者连接了某点 调用line为这个点递归查找是否可以连接其他点</span></span><br><span class="line">            <span class="keyword">if</span>(fromY[y]==<span class="number">-1</span>||line(fromY[y]))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//让x和y连接，并在fromX/Y中登记连接对象的下标</span></span><br><span class="line">                fromX[x]=y;</span><br><span class="line">                fromY[y]=x;</span><br><span class="line">                <span class="comment">//返回可以连接</span></span><br><span class="line">                <span class="comment">//注意 如果这个点y是第一次被访问，此时返回true代表它第一次被连接</span></span><br><span class="line">                <span class="comment">//如果是被递归调用，则代表它以被允许连接的下一个点连接</span></span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//返回不可以连接||不可以被下一个点连接</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//最大匹配</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">maxMatch</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//连接数n x集合数 y集合数</span></span><br><span class="line">    <span class="keyword">int</span> n,x,y;</span><br><span class="line">    <span class="comment">//最大匹配的数值</span></span><br><span class="line">    <span class="keyword">int</span> sum=<span class="number">0</span>;</span><br><span class="line">    <span class="built_in">memset</span>(fromX,<span class="number">-1</span>,<span class="keyword">sizeof</span>(fromX));</span><br><span class="line">    <span class="built_in">memset</span>(fromY,<span class="number">-1</span>,<span class="keyword">sizeof</span>(fromY));</span><br><span class="line">    <span class="built_in">memset</span>(e,<span class="number">0</span>,<span class="keyword">sizeof</span>(e));</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;n;</span><br><span class="line">    <span class="built_in">cin</span>&gt;&gt;nX&gt;&gt;xY;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;n;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cin</span>&gt;&gt;x&gt;&gt;y;</span><br><span class="line">        <span class="comment">//可以连接 为1</span></span><br><span class="line">        e[x][y]=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=nX;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//如果x集合中的i还没有和对面连接</span></span><br><span class="line">        <span class="keyword">if</span>(fromX[i]==<span class="number">-1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//格式化访问数组vis 这个是精髓 因为每一次调用line，都可能造成第一次连接的那个点的重新连接，所以vis数组是要被格式化的。</span></span><br><span class="line">            <span class="built_in">memset</span>(vis,<span class="number">0</span>,<span class="keyword">sizeof</span>(vis));</span><br><span class="line">            <span class="comment">//如果可以连接 那么数目加1</span></span><br><span class="line">            <span class="keyword">if</span>(line(i)) sum++;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果sum=nX||sum=nY  （看题目要求，以X集合为主还是Y集合为主）</span></span><br><span class="line">    <span class="comment">//如果X/Y集合的所有点都成功连接了唯一的对面集合的点 那么就是完美匹配~</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;sum&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2>
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/算法学习/" rel="tag"># 算法学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyAlgorithm-bigNum/" rel="next" title="<常用算法的C++实现>大整数字符串的加减乘(含负数)">
+                <i class="fa fa-chevron-left"></i> <常用算法的c++实现>大整数字符串的加减乘(含负数)
+              </常用算法的c++实现></a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg" alt="ConfuseL">
+            
+              <p class="site-author-name" itemprop="name">ConfuseL</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:895210069@gmail.com" title="E-Mail &rarr; mailto:895210069@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://bitbucket.org/ConfuseL/" title="Bitbucket &rarr; https://bitbucket.org/ConfuseL/" rel="noopener" target="_blank"><i class="fa fa-fw fa-bitbucket"></i>Bitbucket</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#最短路径问题"><span class="nav-number">1.</span> <span class="nav-text">最短路径问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dijkstra算法"><span class="nav-number">1.1.</span> <span class="nav-text">Dijkstra算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程"><span class="nav-number">1.1.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法优化"><span class="nav-number">1.1.3.</span> <span class="nav-text">算法优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#例子"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPFA算法"><span class="nav-number">1.2.</span> <span class="nav-text">SPFA算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负环判断"><span class="nav-number">1.2.3.</span> <span class="nav-text">负环判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码-1"><span class="nav-number">1.2.4.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Floyd算法"><span class="nav-number">1.3.</span> <span class="nav-text">Floyd算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码-2"><span class="nav-number">1.3.3.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最小生成树问题"><span class="nav-number">2.</span> <span class="nav-text">最小生成树问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#prim算法"><span class="nav-number">2.1.</span> <span class="nav-text">prim算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述-3"><span class="nav-number">2.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程-3"><span class="nav-number">2.1.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#例子-1"><span class="nav-number">2.1.3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码-3"><span class="nav-number">2.1.4.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kruskal算法"><span class="nav-number">2.2.</span> <span class="nav-text">Kruskal算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述-4"><span class="nav-number">2.2.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程-4"><span class="nav-number">2.2.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#例子-2"><span class="nav-number">2.2.3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码-4"><span class="nav-number">2.2.4.</span> <span class="nav-text">代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#最大匹配问题"><span class="nav-number">3.</span> <span class="nav-text">最大匹配问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#匈牙利算法"><span class="nav-number">3.1.</span> <span class="nav-text">匈牙利算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述-5"><span class="nav-number">3.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算法流程-5"><span class="nav-number">3.1.2.</span> <span class="nav-text">算法流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码-5"><span class="nav-number">3.1.3.</span> <span class="nav-text">代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文章"><span class="nav-number">3.2.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ConfuseL</span>
+
+  
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+<div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
+</div>
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv" title="总访客量">
+      <i class="fa fa-user"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="site-pv" title="总访问量">
+      <i class="fa fa-eye"></i>
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'c7340dd1b5e1cd160cd5',
+          clientSecret: '94f3e08bdae4a44a29c1c03ac424a0eafb81938f',
+          repo: 'blog_comments',
+          owner: 'ConfuseL',
+          admin: ['ConfuseL'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!--�뿪����-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+
+</body>
+</html>
