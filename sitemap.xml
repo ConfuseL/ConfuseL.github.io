@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://confusel.tech/2019/MyLearn-ComputerNetwork-1/</loc>
+    
+    <lastmod>2019-03-31T09:12:01.292Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/</loc>
     
     <lastmod>2019-03-30T08:20:14.600Z</lastmod>

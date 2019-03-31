@@ -1,3 +1,4 @@
+https://confusel.tech/2019/MyLearn-ComputerNetwork-1/
 https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/
 https://confusel.tech/2019/MyAlgorithm-edge/
 https://confusel.tech/2019/MyAlgorithm-bigNum/
