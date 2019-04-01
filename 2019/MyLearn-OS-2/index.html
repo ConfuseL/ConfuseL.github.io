@@ -120,7 +120,7 @@
 <meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/OS/FCFS.png">
 <meta property="og:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/OS/SJF.png">
 <meta property="og:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/OS/SRTF.png">
-<meta property="og:updated_time" content="2019-04-01T13:28:56.953Z">
+<meta property="og:updated_time" content="2019-04-01T13:51:50.681Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="&lt;学习记录&gt;处理器调度">
 <meta name="twitter:description" content="总结处理器调度的三个层次，几种常见的调度算法以及实现。">
@@ -449,7 +449,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-04-01 21:28:56" itemprop="dateModified" datetime="2019-04-01T21:28:56+08:00">2019-04-01</time>
+                <time title="修改时间：2019-04-01 21:51:50" itemprop="dateModified" datetime="2019-04-01T21:51:50+08:00">2019-04-01</time>
               
             
           </span>
@@ -552,19 +552,24 @@
 <h3 id="周转时间"><a href="#周转时间" class="headerlink" title="周转时间"></a>周转时间</h3><blockquote>
 <p>从系统提交作业开始到作业完成为止的时间间隔。</p>
 </blockquote>
-<h4 id="公式-1"><a href="#公式-1" class="headerlink" title="公式"></a>公式</h4><p>​    1. 第i个作业的周转时间ti=作业i的完成时刻f-作业的提交时刻s。</p>
-<p>​        ti=tf-ts;</p>
-<p>​    2. 平均周转时间T=所有作业的周转时间相加之合/作业个数n。</p>
-<p>​        T=($\sum_{i=1}^N​$ti)/n</p>
-<ol start="3">
-<li><p>第i个作业的带权周转时间wi=第i个作业的周转时间ti/第i个作业的必要消耗时间tk</p>
-<p>​     wi=ti/tk</p>
-<ol start="4">
-<li>平均带权周转时间W=所有作业的带权周转时间相加之合/作业个数n。</li>
+<h4 id="公式-1"><a href="#公式-1" class="headerlink" title="公式"></a>公式</h4><ol>
+<li>第i个作业的周转时间ti=作业i的完成时刻f-作业的提交时刻s。<ol>
+<li>ti=tf-ts;</li>
+</ol>
+</li>
+<li>平均周转时间T=所有作业的周转时间相加之合/作业个数n。<ol>
+<li>T=($\sum_{i=1}^N$ti)/n</li>
+</ol>
+</li>
+<li>第i个作业的带权周转时间wi=第i个作业的周转时间ti/第i个作业的必要消耗时间tk<ol>
+<li>wi=ti/tk</li>
+</ol>
+</li>
+<li>平均带权周转时间W=所有作业的带权周转时间相加之合/作业个数n。<ol>
+<li>W=($\sum_{i=1}^N$wi)/n</li>
 </ol>
 </li>
 </ol>
-<p>​        W=($\sum_{i=1}^N$wi)/n</p>
 <h2 id="作业调度和低级调度算法"><a href="#作业调度和低级调度算法" class="headerlink" title="作业调度和低级调度算法"></a>作业调度和低级调度算法</h2><h3 id="先来先服务算法-FCFS"><a href="#先来先服务算法-FCFS" class="headerlink" title="先来先服务算法(FCFS)"></a>先来先服务算法(FCFS)</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><blockquote>
 <p>字如其名，谁先到谁先服务，也类似数据结构中的队列，不按权值，先进先出。</p>
 <p>非抢占式。</p>
