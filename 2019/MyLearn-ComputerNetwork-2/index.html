@@ -108,30 +108,32 @@
 
 
 
-  <meta name="description" content="线程、 协程、 进程的理论总结，简单介绍他们的作用以及区别。">
-<meta name="keywords" content="进程,协程,线程">
+  <meta name="description" content="本篇总结了TCP/IP参考模型，引用书中发送邮件的例子去理解应用层、传输层、网络层、数据链路层在传输中的功能和流程。">
+<meta name="keywords" content="TCI&#x2F;IP参考模型,计算机网络,基础知识">
 <meta property="og:type" content="article">
-<meta property="og:title" content="&lt;学习记录&gt;线程、 协程、 进程的简单理解">
-<meta property="og:url" content="https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/index.html">
+<meta property="og:title" content="&lt;学习记录&gt;《图解TCP&#x2F;IP》之TCP&#x2F;IP基础知识">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-ComputerNetwork-2/index.html">
 <meta property="og:site_name" content="ConfuseL的个人博客">
-<meta property="og:description" content="线程、 协程、 进程的理论总结，简单介绍他们的作用以及区别。">
+<meta property="og:description" content="本篇总结了TCP/IP参考模型，引用书中发送邮件的例子去理解应用层、传输层、网络层、数据链路层在传输中的功能和流程。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554482916&di=e7971789a22228da570fc73db668aee5&imgtype=jpg&er=1&src=http%3A%2F%2Fupload-images.jianshu.io%2Fupload_images%2F14257988-35ecc363f4919af0.png">
-<meta property="og:image" content="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=839532373,3126445145&fm=26&gp=0.jpg">
-<meta property="og:image" content="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=9832170bbc315c60579863bdecd8a076/b8014a90f603738dd1bbb73cb31bb051f819ec3f.jpg">
-<meta property="og:image" content="http://5b0988e595225.cdn.sohucs.com/images/20180622/6765e36cc4604fba897976638af03524.jpeg">
-<meta property="og:updated_time" content="2019-03-31T09:21:57.702Z">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554144143456&di=e4800c52402be45f2a526ef57971e844&imgtype=0&src=http%3A%2F%2Fwww.net130.com%2FCMS%2FFiles%2FUploadimages%2F111744de017.jpg">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E6%95%B0%E6%8D%AE%E5%8C%85%E9%A6%96%E9%83%A8.png">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554802825&di=a59b9bf0b19ce7c3bbf57c595728c19c&imgtype=jpg&er=1&src=http%3A%2F%2Fupload-images.jianshu.io%2Fupload_images%2F1653926-8d8b9e2591e664e1.png">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554208303275&di=6b2e1b41a598f4619c8d71267b5812c2&imgtype=0&src=http%3A%2F%2Fyzhtml01.book118.com%2F2016%2F11%2F24%2F20%2F44911243%2F10.files%2Ffile0001.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCPIP%E4%B8%BE%E4%BE%8B.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F.png">
+<meta property="og:updated_time" content="2019-04-02T13:26:50.359Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="&lt;学习记录&gt;线程、 协程、 进程的简单理解">
-<meta name="twitter:description" content="线程、 协程、 进程的理论总结，简单介绍他们的作用以及区别。">
-<meta name="twitter:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554482916&di=e7971789a22228da570fc73db668aee5&imgtype=jpg&er=1&src=http%3A%2F%2Fupload-images.jianshu.io%2Fupload_images%2F14257988-35ecc363f4919af0.png">
+<meta name="twitter:title" content="&lt;学习记录&gt;《图解TCP&#x2F;IP》之TCP&#x2F;IP基础知识">
+<meta name="twitter:description" content="本篇总结了TCP/IP参考模型，引用书中发送邮件的例子去理解应用层、传输层、网络层、数据链路层在传输中的功能和流程。">
+<meta name="twitter:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1554144143456&di=e4800c52402be45f2a526ef57971e844&imgtype=0&src=http%3A%2F%2Fwww.net130.com%2FCMS%2FFiles%2FUploadimages%2F111744de017.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/">
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-ComputerNetwork-2/">
 
 
 
@@ -141,7 +143,7 @@
   };
 </script>
 
-  <title><学习记录>线程、 协程、 进程的简单理解 | ConfuseL的个人博客</学习记录></title>
+  <title><学习记录>《图解TCP/IP》之TCP/IP基础知识 | ConfuseL的个人博客</学习记录></title>
   
 
 
@@ -390,7 +392,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-ComputerNetwork-2/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ConfuseL">
@@ -407,7 +409,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline"><学习记录>线程、 协程、 进程的简单理解
+          <h1 class="post-title" itemprop="name headline"><学习记录>《图解TCP/IP》之TCP/IP基础知识
               
             
           </学习记录></h1>
@@ -432,24 +434,12 @@
                 
               
 
-              <time title="创建时间：2019-03-28 15:45:51" itemprop="dateCreated datePublished" datetime="2019-03-28T15:45:51+08:00">2019-03-28</time>
+              <time title="创建时间：2019-04-02 21:25:21 / 修改时间：21:26:50" itemprop="dateCreated datePublished" datetime="2019-04-02T21:25:21+08:00">2019-04-02</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-03-31 17:21:57" itemprop="dateModified" datetime="2019-03-31T17:21:57+08:00">2019-03-31</time>
               
             
           </span>
@@ -466,7 +456,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/操作系统/" itemprop="url" rel="index"><span itemprop="name">操作系统</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/计算机网络/" itemprop="url" rel="index"><span itemprop="name">计算机网络</span></a></span>
 
                 
                 
@@ -493,7 +483,7 @@
           
 
           
-              <div class="post-description">线程、 协程、 进程的理论总结，简单介绍他们的作用以及区别。</div>
+              <div class="post-description">本篇总结了TCP/IP参考模型，引用书中发送邮件的例子去理解应用层、传输层、网络层、数据链路层在传输中的功能和流程。</div>
           
 
         </div>
@@ -509,163 +499,142 @@
       
 
       
-        <h2 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h2><blockquote>
-<p>​    在了解协程之前，我们先了解一下操作系统中的堆、 栈。</p>
-<p>​    再谈谈进程和线程。其中暂不介绍上下文。</p>
+        <h1 id="TCP-IP基础知识"><a href="#TCP-IP基础知识" class="headerlink" title="TCP/IP基础知识"></a>TCP/IP基础知识</h1><h2 id="TCP-IP的具体含义"><a href="#TCP-IP的具体含义" class="headerlink" title="TCP/IP的具体含义"></a>TCP/IP的具体含义</h2><blockquote>
+<p>根据不同的使用范围，可以分为两种含义。</p>
+<ol>
+<li>仅TCP和IP两种协议。</li>
+<li>利用IP进行通信时所必须用到的协议群的统称。如IP/ICMP、 TCP/UDP、 TELNET/FTP等等。</li>
+</ol>
 </blockquote>
-<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><blockquote>
-<p>​    在数据结构中，栈具有先进后出的特性，也就是说，将1,2,3按顺序添加到栈结构中，再依次取出数据时，数据顺序是这样的：3,2,1。</p>
-<p>​    而在操作系统中，它是内存分配的一种方式，即动态分配内存。它由编译器自动分配和释放，主要用于存放函数的参数值，局部变量等等，而它的性质也遵循先进后出。</p>
-<p>​    栈存放在一级缓存中，在被调用结束后会被立即释放。</p>
+<h2 id="TCP-IP协议分层模型"><a href="#TCP-IP协议分层模型" class="headerlink" title="TCP/IP协议分层模型"></a>TCP/IP协议分层模型</h2><blockquote>
+<p>书本第一章介绍了OSI参考模型（<a href="http://confusel.tech/2019/MyLearn-ComputerNetwork-1/">博客也记录了</a>），而TCP/IP也有一个对应的参考模型。</p>
+</blockquote>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1554144143456&amp;di=e4800c52402be45f2a526ef57971e844&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.net130.com%2FCMS%2FFiles%2FUploadimages%2F111744de017.jpg" alt=""></p>
+<blockquote>
+<p>可以简单的理解为，TCP/IP参考模型将OSI参考模型的顶上三层，即应用层、 表示层、 会话层概括为应用层，其余层不变。也就从原来的7层变为5层模型。</p>
+<p>这里不多介绍数据链路层和物理层了，直接从网络层的协议讲起。</p>
 </blockquote>
 <hr>
-<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><blockquote>
-<p>​    在数据结构中，是一种树形结构，即完全二叉树，它的特性是某节点的值都不会比父节点的值大或者小，所以常常用来实现优先队列。</p>
-<p>​    而在操作系统中，它和栈一样是动态分配内存，不同的是，它由我们分配和释放，如果我们没有主动释放，会在程序结束时被回收。</p>
-<p>​    <strong>重点来了，它与数据结构的堆并不具有同种特性，它的性质更接近于链表。</strong></p>
-<p>​    堆存放在二级缓存中，调用完毕并不会被系统直接回收。</p>
+<h3 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h3><blockquote>
+<p><strong>让主机与主机之间通信。</strong></p>
+</blockquote>
+<h4 id="IP协议"><a href="#IP协议" class="headerlink" title="IP协议"></a>IP协议</h4><blockquote>
+<p>IP是跨越网络传输数据包，使整个互联网都能收到数据的协议。IP协议使数据能够发送到对方，在发送的期间，以IP地址作为主机的标识符。</p>
+<p>IP包含数据链路层的功能，通过IP可以经过任意的底层数据链路去实现通信。</p>
+<p>IP是分组交换的一种协议，但是不具有重发机制，所以是非可靠性传输协议。</p>
+</blockquote>
+<h4 id="ICMP协议"><a href="#ICMP协议" class="headerlink" title="ICMP协议"></a>ICMP协议</h4><blockquote>
+<p>ICMP用于在IP数据包发送异常时，向发送端发送一个err，可以用来诊断网络的健康状况。</p>
+</blockquote>
+<h4 id="ARP协议"><a href="#ARP协议" class="headerlink" title="ARP协议"></a>ARP协议</h4><blockquote>
+<p>可以从IP地址 解析出MAC地址。</p>
 </blockquote>
 <hr>
-<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><blockquote>
-<p>​    进程即可并发执行的程序在某个数据集合上的一切计算活动。</p>
-<p>​    可以简单的认为，在电脑上打开了一个软件，运行了一款游戏，就是开启了一个进程。</p>
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><blockquote>
+<p><strong>让应用和应用之间通信。</strong></p>
 </blockquote>
-<h4 id="进程性质"><a href="#进程性质" class="headerlink" title="进程性质"></a>进程性质</h4><blockquote>
-<ol>
-<li>有生命周期</li>
-<li><strong>拥有系统资源的基本单位</strong></li>
-<li>进程之间可以对等的，也可以是父子结构。</li>
-</ol>
+<h4 id="TCP协议"><a href="#TCP协议" class="headerlink" title="TCP协议"></a>TCP协议</h4><blockquote>
+<p>面向连接的传输层协议。</p>
+<p>可靠的传输，能保证两个主机之间的通信可达。</p>
+<p>能够正确处理传输过程的丢包、 传输顺序错乱的异常情况。</p>
+<p>可以有效利用带宽，缓解网络拥堵。</p>
 </blockquote>
-<h4 id="进程属性"><a href="#进程属性" class="headerlink" title="进程属性"></a>进程属性</h4><blockquote>
-<ol>
-<li>动态性：拥有生命周期</li>
-<li>共享性：多个进程可以执行同个程序</li>
-<li>独立性：每个进程都是OS中的一个操作实体，拥有自己的独立栈、 堆</li>
-<li>制约性：共享资源的制约关系</li>
-<li>并发性：单处理器可并发执行，多处理器可并行执行</li>
-</ol>
+<blockquote>
+<p>为了实现可靠性，定义了很多规范，因此在传输上的数据量就不是很大，因此不适合一些数据量大且频繁传输，例如视频通话。</p>
 </blockquote>
-<h4 id="进程结构"><a href="#进程结构" class="headerlink" title="进程结构"></a>进程结构</h4><blockquote>
-<ol>
-<li>控制块：英文缩写PCB，每一个进程捆绑一个，用来存储进程的标识、 现场、 控制信息 ，同进程创建、 回收。</li>
-<li>程序块：即进程执行的程序</li>
-<li>核心栈： 进程在内核模式下运行时使用的堆栈， 中断或系统过程使用；</li>
-<li>数据块：进程处理的数据空间， 包括数据、 处理函数的用户栈（用户态）和可修改的程序；</li>
-</ol>
+<h4 id="UDP协议"><a href="#UDP协议" class="headerlink" title="UDP协议"></a>UDP协议</h4><blockquote>
+<p>面向无连接的传输层协议。</p>
+<p>不可靠的传输，它不会关心对方是否能收到数据。</p>
+<p>如果需要检查，只能在应用中实现而不是协议中。</p>
 </blockquote>
-<h4 id="进程的创建过程"><a href="#进程的创建过程" class="headerlink" title="进程的创建过程"></a>进程的创建过程</h4><blockquote>
-<p>​    在进程列表中增加一项，然后从PCB池里申请一个空闲的PCB然后为新进程分配唯一的标识符，同时分配地址空间等等各种资源。随后初始化PCB，如标识符、 进程优先级等，然后设置就绪态，加入就绪队列。</p>
-</blockquote>
-<h4 id="进程的撤销过程"><a href="#进程的撤销过程" class="headerlink" title="进程的撤销过程"></a>进程的撤销过程</h4><blockquote>
-<p>​    可分为正常和非正常撤销，也就是类似进程运行结束、 执行非法命令、 被中断等</p>
-<p>​    根据被撤销进程的标识符从相应的队列中查找并移除，并把资源归还给上一级（父进程或者是OS），如果这个进程拥有子进程，那么先对子进程同样的操作，最后将PCB回收。</p>
-</blockquote>
-<h4 id="进程拥有的进程状态"><a href="#进程拥有的进程状态" class="headerlink" title="进程拥有的进程状态"></a>进程拥有的进程状态</h4><h5 id="三态"><a href="#三态" class="headerlink" title="三态"></a>三态</h5><p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1554482916&amp;di=e7971789a22228da570fc73db668aee5&amp;imgtype=jpg&amp;er=1&amp;src=http%3A%2F%2Fupload-images.jianshu.io%2Fupload_images%2F14257988-35ecc363f4919af0.png" alt=""></p>
-<h5 id="七态"><a href="#七态" class="headerlink" title="七态"></a>七态</h5><p><img src="https://ss0.bdstatic.com/70cFvHSh_Q1YnxGkpoWK1HF6hhy/it/u=839532373,3126445145&amp;fm=26&amp;gp=0.jpg" alt=""></p>
-<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><blockquote>
-<p>​    上面介绍了进程，可以看出进程的功能十分强大，那么为什么还需要线程呢？</p>
-<p>​    首先需要明确一个概念，Linux系统中甚至没有真正的线程。不过，可以认为Linux是系统的线程是内核线程，所以调度是基于线程的。</p>
-</blockquote>
-<h4 id="引入线程的原因"><a href="#引入线程的原因" class="headerlink" title="引入线程的原因"></a>引入线程的原因</h4><blockquote>
-<ol>
-<li>进程切换开销大</li>
-<li>进程通信代价大</li>
-<li>进程间的并发性力度较粗，并发度不高，并发的本质是在时间上重叠的多个逻辑流，也就是说同时运行的多个逻辑流。并发编程要解决的一个很重要的问题就是对资源的并发访问的问题，也就是共享资源的问题。而两个进程恰恰很难在逻辑上表示共享资源。</li>
-<li>不适应并行计算和分部并行的计算需求</li>
-<li>不适合C/S计算的要求</li>
-</ol>
-</blockquote>
-<h4 id="线程性质"><a href="#线程性质" class="headerlink" title="线程性质"></a>线程性质</h4><blockquote>
-<ol>
-<li>在引入线程这个概念之后，线程成为了CPU<strong>调度和分配的最小单位</strong>。</li>
-<li>线程是进程的组成部分，是能够并发的实体。</li>
-<li>线程<strong>不是拥有资源</strong>的单位，所以挂起状态对于线程没有任何意义。因此挂起操作不是线程级而是进程级状态。</li>
-<li>线程可以创建另一个线程。但都是对等结构不是父子结构。</li>
-</ol>
-</blockquote>
-<h4 id="线程结构"><a href="#线程结构" class="headerlink" title="线程结构"></a>线程结构</h4><blockquote>
-<ol>
-<li>线程控制块：英文缩写TCB，与进程的控制块相似，但是由进程操控。</li>
-<li>线程用户栈</li>
-<li>线程核心栈</li>
-</ol>
+<blockquote>
+<p>性质与TCP大部分相反，因此它适合用于多播、 广播以及视频通信。</p>
 </blockquote>
 <hr>
-<h4 id="线程与进程的关系"><a href="#线程与进程的关系" class="headerlink" title="线程与进程的关系"></a>线程与进程的关系</h4><h4 id=""><a href="#" class="headerlink" title=""></a><img src="https://gss0.bdstatic.com/94o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike80%2C5%2C5%2C80%2C26/sign=9832170bbc315c60579863bdecd8a076/b8014a90f603738dd1bbb73cb31bb051f819ec3f.jpg" alt="img"></h4><blockquote>
-<p>​    可以理解为线程是进程的一部分。一个线程只能属于一个进程，而一个进程可以有多个线程。线程是进程的一部分，所以线程有的时候被称为是轻权进程或者<a href="https://baike.baidu.com/item/%E8%BD%BB%E9%87%8F%E7%BA%A7%E8%BF%9B%E7%A8%8B" target="_blank" rel="noopener">轻量级进程</a>。</p>
-<p>​    线程可以分为两部分：<strong>资源集合</strong>和<strong>线程集合</strong>。进程要支持线程的运行，并为线程提供虚拟地址空间和各种资源。</p>
+<h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><blockquote>
+<p>如上面所述，TCP/IP将OSI中的表示层、 会话层、 应用层一起概括为应用层，所以在TCP/IP的应用层中，它要实现OSI三层的功能。</p>
+<p>传输层的 UDP 报文和 TCP 报文段的数据部分就是应用层交付的数据。</p>
+<p>网络管理(<a href="https://baike.baidu.com/item/SNMP/133378?fr=aladdin" target="_blank" rel="noopener">SNMP</a>)在这里不介绍，因为本人不是很了解。</p>
 </blockquote>
-<h4 id="线程与进程的区别"><a href="#线程与进程的区别" class="headerlink" title="线程与进程的区别"></a>线程与进程的区别</h4><blockquote>
+<h4 id="WWW功能"><a href="#WWW功能" class="headerlink" title="WWW功能"></a>WWW功能</h4><blockquote>
+<p>即万维网，简称web。一般由web客户端(如浏览器)和web服务器组成。而它们之间传输的数据格式主要是<a href="https://baike.baidu.com/item/HTML/97049?fr=aladdin" target="_blank" rel="noopener">HTML</a>，即超文本标记语言，通信使用的协议是<a href="https://baike.baidu.com/item/http" target="_blank" rel="noopener">HTTP</a>协议，即超文本传输协议。</p>
+<p>注意：HTTP属于OSI应用层协议，HTML属于表示层协议。</p>
+</blockquote>
+<h4 id="电子邮件功能-E-Mail"><a href="#电子邮件功能-E-Mail" class="headerlink" title="电子邮件功能(E-Mail)"></a>电子邮件功能(E-Mail)</h4><blockquote>
+<p>就是发送电子邮件，使用到的协议叫做<a href="https://baike.baidu.com/item/SMTP" target="_blank" rel="noopener">STMP</a>，即简单邮件传输协议，在上一篇博客举例中提到过。</p>
+<p>原来只可以发送文本格式的邮件，在<a href="https://baike.baidu.com/item/MIME/2900607?fr=aladdin" target="_blank" rel="noopener">MIME</a>协议出现后，允许发送音频、图像等。甚至能对邮件的文字格式进行更改。</p>
+<p>STMP是传输邮件的协议(还有<a href="https://baike.baidu.com/item/POP3" target="_blank" rel="noopener">POP3</a>)，而MIME是邮件格式的协议，不用弄混了。</p>
+</blockquote>
+<h4 id="文件传输功能-FTP"><a href="#文件传输功能-FTP" class="headerlink" title="文件传输功能(FTP)"></a>文件传输功能(FTP)</h4><blockquote>
+<p>允许两个计算机之间相互传输文件，可以选择传输过程是二进制还是文本方式。</p>
+<p>在传输过程中，需要创建两个TCP连接，分别是发出传输请求的控制连接，以及实际的数据连接。</p>
+</blockquote>
+<h4 id="远程登录功能-TELNET-SSH"><a href="#远程登录功能-TELNET-SSH" class="headerlink" title="远程登录功能(TELNET|SSH)"></a>远程登录功能(TELNET|SSH)</h4><blockquote>
+<p>远程登录的作用就不多介绍了，其中telnet是明文发送的数据，而ssh支持加密，所以普遍来说ssh更安全。</p>
+</blockquote>
+<h2 id="TCP-IP分层模型与通信示例"><a href="#TCP-IP分层模型与通信示例" class="headerlink" title="TCP/IP分层模型与通信示例"></a>TCP/IP分层模型与通信示例</h2><blockquote>
+<p>跟着书上的内容，在这里介绍应用层到物理媒介的数据处理流程。</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E6%95%B0%E6%8D%AE%E5%8C%85%E9%A6%96%E9%83%A8.png" alt=""></p>
+<blockquote>
+<p>如上图，我们从下往上看，传输层在上层包装好的数据中添加了自己的TCP首部信息，传递给下一层网络层，网络层也添加了自己的IP首部。</p>
+<p>如同在上一篇博客的发邮件例子的过程中，发送方的邮件数据从表示层开始每一层都为数据添加一个首部信息，代表了它们在这一层的操作规定。</p>
+<p>我们在这里依然和书上一样，使用发邮件的例子介绍它们的封装流程。</p>
+</blockquote>
+<h3 id="邮件样例"><a href="#邮件样例" class="headerlink" title="邮件样例"></a>邮件样例</h3><blockquote>
+<p>当发送方输入好内容，点击发送的时候。</p>
 <ol>
-<li>进程之间的通信，只能通过管道、 信号的方式通信。而线程使用的资源来源于进程的共享，通信起来并没有进程这么麻烦。</li>
-<li>一个线程只能属于一个进程，但是一个进程可以拥有多个线程。多线程处理就是允许一个进程中在同一时刻执行多个任务。</li>
-<li>进程有自己的不共享堆，不共享栈，线程有自己的不共享栈和共享堆。</li>
-<li>进程是拥有资源的单位，线程是调度和分配的最小单位。</li>
+<li>TCP/IP的应用层开始对邮件进行编码处理，将它变成网络的通用码。(这一步在OSI中是表示层的功能)。邮件开始发送的那一刻，开始建立TCP连接，即从应用层将数据发给下一层传输层的TCP中。</li>
+<li>TCP为了实现可靠性传输的功能，在应用层数据的前端加上了一个TCP首部，上面记录了源端口号和目的端口号，以及数据的序列号和校验和，处理好这些，它将数据发到网络层的IP中。</li>
+</ol>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1554802825&amp;di=a59b9bf0b19ce7c3bbf57c595728c19c&amp;imgtype=jpg&amp;er=1&amp;src=http%3A%2F%2Fupload-images.jianshu.io%2Fupload_images%2F1653926-8d8b9e2591e664e1.png" alt=""></p>
+<p>​    上图的数据即<strong>应用层数据</strong>。</p>
+<ol start="3">
+<li>网络层接受到了数据，对于网络层，它把接受到的数据当作一个整体处理，它直接在这些数据的头部上加入IP首部，上面注明了源地址和目的地址。</li>
+</ol>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1554208303275&amp;di=6b2e1b41a598f4619c8d71267b5812c2&amp;imgtype=0&amp;src=http%3A%2F%2Fyzhtml01.book118.com%2F2016%2F11%2F24%2F20%2F44911243%2F10.files%2Ffile0001.png" alt="img"></p>
+<p>​    上图的数据部分即(<strong>应用层数据加上TCP头部信息</strong>)的数据。</p>
+<ol start="4">
+<li>这个时候，开始把数据发送给数据链路层(如路由器)，这时候我们需要知道接受方的MAC地址(如网卡地址)，我们可以通过ARP协议解析出MAC地址。</li>
 </ol>
 </blockquote>
-<h4 id="多线程容易引发的问题"><a href="#多线程容易引发的问题" class="headerlink" title="多线程容易引发的问题"></a>多线程容易引发的问题</h4><h5 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h5><blockquote>
-<p>​    我们都知道线程共享使用的是来自进程的资源，那么在多个线程同时访问资源时，同时对某个资源进行操作，就会发生一些错误。</p>
-<p>​    比如买票，就剩最后一张票了，两个线程同时买票，都发现了最后一张，都买掉了它，那么这个时候，系统还剩-1张票。</p>
-<p>​    显然这不是我们想看到的情况。</p>
-<p>​    为了解决这种问题，出现了互斥锁、信号量的等等解决方案。因为介绍这些内容篇幅过长可以自行百度。</p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCPIP%E4%B8%BE%E4%BE%8B.png" alt=""></p>
+<center>书上的图，该图对包首做了简化</center>
+
+<h3 id="数据包接收处理"><a href="#数据包接收处理" class="headerlink" title="数据包接收处理"></a>数据包接收处理</h3><p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F.png" alt=""></p>
+<h4 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h4><blockquote>
+<p>接收到数据之后，数据链路层先查看接收端MAC地址是不是自己，如果不是则丢弃。</p>
+<p>确定是自己的包以后，开始查找以太网包首部的类型域，以确定传过来的数据类型。当前的例子是IP包，所以我们会把数据传输给网络层的IP模块中，如果是ARP则给ARP。</p>
 </blockquote>
-<h5 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h5><blockquote>
-<p>​    死锁是指多个线程因竞争资源而造成的一种僵局（互相等待），经典的问题如<a href="https://baike.baidu.com/item/%E5%93%B2%E5%AD%A6%E5%AE%B6%E5%B0%B1%E9%A4%90%E9%97%AE%E9%A2%98/10929794?fr=aladdin" target="_blank" rel="noopener">哲学家就餐问题</a>,因为死锁问题可以另开篇幅，在这里同样不再描述。</p>
+<h4 id="网络层-1"><a href="#网络层-1" class="headerlink" title="网络层"></a>网络层</h4><blockquote>
+<p>例子中的网络层的IP模块接受到下一层(数据链路层)的数据，首先判断目的ip地址是不是自己，如果不是则丢弃。</p>
+<p>确定是自己的包以后，开始查找IP包首部的协议，如果是TCP则给传输层的TCP模块，如果是UDP则给传输层的UDP模块。</p>
 </blockquote>
-<h3 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h3><h4 id="引入协程的原因"><a href="#引入协程的原因" class="headerlink" title="引入协程的原因"></a>引入协程的原因</h4><blockquote>
-<p>​    线程其实并没有提高CPU的运行速率，而只是提高了运行效率，同时会很吃CPU的性能。</p>
+<h4 id="传输层-1"><a href="#传输层-1" class="headerlink" title="传输层"></a>传输层</h4><blockquote>
+<p>例子中的传输层TCP模块接受到下一层(网络层)的数据，这个时候已经确定信息就是发送给自己了，因此不需要再确认。但是需要检验一下校验和，避免数据错误，之后查看端口号，将数据传给对应端口号的进程。同时发送一个ACK，代表接受到数据。</p>
+<p>如果校验和不对，也会向发送方要求重发一次数据，或者是没有向发送方发送ACK，发送方也会反复发送。</p>
+</blockquote>
+<h4 id="应用层-1"><a href="#应用层-1" class="headerlink" title="应用层"></a>应用层</h4><blockquote>
+<p>我们接受到了传输层的数据，这个时候开始解析(对应OSI的表示层)数据，如果数据正常，并且磁盘有空间能正常保存，那么会发送一个处理正常的信息给发送方。</p>
+<p>否则：</p>
 <ol>
-<li><p>涉及到同步、异步、互斥锁。</p>
-</li>
-<li><p>涉及到线程阻塞状态和可运行状态之间的切换。</p>
-</li>
-<li><p>涉及到线程上下文的切换。</p>
-<p>可见一个进程内多个线程运作的时候进行以上操作会非常消耗性能。</p>
-</li>
+<li>如果数据实际上并不是指向接受方，比如邮件的收件人地址并不是接受方，那么会发送一个err给发送方。</li>
+<li>如果接收到了，但是无法正常存储，也会发送一个err。</li>
 </ol>
 </blockquote>
-<p><img src="http://5b0988e595225.cdn.sohucs.com/images/20180622/6765e36cc4604fba897976638af03524.jpeg" alt=""></p>
-<h4 id="协程性质"><a href="#协程性质" class="headerlink" title="协程性质"></a>协程性质</h4><blockquote>
-<ol>
-<li>如同操作系统拥有多个进程，进程拥有多个线程一样，线程拥有多个协程。</li>
-<li>协程不是被操作系统内核所管理，而完全是由程序所控制（也就是在用户态执行）。</li>
-<li>协程是在一个线程中，每个协程对CPU进行分时处理。</li>
-<li>协程即与多线程情况下的线程比较类似：有自己的堆栈，自己的局部变量，有自己的指令指针，但与其它协同程序共享全局变量等很多信息。</li>
-<li>协程造成阻塞是，会影响整个线程。</li>
-</ol>
+<blockquote>
+<p>最后接受方打开邮件，看到了发送方发来的信息。</p>
 </blockquote>
-<h4 id="线程和协程的区别"><a href="#线程和协程的区别" class="headerlink" title="线程和协程的区别"></a>线程和协程的区别</h4><blockquote>
-<ol>
-<li>协程 :同一时间只能执行某个协程。开辟多个协程开销不大。协程适合对某任务进行分时处理。</li>
-<li>线程: 同一时间可以同时执行多个线程。开辟多条线程开销很大。线程适合多任务同时处理。</li>
-<li>线程和协同程序的主要不同在于：在多处理器情况下，从概念上来讲多线程程序同时运行多个线程；而协同程序是通过协作来完成，在任一指定时刻只有一个协同程序在运行，并且这个正在运行的协同程序只在必要时才会被挂起。</li>
-<li>协程需要保证是非堵塞的且没有相互依赖，协程基本上不能同步通讯，多采用一步的消息通讯，效率比较高。</li>
-</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote>
+<p>书上第二章主要就是介绍TCP/IP参考模型以及几个层中相对重要的协议，依然通过发送邮件的例子让读者了解在TCP/IP参考模型中的数据传输流程。</p>
+<p>在发送过程中，传输层，网络层，数据链路层都会在应用层的数据包上加上一层对应的首包，分别标记端口、ip地址、mac地址。</p>
+<p>而接收过程，则逆序解析，一一对正，只要不符合就丢弃。</p>
+<p>最后的解析出原本的数据在应用层上被正确的使用，在这个过程中还回确保信息无误，与发送方确认。</p>
 </blockquote>
-<h3 id="Unity3D中的线程、协程"><a href="#Unity3D中的线程、协程" class="headerlink" title="Unity3D中的线程、协程"></a>Unity3D中的线程、协程</h3><h4 id="创建的线程无法调用UnityAPI"><a href="#创建的线程无法调用UnityAPI" class="headerlink" title="创建的线程无法调用UnityAPI"></a>创建的线程无法调用UnityAPI</h4><blockquote>
-<p>​    Unity是单线程设计的游戏引擎(很多都是，因为游戏大部分都是主循环结构)，它有一个负责主循环的主线程。基于MonoBehavior，因此游戏脚本拥有严格的生命周期。</p>
-<p>​    尝试在Unity中创建线程后，很容易发现，在我们创建的线程运行函数中，无法调用Unity引擎提供的各种API，以及它提供的特殊对象。例如组件，但是常用的如int、struct类型是允许使用的。</p>
+<blockquote>
+<p><strong>书上第三章是数据链路层，个人仅去了解，不会专门总结一篇知识，所以下一次会跳到网络层的ip协议。</strong></p>
 </blockquote>
-<h4 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h4><blockquote>
-<p>​    为了保证逻辑和画面按照严格的顺序更新。</p>
-</blockquote>
-<h4 id="无法使用UnityAPI，那么创建线程还有什么用"><a href="#无法使用UnityAPI，那么创建线程还有什么用" class="headerlink" title="无法使用UnityAPI，那么创建线程还有什么用"></a>无法使用UnityAPI，那么创建线程还有什么用</h4><blockquote>
-<p>​    如果不是画面更新，也不是常规的逻辑更新（指包括AI、物理碰撞、角色控制这些），而是一些其他后台任务，比如网络传输：</p>
-<p>​    正如TCP或者UDP协议的传输，在TCP中，我们需要确保长链接，需要一直接受发送端发送过来的数据，如果我们把它写在主线程下，会发生什么。我们在游戏拥有聊天服务这个功能，假设使用阻塞式TCP协议，那么我们打开与某玩家的聊天窗口，向其发送数据，然后就没有然后了，因为我们必须等待对方的回复。</p>
-<p>​    而我们使用多线程就可以解决了。新增线程专门用于网络通讯，而主线程根据接受到的信息负责更新逻辑以及画面。</p>
-</blockquote>
-<h4 id="可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程"><a href="#可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程" class="headerlink" title="可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程"></a>可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程</h4><blockquote>
-<p>​    协程，即协作式程序，其思想是一系列互相依赖的协程间依次使用CPU，每次只有一个协程工作，而其他协程处于休眠状态。协程实际上是在一个线程中，只不过每个协程对CUP进行分时，协程可以访问和使用unity的所有方法和component.</p>
-<p>​    协程一般都是在一次Update之后被使用，协程在每次使用后会被挂起，等待下一次的使用。那么它的作用是什么呢。</p>
-<p>​    比如，我们需要异步加载场景上的所有预置体，比如制作了一款关卡场景中物体比较多的游戏，我们需要在关卡开始前加载所有预置体(为了更能提现协程的作用，在这里先不考虑缓存池优化)，假设预置体真的很多，把加载都放在Start中执行，那么玩家可能会卡顿一段时间才能进入到游戏循环中，而我们使用协程，协程每次加载部分预置体，在Start中开启协程，那么协程会被执行一次，这个时候加载了部分预置体，再进行一次Update循环后，协程又一次被调用，又加载了部分预置体，而一秒中调用的Update次数足够多，所以并不会产生卡顿的感觉。</p>
-</blockquote>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><blockquote>
-<p>进程是操作系统拥有资源的单位，一个操作系统可拥有多个进程，拥有独立的栈和堆。通常对应一个运行的程序。</p>
-<p>线程是CPU调度和分配的最小单位，一个进程可以拥有多个线程。拥有独立的栈和共享的堆(来自进程)。通常对应一个程序中的主要功能和并发功能。</p>
-<p>协程可以说是用户态的轻量级线程，一个线程可以拥有多个协程。拥有用户栈和共享的堆(来自线程)。通常应用于异步中。</p>
-</blockquote>
-<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3>
+
       
     </div>
 
@@ -684,12 +653,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/MyLearn-ProcessAndThreadAndCoroutine/"><学习记录>线程、 协程、 进程的简单理解</学习记录></a></p>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-ComputerNetwork-2/"><学习记录>《图解TCP/IP》之TCP/IP基础知识</学习记录></a></p>
   <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
-  <p><span>发布时间:</span>2019年03月28日 - 15:03</p>
-  <p><span>最后更新:</span>2019年03月31日 - 17:03</p>
-  <p><span>原始链接:</span><a href="/2019/MyLearn-ProcessAndThreadAndCoroutine/" title="<学习记录>线程、 协程、 进程的简单理解">https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/" aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2019年04月02日 - 21:04</p>
+  <p><span>最后更新:</span>2019年04月02日 - 21:04</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-ComputerNetwork-2/" title="<学习记录>《图解TCP/IP》之TCP/IP基础知识">https://confusel.tech/2019/MyLearn-ComputerNetwork-2/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-ComputerNetwork-2/" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -738,19 +707,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/MyAlgorithm-edge/" rel="next" title="<常用算法的C++实现>图论">
-                <i class="fa fa-chevron-left"></i> <常用算法的c++实现>图论
-              </常用算法的c++实现></a>
+              <a href="/2019/MyLearn-OS-2/" rel="next" title="<学习记录>处理器调度">
+                <i class="fa fa-chevron-left"></i> <学习记录>处理器调度
+              </学习记录></a>
             
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/MyLearn-ComputerNetwork-1/" rel="prev" title="<学习记录>《图解TCP/IP》之网络基础知识">
-                <学习记录>《图解TCP/IP》之网络基础知识 <i class="fa fa-chevron-right"></i>
-              </学习记录></a>
             
           </div>
         </div>
@@ -929,7 +894,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#理论"><span class="nav-number">1.</span> <span class="nav-text">理论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#栈"><span class="nav-number">1.1.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆"><span class="nav-number">1.2.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进程"><span class="nav-number">1.3.</span> <span class="nav-text">进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#进程性质"><span class="nav-number">1.3.1.</span> <span class="nav-text">进程性质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程属性"><span class="nav-number">1.3.2.</span> <span class="nav-text">进程属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程结构"><span class="nav-number">1.3.3.</span> <span class="nav-text">进程结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程的创建过程"><span class="nav-number">1.3.4.</span> <span class="nav-text">进程的创建过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程的撤销过程"><span class="nav-number">1.3.5.</span> <span class="nav-text">进程的撤销过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进程拥有的进程状态"><span class="nav-number">1.3.6.</span> <span class="nav-text">进程拥有的进程状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#三态"><span class="nav-number">1.3.6.1.</span> <span class="nav-text">三态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#七态"><span class="nav-number">1.3.6.2.</span> <span class="nav-text">七态</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">1.4.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入线程的原因"><span class="nav-number">1.4.1.</span> <span class="nav-text">引入线程的原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程性质"><span class="nav-number">1.4.2.</span> <span class="nav-text">线程性质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程结构"><span class="nav-number">1.4.3.</span> <span class="nav-text">线程结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程与进程的关系"><span class="nav-number">1.4.4.</span> <span class="nav-text">线程与进程的关系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#"><span class="nav-number">1.4.5.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程与进程的区别"><span class="nav-number">1.4.6.</span> <span class="nav-text">线程与进程的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多线程容易引发的问题"><span class="nav-number">1.4.7.</span> <span class="nav-text">多线程容易引发的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#线程安全"><span class="nav-number">1.4.7.1.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#死锁"><span class="nav-number">1.4.7.2.</span> <span class="nav-text">死锁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协程"><span class="nav-number">1.5.</span> <span class="nav-text">协程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#引入协程的原因"><span class="nav-number">1.5.1.</span> <span class="nav-text">引入协程的原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协程性质"><span class="nav-number">1.5.2.</span> <span class="nav-text">协程性质</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程和协程的区别"><span class="nav-number">1.5.3.</span> <span class="nav-text">线程和协程的区别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity3D中的线程、协程"><span class="nav-number">1.6.</span> <span class="nav-text">Unity3D中的线程、协程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建的线程无法调用UnityAPI"><span class="nav-number">1.6.1.</span> <span class="nav-text">创建的线程无法调用UnityAPI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原因"><span class="nav-number">1.6.2.</span> <span class="nav-text">原因</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#无法使用UnityAPI，那么创建线程还有什么用"><span class="nav-number">1.6.3.</span> <span class="nav-text">无法使用UnityAPI，那么创建线程还有什么用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程"><span class="nav-number">1.6.4.</span> <span class="nav-text">可我想对我的游戏进行调用UnityAPI的并发或者异步操作，怎么办——使用协程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">1.8.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP-IP基础知识"><span class="nav-number">1.</span> <span class="nav-text">TCP/IP基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-IP的具体含义"><span class="nav-number">1.1.</span> <span class="nav-text">TCP/IP的具体含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-IP协议分层模型"><span class="nav-number">1.2.</span> <span class="nav-text">TCP/IP协议分层模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#网络层"><span class="nav-number">1.2.1.</span> <span class="nav-text">网络层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IP协议"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">IP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ICMP协议"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">ICMP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ARP协议"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">ARP协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#传输层"><span class="nav-number">1.2.2.</span> <span class="nav-text">传输层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP协议"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">TCP协议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UDP协议"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">UDP协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应用层"><span class="nav-number">1.2.3.</span> <span class="nav-text">应用层</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WWW功能"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">WWW功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#电子邮件功能-E-Mail"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">电子邮件功能(E-Mail)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件传输功能-FTP"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">文件传输功能(FTP)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#远程登录功能-TELNET-SSH"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">远程登录功能(TELNET|SSH)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-IP分层模型与通信示例"><span class="nav-number">1.3.</span> <span class="nav-text">TCP/IP分层模型与通信示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#邮件样例"><span class="nav-number">1.3.1.</span> <span class="nav-text">邮件样例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据包接收处理"><span class="nav-number">1.3.2.</span> <span class="nav-text">数据包接收处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数据链路层"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">数据链路层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#网络层-1"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#传输层-1"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#应用层-1"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">应用层</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
             
 
           </div>
