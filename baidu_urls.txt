@@ -5,8 +5,5 @@ https://confusel.tech/2019/MyLearn-ComputerNetwork-1/
 https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/
 https://confusel.tech/2019/MyAlgorithm-edge/
 https://confusel.tech/2019/MyAlgorithm-bigNum/
-https://confusel.tech/2019/MyGame-19-Mar/
 https://confusel.tech/2019/MyLearn-Anima2D/
 https://confusel.tech/2018/MyIssue-Solution-DLL/
-https://confusel.tech/2018/MyGame-Nov/
-https://confusel.tech/2018/MyGame-Oct/
