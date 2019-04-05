@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="虚函数是C++的特性之一，它为C++带来了多态和接口的作用，但是在内存中，这些到底是怎么分配的呢。">
+<meta name="keywords" content="虚函数,虚基表,虚函数表">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;学习记录&gt;C++的虚函数表知识总结">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-VirtualCpp/index.html">
+<meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="虚函数是C++的特性之一，它为C++带来了多态和接口的作用，但是在内存中，这些到底是怎么分配的呢。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%AE%BE%E7%BD%AE.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%AF%B9%E6%AF%941.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%AF%B9%E6%AF%942.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%A4%9A%E7%BB%A7%E6%89%BF%E5%AF%BC%E8%87%B4%E7%9A%84%E4%B8%8D%E6%98%8E%E7%A1%AE.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%90%91%E4%B8%8A%E8%BD%AC%E6%8D%A2%E4%B8%8D%E5%86%8D%E6%8A%A5%E9%94%99.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%90%91%E4%B8%8A%E8%BD%AC%E6%8D%A2%E7%9A%84%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E9%87%8D%E5%86%99%E5%A4%9A%E7%BB%A7%E6%89%BF.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/VS%E6%8A%BD%E9%A3%8E.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF%E9%97%AE%E9%A2%98.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%99%9A%E7%BB%A7%E6%89%BF%E8%A7%A3%E5%86%B3%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF.png">
+<meta property="og:updated_time" content="2019-04-05T15:32:12.627Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;学习记录&gt;C++的虚函数表知识总结">
+<meta name="twitter:description" content="虚函数是C++的特性之一，它为C++带来了多态和接口的作用，但是在内存中，这些到底是怎么分配的呢。">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%AE%BE%E7%BD%AE.png">
+
+
+
+
+
+
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-VirtualCpp/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title><学习记录>C++的虚函数表知识总结 | ConfuseL的个人博客</学习记录></title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/ConfuseL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ConfuseL的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">独立精神</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-游戏开发记录">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/myGame/" rel="section"><i class="menu-item-icon fa fa-fw fa-gamepad"></i> <br>游戏开发记录</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-VirtualCpp/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><学习记录>C++的虚函数表知识总结
+              
+            
+          </学习记录></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-05 23:32:43 / 修改时间：23:32:12" itemprop="dateCreated datePublished" datetime="2019-04-05T23:32:43+08:00">2019-04-05</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">虚函数是C++的特性之一，它为C++带来了多态和接口的作用，但是在内存中，这些到底是怎么分配的呢。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="为VS中的CPP属性添加一行代码"><a href="#为VS中的CPP属性添加一行代码" class="headerlink" title="为VS中的CPP属性添加一行代码"></a>为VS中的CPP属性添加一行代码</h2><blockquote>
+<p>我们在VS2017中新建一个CPP工程，并新建一个源文件。</p>
+<p>在这个工程中，我们右键属性，在C++那一项的命令行子项中添加以下代码。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/d1 reportAllClassLayout</span><br></pre></td></tr></table></figure>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%AE%BE%E7%BD%AE.png" alt=""></p>
+<blockquote>
+<p>加上这行代码，可以在编译时，在<strong>输出</strong>窗口输出内存分布的信息。</p>
+</blockquote>
+<h2 id="有虚函数的类与无虚函数的类对比"><a href="#有虚函数的类与无虚函数的类对比" class="headerlink" title="有虚函数的类与无虚函数的类对比"></a>有虚函数的类与无虚函数的类对比</h2><blockquote>
+<p>我们新建两个类，分别为A和B，他们其中一个类拥有虚函数。</p>
+<p>每一个类中有两个整形成员。</p>
+</blockquote>
+<h3 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	A();</span><br><span class="line">	~A();</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	B();</span><br><span class="line">	<span class="keyword">virtual</span> ~B();</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>其中B类拥有虚析构函数以及一个普通虚函数。我们生成解决方案，查看输出窗口。</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%AF%B9%E6%AF%941.png" alt=""></p>
+<h3 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h3><blockquote>
+<p>从图上往下解释：</p>
+<p>A这个类占用内存中的8个字节。其中有两个成员ab分别占了4个字节，他们的首地址偏移量为0和4。</p>
+<p>B这个类占用内存中的12个字节。其中发现了一个叫vfptr的成员(即虚函数表的指针)占用了4个字节。随后是两个成员ab分别占了4个字节，他们的首地址偏移量为4和8。</p>
+<p>B:: vftavle ，即B作用域中的虚函数表，在这个表中标记了两个虚函数，分别是dtor(destructor虚构函数的缩写)，以及fun。</p>
+<p>​    其中，在虚函数表中左边的编号不是占用的字节，而是函数的编号。</p>
+</blockquote>
+<h3 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h3><blockquote>
+<ol>
+<li>从内存分布来看，成员函数无论是否是virtual的，都不在类中，而成员变量则在。(类的非静态成员变量信息在栈上，函数在代码区里)</li>
+<li>当类中存在虚函数的时候，系统会给它分配一个虚函数表，里面记录了这个类拥有的虚函数的指针。</li>
+<li>当类中存在虚函数的时候，系统会给它分配一个虚函数表指针，用来指向2中的虚函数表，而这个虚函数表指针位于其内存的首位。(偏移量为0)</li>
+</ol>
+</blockquote>
+<h2 id="有虚函数类的单继承：重写与不重写"><a href="#有虚函数类的单继承：重写与不重写" class="headerlink" title="有虚函数类的单继承：重写与不重写"></a>有虚函数类的单继承：重写与不重写</h2><blockquote>
+<p>我们定一个基类A，拥有两个整形成员ab，以及虚析构函数和普通虚函数fun。</p>
+<p>定义两个派生类SA1和SA2，它们各自拥有一个新整形成员c，其中SA2重写了基类A中的fun以及自己的析构函数。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">virtual</span> ~A()&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SA1</span> :</span><span class="keyword">public</span> A</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span> :</span><br><span class="line">	<span class="keyword">int</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SA2</span> :</span><span class="keyword">public</span>  A</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> c;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">virtual</span> ~SA2()&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>查看输出窗口</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%AF%B9%E6%AF%942.png" alt=""></p>
+<h3 id="解释-1"><a href="#解释-1" class="headerlink" title="解释"></a>解释</h3><blockquote>
+<p>从图上往下解释：</p>
+<p>SA1这个类占用内存中的16个字节。其中先排布了基类A的成员信息，与上面第一张图一样，分别是虚函数表指针、成员a、b，分别占用4字节。随后是排布SA1自己的整形成员c，占用字节4。</p>
+<p>随后是SA1的虚函数表，可以看到，虚函数表中的fun函数作用域是基类A。而析构函数是SA1本身。(C++中的类会默认帮你生成四个默认函数：构造、析构、浅拷贝、赋值(返回浅拷贝)，如果你自己实现了，则不会再生成)</p>
+<p>SA2这个类占用内存中的16个字节。内容排版和SA1一样。</p>
+<p>随后是SA1的虚函数表，可以看到，虚函数表中的函数作用域都是是SA2本身。</p>
+<p>因为我们重写了基类的虚函数。</p>
+</blockquote>
+<h3 id="分析-1"><a href="#分析-1" class="headerlink" title="分析"></a>分析</h3><blockquote>
+<ol>
+<li><p>派生类在内存的分布上，首先排布自己的基类成员信息，包含基类的虚函数表指针。基类成员信息的排版顺序和基类自身的一致。    </p>
+<p>​    随后才是自己的成员信息。</p>
+</li>
+<li><p>内存会为拥有虚函数的基类的派生类再生成一个虚函数表，里面指名了虚函数，如果重写了虚函数，则会被覆盖。</p>
+</li>
+<li><p>内存中存储基类信息中的虚函数指针不再指向基类的虚函数表，而是自己的虚函数表。</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="有虚函数基类的多重继承"><a href="#有虚函数基类的多重继承" class="headerlink" title="有虚函数基类的多重继承"></a>有虚函数基类的多重继承</h2><blockquote>
+<p>多重继承就是爷爷-&gt;爸爸-&gt;儿子。简单理解为一条从上到下的线性继承。</p>
+<p>我们定义三个类，也有这样的继承关系：A-&gt;B&gt;C。</p>
+<p>其中A有虚函数fun和fun1。</p>
+<p>B有虚函数fun2并重写虚函数fun1。</p>
+<p>C重写虚函数fun、fun1、fun2.</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> :</span><span class="keyword">public</span> A</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun1</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> :</span><span class="keyword">public</span> B</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> c;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun2</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>因为输出窗口截图太长了，所以直接赋值上来了</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;A::$vftable@:</span><br><span class="line">1&gt;	| &amp;A_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;A::fun</span><br><span class="line">1&gt; 1	| &amp;A::fun1</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">1&gt;class B	size(12):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class A)</span><br><span class="line">1&gt; 0	| | &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| | a</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 8	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vftable@:</span><br><span class="line">1&gt;	| &amp;B_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;A::fun</span><br><span class="line">1&gt; 1	| &amp;B::fun1</span><br><span class="line">1&gt; 2	| &amp;B::fun2</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">1&gt;class C	size(16):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class B)</span><br><span class="line">1&gt; 0	| | +--- (base class A)</span><br><span class="line">1&gt; 0	| | | &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| | | a</span><br><span class="line">1&gt;	| | +---</span><br><span class="line">1&gt; 8	| | b</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt;12	| c</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vftable@:</span><br><span class="line">1&gt;	| &amp;C_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;C::fun</span><br><span class="line">1&gt; 1	| &amp;B::fun1</span><br><span class="line">1&gt; 2	| &amp;C::fun2</span><br></pre></td></tr></table></figure>
+<h3 id="解释-2"><a href="#解释-2" class="headerlink" title="解释"></a>解释</h3><blockquote>
+<ol>
+<li><p>基类A占用8个字节，分别是虚函数表指针和成员a。</p>
+<p>​    在虚函数表中，函数fun和fun1作用域都属于自己。</p>
+</li>
+<li><p>派生类B占用12个字节，分别是基类A的虚函数表指针和成员a。加上自己的成员b。其中虚函数表指针指向自己的虚函数表而不是基类A。</p>
+<p>​    在虚函数表中，因为重写了虚函数fun1，并且新增一个虚函数fun2，基类A的虚函数fun的作用域属于A。</p>
+</li>
+<li><p>派生类C占用16个字节，分别是基类A的虚函数表指针和成员a。和基类B的成员b，加上自己的成员c。其中虚函数表指针指向自己的虚函数表而不是基类B。</p>
+<p>​    在虚函数表中，因为重写了基类的所有的虚函数fun、2，作用域都是自己。保留未重写的虚函数fun1。因为fun1来自基类B，而B重写了来自基类A的虚函数fun1，所以在C中，fun1依然属于B类。</p>
+</li>
+</ol>
+</blockquote>
+<h3 id="分析-2"><a href="#分析-2" class="headerlink" title="分析"></a>分析</h3><blockquote>
+<ol>
+<li>虚函数表中只会记录基类的虚函数地址(或被重写的)，以及自己的新虚函数地址。</li>
+<li>可以理解虚函数表中记录的虚函数地址都是相对于当前类最新的虚函数(即只要被重写的虚函数，都会替代)。</li>
+</ol>
+</blockquote>
+<h2 id="多继承与虚继承"><a href="#多继承与虚继承" class="headerlink" title="多继承与虚继承"></a>多继承与虚继承</h2><h3 id="多继承的二义性"><a href="#多继承的二义性" class="headerlink" title="多继承的二义性"></a>多继承的二义性</h3><blockquote>
+<p>JAVA中没有多继承，为何？因为多继承容易造成二义性。</p>
+<p>我们来看看下面的代码。</p>
+<p>创建了三个基类ABC，其中ABC都有相同名字的虚函数fun以及相同名字的char类型成员x。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">char</span> x = <span class="string">'A'</span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"来自A的fun"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funA</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">char</span> x = <span class="string">'B'</span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"来自B的fun"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funB</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">char</span> x = <span class="string">'C'</span>;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function">	</span>&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"来自C的fun"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funC</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Son</span> :</span> A,  B,  C</span><br><span class="line">&#123;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funSon</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>我们再创建了一个派生类Son，多继承于A,B,C。</p>
+<p>这个时候我们通过Son对象去访问fun函数和x成员会发生什么？</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%A4%9A%E7%BB%A7%E6%89%BF%E5%AF%BC%E8%87%B4%E7%9A%84%E4%B8%8D%E6%98%8E%E7%A1%AE.png" alt=""></p>
+<blockquote>
+<p>不说编译器，就算是写出代码的我们，也不知道这个Son到底是指谁。</p>
+<p>那我们向上转换呢，结果是当然，因为我们告诉了编译器，我们想要谁的函数和成员。</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%90%91%E4%B8%8A%E8%BD%AC%E6%8D%A2%E4%B8%8D%E5%86%8D%E6%8A%A5%E9%94%99.png" alt=""></p>
+<center>向上转换后不再报错</center>
+
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E5%90%91%E4%B8%8A%E8%BD%AC%E6%8D%A2%E7%9A%84%E7%BB%93%E6%9E%9C.png" alt=""></p>
+<center>正确输出结果</center>
+
+<blockquote>
+<p>好，我们已经领略到多继承因同名而引发的二义性。这个时候我们看看这段代码在内存中的分布如何。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| x</span><br><span class="line">1&gt;  	| &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;A::$vftable@:</span><br><span class="line">1&gt;	| &amp;A_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;A::fun</span><br><span class="line">1&gt; 1	| &amp;A::funA</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">1&gt;class B	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| x</span><br><span class="line">1&gt;  	| &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vftable@:</span><br><span class="line">1&gt;	| &amp;B_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;B::fun</span><br><span class="line">1&gt; 1	| &amp;B::funB</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">1&gt;class C	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| x</span><br><span class="line">1&gt;  	| &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vftable@:</span><br><span class="line">1&gt;	| &amp;C_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;C::fun</span><br><span class="line">1&gt; 1	| &amp;C::funC</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">1&gt;class Son	size(24):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class A)</span><br><span class="line">1&gt; 0	| | &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| | x</span><br><span class="line">1&gt;  	| | &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 8	| +--- (base class B)</span><br><span class="line">1&gt; 8	| | &#123;vfptr&#125;</span><br><span class="line">1&gt;12	| | x</span><br><span class="line">1&gt;  	| | &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt;16	| +--- (base class C)</span><br><span class="line">1&gt;16	| | &#123;vfptr&#125;</span><br><span class="line">1&gt;20	| | x</span><br><span class="line">1&gt;  	| | &lt;alignment member&gt; (size=3)</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;Son::$vftable@A@:</span><br><span class="line">1&gt;	| &amp;Son_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;A::fun</span><br><span class="line">1&gt; 1	| &amp;A::funA</span><br><span class="line">1&gt; 2	| &amp;Son::funSon</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;Son::$vftable@B@:</span><br><span class="line">1&gt;	| -8</span><br><span class="line">1&gt; 0	| &amp;B::fun</span><br><span class="line">1&gt; 1	| &amp;B::funB</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;Son::$vftable@C@:</span><br><span class="line">1&gt;	| -16</span><br><span class="line">1&gt; 0	| &amp;C::fun</span><br><span class="line">1&gt; 1	| &amp;C::funC</span><br></pre></td></tr></table></figure>
+<h4 id="解释-3"><a href="#解释-3" class="headerlink" title="解释"></a>解释</h4><blockquote>
+<p>基类ABC不再多解释。</p>
+<p>我们直接看派生类Son，在内存中，基类的信息按照多继承时的左到右的顺序排序，也就是A-&gt;B-&gt;C。</p>
+<p>每一个基类成员中，都包含有指向对应虚函数表的指针以及一个char成员x。</p>
+<p>然后有一段  <alignment member=""> (size=3)  的代码。在这里解释一下，是补充了3个字节的意思。</alignment></p>
+<p>(为什么是三个字节，因为在整个基类成员中，占位最大的是虚函数表指针，即4个字节，那么我们就需要按照它去对齐，所以在占有一个字节的char后面补充了三个字节，这是内存对齐的知识点)</p>
+<p>随后是三张虚函数表，偏移量从0到-8再到-16。三张表中的虚函数地址都指对应自己类中的虚函数。</p>
+<p>在第一个虚函数表中，多出了派生类的新虚函数。</p>
+</blockquote>
+<h4 id="分析-3"><a href="#分析-3" class="headerlink" title="分析"></a>分析</h4><blockquote>
+<p>在派生类对象调用相同名字的虚函数时，会产生二义性，编译器无法知道我们到底想调用哪一个虚函数表指针的虚函数。而向上转换后，明确的告诉编译器我们调用的虚函数指针是哪个基类成员中的，这样就能正确调用那个基类的虚函数。</p>
+<p>派生类新增虚函数，放在声明的第一个基类的虚函数表中</p>
+</blockquote>
+<h4 id="重写多继承中的虚函数"><a href="#重写多继承中的虚函数" class="headerlink" title="重写多继承中的虚函数"></a>重写多继承中的虚函数</h4><blockquote>
+<p>我们将上面的代码改成这样：重写Son中对ABC的虚函数fun</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">class Son : A, B, C</span><br><span class="line">&#123;</span><br><span class="line">	virtual void fun()</span><br><span class="line">	&#123;</span><br><span class="line">		cout &lt;&lt; &quot;来自Son的fun&quot; &lt;&lt; endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>查看内存分布：</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E9%87%8D%E5%86%99%E5%A4%9A%E7%BB%A7%E6%89%BF.png" alt=""></p>
+<blockquote>
+<p>我们发现，派生类中对应基类A的虚表（虚函数表）的fun已经改变，作用域为Son。</p>
+<p>而虚表B、C中的fun虚函数指针已经了一个goto语句，即将内存偏移x位到达虚表A，从A中读取fun函数。(编译器多聪明，不需要另建指针)。</p>
+</blockquote>
+<hr>
+<h3 id="虚继承"><a href="#虚继承" class="headerlink" title="虚继承"></a>虚继承</h3><blockquote>
+<p>虚继承就是在继承时候在基类名字前加上 virtual 关键字。</p>
+</blockquote>
+<h4 id="没有虚函数的虚继承多重继承-包含单继承"><a href="#没有虚函数的虚继承多重继承-包含单继承" class="headerlink" title="没有虚函数的虚继承多重继承(包含单继承)"></a>没有虚函数的虚继承多重继承(包含单继承)</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> x;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> :</span><span class="keyword">virtual</span> A</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">int</span> y;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> :</span><span class="keyword">virtual</span> B</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">int</span> z;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(4):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| x</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class B	size(12):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| y</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt; 8	| x</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vbtable@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Bd(B+0)A)</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A       8       0       4 0</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class C	size(20):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| z</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt; 8	| x</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base B)</span><br><span class="line">1&gt;12	| &#123;vbptr&#125;</span><br><span class="line">1&gt;16	| y</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vbtable@C@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Cd(C+0)A)</span><br><span class="line">1&gt; 2	| 12 (Cd(C+0)B)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vbtable@B@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| -4 (Cd(B+0)A)</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A       8       0       4 0</span><br><span class="line">1&gt;               B      12       0       8 0</span><br></pre></td></tr></table></figure>
+<h6 id="解释-4"><a href="#解释-4" class="headerlink" title="解释"></a>解释</h6><blockquote>
+<p>基类A占四个字节，即自身成员x。</p>
+<p>派生类B占8个字节，多了一个vbptr(虚基表指针)的指针，随后是自己的成员y，才到A类中的成员x。</p>
+<p>vbtable字段中的值代表访问某个虚基表的内存偏移量。</p>
+<p>vbi字段：</p>
+<p>class ：虚基表的类名</p>
+<p>offset：内存偏移量</p>
+<p>vbptr：虚基表指针位置</p>
+<p>vbte：母鸡0 0</p>
+<p>fvtorDisp: 下面引用于<a href="https://www.cnblogs.com/fanzhidongyzby/archive/2013/01/14/2860015.html" target="_blank" rel="noopener">关于vtordisp知多少？</a></p>
+<hr>
+<p>MSDN给出的解释是：<strong>虚继承中派生类重写了基类的虚函数，并且在构造函数或者析构函数中使用指向基类的指针调用了该函数，编译器会为虚基类添fVtorDisp域。</strong></p>
+<p>然而，经过VS2010的测试，我们发现上述示例代码便会产生vtordisp字段！条件是。</p>
+<ol>
+<li><p>派生类重写了虚基类的虚函数。</p>
+</li>
+<li><p>派生类定义了构造函数或者析构函数。</p>
+</li>
+</ol>
+<hr>
+</blockquote>
+<h6 id="分析-4"><a href="#分析-4" class="headerlink" title="分析"></a>分析</h6><blockquote>
+<p>我们看到，只要虚继承于一个基类，就会为其创建一个虚基表，并且在内存首部生成一个虚基表指针。</p>
+<p>而且，派生类的成员变量内存分布永远在前面(在虚基表指针的后面)，其次是基类的基类成员(如果有)，再到基类的成员。</p>
+<p>下面引用于<a href="https://www.cnblogs.com/yanqi0124/p/3830433.html" target="_blank" rel="noopener">C++ 继承之虚继承与普通继承的内存分布</a></p>
+<hr>
+<ol>
+<li>普通继承情况下，先父类元素后子类元素，若父类元素本身也是从某个爷爷类继承而来：父类是虚继承而来，则先父后子再爷爷（其实这个分布是满足规则2的）,即爷爷放在最后；父类是普通继承而来，先爷爷后父再子，即爷爷放在前面。</li>
+<li>虚继承情况下，先子类元素后父类元素，如果父类元素本身也是从某个爷爷类继承（不论是虚继承还是普通继承）而来，则父类由类的深到浅依次分布（先爷爷后父，爷爷在子和父之间）。</li>
+</ol>
+<hr>
+</blockquote>
+<h4 id="有虚函数的虚继承多重继承-包含单继承"><a href="#有虚函数的虚继承多重继承-包含单继承" class="headerlink" title="有虚函数的虚继承多重继承(包含单继承)"></a>有虚函数的虚继承多重继承(包含单继承)</h4><blockquote>
+<p>新建三个基类ABC，每个基类拥有自己不同名的成员变量。每个基类都有自己的虚函数。</p>
+<p>ABC父子关系为A-&gt;B-&gt;C。</p>
+<p>其中BC重写A的虚函数fun。</p>
+<p>派生类D重写所有虚函数。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funA</span><span class="params">()</span></span>&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> :</span><span class="keyword">virtual</span> A</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funB</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> :</span><span class="keyword">virtual</span> B</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> c;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funC</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> :</span><span class="keyword">virtual</span> C</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">int</span> d;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funA</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funB</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funC</span><span class="params">()</span> </span>&#123;&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;A::$vftable@:</span><br><span class="line">1&gt;	| &amp;A_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;A::fun</span><br><span class="line">1&gt; 1	| &amp;A::funA</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class B	size(20):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 8	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt;12	| &#123;vfptr&#125;</span><br><span class="line">1&gt;16	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vftable@B@:</span><br><span class="line">1&gt;	| &amp;B_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;B::funB</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vbtable@:</span><br><span class="line">1&gt; 0	| -4</span><br><span class="line">1&gt; 1	| 8 (Bd(B+4)A)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vftable@A@:</span><br><span class="line">1&gt;	| -12</span><br><span class="line">1&gt; 0	| &amp;B::fun</span><br><span class="line">1&gt; 1	| &amp;A::funA</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A      12       4       4 0</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class C	size(32):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vfptr&#125;</span><br><span class="line">1&gt; 4	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 8	| c</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt;12	| &#123;vfptr&#125;</span><br><span class="line">1&gt;16	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base B)</span><br><span class="line">1&gt;20	| &#123;vfptr&#125;</span><br><span class="line">1&gt;24	| &#123;vbptr&#125;</span><br><span class="line">1&gt;28	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vftable@:</span><br><span class="line">1&gt;	| &amp;C_meta</span><br><span class="line">1&gt;	|  0</span><br><span class="line">1&gt; 0	| &amp;C::funC</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vbtable@C@:</span><br><span class="line">1&gt; 0	| -4</span><br><span class="line">1&gt; 1	| 8 (Cd(C+4)A)</span><br><span class="line">1&gt; 2	| 16 (Cd(C+4)B)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vftable@A@:</span><br><span class="line">1&gt;	| -12</span><br><span class="line">1&gt; 0	| &amp;C::fun</span><br><span class="line">1&gt; 1	| &amp;A::funA</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vftable@B@:</span><br><span class="line">1&gt;	| -20</span><br><span class="line">1&gt; 0	| &amp;B::funB</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vbtable@B@:</span><br><span class="line">1&gt; 0	| -4</span><br><span class="line">1&gt; 1	| -12 (Cd(B+4)A)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A      12       4       4 0</span><br><span class="line">1&gt;               B      20       4       8 0</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class D	size(40):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| d</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt; 8	| &#123;vfptr&#125;</span><br><span class="line">1&gt;12	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base B)</span><br><span class="line">1&gt;16	| &#123;vfptr&#125;</span><br><span class="line">1&gt;20	| &#123;vbptr&#125;</span><br><span class="line">1&gt;24	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base C)</span><br><span class="line">1&gt;28	| &#123;vfptr&#125;</span><br><span class="line">1&gt;32	| &#123;vbptr&#125;</span><br><span class="line">1&gt;36	| c</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vbtable@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Dd(D+0)A)</span><br><span class="line">1&gt; 2	| 16 (Dd(D+0)B)</span><br><span class="line">1&gt; 3	| 28 (Dd(D+0)C)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vftable@A@:</span><br><span class="line">1&gt;	| -8</span><br><span class="line">1&gt; 0	| &amp;D::fun</span><br><span class="line">1&gt; 1	| &amp;D::funA</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vftable@B@:</span><br><span class="line">1&gt;	| -16</span><br><span class="line">1&gt; 0	| &amp;D::funB</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vbtable@B@:</span><br><span class="line">1&gt; 0	| -4</span><br><span class="line">1&gt; 1	| -12 (Dd(B+4)A)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vftable@:</span><br><span class="line">1&gt;	| -28</span><br><span class="line">1&gt; 0	| &amp;D::funC</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vbtable@C@:</span><br><span class="line">1&gt; 0	| -4</span><br><span class="line">1&gt; 1	| -24 (Dd(C+4)A)</span><br><span class="line">1&gt; 2	| -16 (Dd(C+4)B)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A       8       0       4 0</span><br><span class="line">1&gt;               B      16       0       8 0</span><br><span class="line">1&gt;               C      28       0      12 0</span><br></pre></td></tr></table></figure>
+<h5 id="解释-5"><a href="#解释-5" class="headerlink" title="解释"></a>解释</h5><blockquote>
+<p>A因为没有虚继承，有虚函数，所以拥有一个虚函数表指针以及虚函数表，</p>
+<p>B因为虚继承于A，拥有虚基表以及虚基表、虚函数表指针以及基类成员，因为是虚继承且有新的虚函数，所以拥有一个自己虚函数表以及指针。</p>
+<p>​    其中基类的虚函数表记录从基类继承的虚函数地址，即使以被自己重写。</p>
+<p>​    自己的虚函数表仅记录自己的新增虚函数地址。</p>
+<p>C因为虚继承于B，拥有虚基表以及虚基表、虚函数表指针以及基类成员，因为是虚继承且有新的虚函数，所以拥有一个自己虚函数表以及指针。</p>
+<p>​    因为B也是虚继承于A，所以在派生类C的内存中B的成员信息中拥有对应的虚基表指针。</p>
+<p>​    其中基类的虚函数表记录从基类继承的虚函数地址，即使以被自己重写。</p>
+<p>​    自己的虚函数表仅记录自己的新增虚函数地址。</p>
+</blockquote>
+<h5 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h5><blockquote>
+<p>D也如此，但是在VS输出的信息中，D却拥有了自己的虚函数表地址，并且有一个虚函数地址是指向基类C的函数funC。。 (上述的  D::\$vftable@:    ， 不应该是  D::\$vftable@c@:么)</p>
+<p>但是通过VS断点去查看局部变量的地址，发现D是没有自己的虚函数地址的，而D中C类成员的虚函数表指针可以看到funC。所以可能是VS抽风了？</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/VS%E6%8A%BD%E9%A3%8E.png" alt=""></p>
+<h5 id="分析-5"><a href="#分析-5" class="headerlink" title="分析"></a>分析</h5><blockquote>
+<p>不难看出，虚继承很智能的把虚函数的起源分开了，也就是很智能的将虚函数指针放在第一个提出某个虚函数的基类虚函数表中。</p>
+</blockquote>
+<h4 id="虚基表的作用：菱形继承问题"><a href="#虚基表的作用：菱形继承问题" class="headerlink" title="虚基表的作用：菱形继承问题"></a>虚基表的作用：菱形继承问题</h4><blockquote>
+<p>有下面的代码</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int a;</span><br><span class="line">&#125;;</span><br><span class="line">class B :  public A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int b;</span><br><span class="line">&#125;;</span><br><span class="line">class C :   public A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class D :public B, public C</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果我们尝试访问D类的对象中的a成员，会发生什么事情呢。</p>
+</blockquote>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF%E9%97%AE%E9%A2%98.png" alt=""></p>
+<blockquote>
+<p>很显然产生了二义性，因为B和C都继承有A的成员a，我们多继承于BC，那么这两个a，编译器不知道到底选谁。</p>
+<p>让我们看看内存排布：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(4):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class B	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class A)</span><br><span class="line">1&gt; 0	| | a</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 4	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class C	size(8):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class A)</span><br><span class="line">1&gt; 0	| | a</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 4	| c</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class D	size(16):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class B)</span><br><span class="line">1&gt; 0	| | +--- (base class A)</span><br><span class="line">1&gt; 0	| | | a</span><br><span class="line">1&gt;	| | +---</span><br><span class="line">1&gt; 4	| | b</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 8	| +--- (base class C)</span><br><span class="line">1&gt; 8	| | +--- (base class A)</span><br><span class="line">1&gt; 8	| | | a</span><br><span class="line">1&gt;	| | +---</span><br><span class="line">1&gt;12	| | c</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt;	+---</span><br></pre></td></tr></table></figure>
+<h5 id="解释-6"><a href="#解释-6" class="headerlink" title="解释"></a>解释</h5><blockquote>
+<p>我们可以看到D类的内存分布，出现了两个a成员，分别来源于B-&gt;A和C-&gt;A。</p>
+</blockquote>
+<h5 id="使用虚继承的虚基表解决问题"><a href="#使用虚继承的虚基表解决问题" class="headerlink" title="使用虚继承的虚基表解决问题"></a>使用虚继承的虚基表解决问题</h5><blockquote>
+<p>改成下面的代码：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int a;</span><br><span class="line">&#125;;</span><br><span class="line">class B : virtual public A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int b;</span><br><span class="line">&#125;;</span><br><span class="line">class C : virtual  public A</span><br><span class="line">&#123;</span><br><span class="line">public:</span><br><span class="line">	int c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">class D :public B, public C</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%99%9A%E5%87%BD%E6%95%B0/%E8%99%9A%E7%BB%A7%E6%89%BF%E8%A7%A3%E5%86%B3%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF.png" alt=""></p>
+<center>不再报错</center>
+
+<blockquote>
+<p>查看内存分布</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">1&gt;class A	size(4):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class B	size(12):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| b</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt; 8	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;B::$vbtable@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Bd(B+0)A)</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A       8       0       4 0</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class C	size(12):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| c</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt; 8	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;C::$vbtable@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Cd(C+0)A)</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A       8       0       4 0</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;class D	size(20):</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt; 0	| +--- (base class B)</span><br><span class="line">1&gt; 0	| | &#123;vbptr&#125;</span><br><span class="line">1&gt; 4	| | b</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt; 8	| +--- (base class C)</span><br><span class="line">1&gt; 8	| | &#123;vbptr&#125;</span><br><span class="line">1&gt;12	| | c</span><br><span class="line">1&gt;	| +---</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;	+--- (virtual base A)</span><br><span class="line">1&gt;16	| a</span><br><span class="line">1&gt;	+---</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vbtable@B@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 16 (Dd(B+0)A)</span><br><span class="line">1&gt;</span><br><span class="line">1&gt;D::$vbtable@C@:</span><br><span class="line">1&gt; 0	| 0</span><br><span class="line">1&gt; 1	| 8 (Dd(C+0)A)</span><br><span class="line">1&gt;vbi:	   class  offset o.vbptr  o.vbte fVtorDisp</span><br><span class="line">1&gt;               A      16       0       4 0</span><br></pre></td></tr></table></figure>
+<h5 id="解释-7"><a href="#解释-7" class="headerlink" title="解释"></a>解释</h5><blockquote>
+<pre><code>1&gt;class D    size(20):
+1&gt;    +---
+1&gt; 0    | +--- (base class B)
+1&gt; 0    | | {vbptr}//起始偏移量地址为0
+1&gt; 4    | | b
+1&gt;    | +---
+1&gt; 8    | +--- (base class C)
+1&gt; 8    | | {vbptr}//起始偏移量为8
+1&gt;12    | | c
+1&gt;    | +---
+1&gt;    +---
+1&gt;    +--- (virtual base A) //这里存储了A类成员信息
+1&gt;16    | a//我们想要访问的成员 它在内存的偏移量为16
+1&gt;    +---
+1&gt;
+1&gt;D::$vbtable@B@://D中的B虚基表，它记录了访问虚继承基类A的成员信息的内存偏移量
+1&gt; 0    | 0
+1&gt; 1    | 16 (Dd(B+0)A)//偏移16
+1&gt;
+1&gt;D::$vbtable@C@://D中的C虚基表，它记录了访问虚继承基类A的成员信息的内存偏移量
+1&gt; 0    | 0
+1&gt; 1    | 8 (Dd(C+0)A)//偏移16
+</code></pre></blockquote>
+<blockquote>
+<p>我们看到B的虚基表指针的偏移量为0，而它要访问的虚基表显示偏移量为16。0+16=16。</p>
+<p>C的虚基表指针的偏移量为8，而它要访问的虚基表显示偏移量为8。8+8=16。</p>
+<p>显然他们都指向同一个内存偏移量为16的内容，即A类中的a成员。</p>
+</blockquote>
+<h5 id="分析-6"><a href="#分析-6" class="headerlink" title="分析"></a>分析</h5><blockquote>
+<p>虚基表保存了虚继承基类成员的内存偏移量，访问的时候通过偏移访问，保证都是访问同一个数据。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote>
+<ol>
+<li>无虚继承<ol>
+<li>存在新的虚函数时，会创建一个虚函数表和虚函数表指针。</li>
+<li>在多重继承中，最后的派生类只有一个虚函数表和指针。</li>
+<li>在多继承中，有多少个虚继承的基类，就有多少个对应的虚函数表和虚函数表指针。自己的新虚函数地址存放在最左边的基类的虚函数表中。</li>
+</ol>
+</li>
+<li>虚继承多<ol>
+<li>重继承中，有多少个虚继承的基类，就有多少个对应的虚函数表和虚函数表指针。同时如果自己拥有新的虚函数，那么将存在一个自己的虚函数表和虚函数指针。</li>
+<li>内存的排版为先子类成员后父类成员，即当前派生类的成员变量最先，然后按照基类的祖父类成员再到基类成员排序。</li>
+</ol>
+</li>
+<li>派生类重写了父类的虚函数时，对应的虚函数表中的虚函数地址以及作用域会被更改为当前派生类。</li>
+<li>在内存排版中的同一个类的作用域中，虚函数表指针vfptr永远在虚基表指针vbptr的前面，虚基表指针永远在其他成员变量前面。</li>
+<li>虚基表保存了虚继承基类成员的内存偏移量，访问的时候通过偏移访问，保证都是访问同一个数据。</li>
+<li>虚函数真乱啊。。。</li>
+</ol>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-VirtualCpp/"><学习记录>C++的虚函数表知识总结</学习记录></a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
+  <p><span>发布时间:</span>2019年04月05日 - 23:04</p>
+  <p><span>最后更新:</span>2019年04月05日 - 23:04</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-VirtualCpp/" title="<学习记录>C++的虚函数表知识总结">https://confusel.tech/2019/MyLearn-VirtualCpp/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-VirtualCpp/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyLearn-OS-3/" rel="next" title="<学习记录>同步、通信与死锁">
+                <i class="fa fa-chevron-left"></i> <学习记录>同步、通信与死锁
+              </学习记录></a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div id="gitalk-container">
+    </div>
+    
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg" alt="ConfuseL">
+            
+              <p class="site-author-name" itemprop="name">ConfuseL</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:895210069@gmail.com" title="E-Mail &rarr; mailto:895210069@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://bitbucket.org/ConfuseL/" title="Bitbucket &rarr; https://bitbucket.org/ConfuseL/" rel="noopener" target="_blank"><i class="fa fa-fw fa-bitbucket"></i>Bitbucket</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为VS中的CPP属性添加一行代码"><span class="nav-number">1.</span> <span class="nav-text">为VS中的CPP属性添加一行代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有虚函数的类与无虚函数的类对比"><span class="nav-number">2.</span> <span class="nav-text">有虚函数的类与无虚函数的类对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码"><span class="nav-number">2.1.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解释"><span class="nav-number">2.2.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析"><span class="nav-number">2.3.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有虚函数类的单继承：重写与不重写"><span class="nav-number">3.</span> <span class="nav-text">有虚函数类的单继承：重写与不重写</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解释-1"><span class="nav-number">3.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析-1"><span class="nav-number">3.2.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有虚函数基类的多重继承"><span class="nav-number">4.</span> <span class="nav-text">有虚函数基类的多重继承</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解释-2"><span class="nav-number">4.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析-2"><span class="nav-number">4.2.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多继承与虚继承"><span class="nav-number">5.</span> <span class="nav-text">多继承与虚继承</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多继承的二义性"><span class="nav-number">5.1.</span> <span class="nav-text">多继承的二义性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#解释-3"><span class="nav-number">5.1.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析-3"><span class="nav-number">5.1.2.</span> <span class="nav-text">分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重写多继承中的虚函数"><span class="nav-number">5.1.3.</span> <span class="nav-text">重写多继承中的虚函数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚继承"><span class="nav-number">5.2.</span> <span class="nav-text">虚继承</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#没有虚函数的虚继承多重继承-包含单继承"><span class="nav-number">5.2.1.</span> <span class="nav-text">没有虚函数的虚继承多重继承(包含单继承)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#解释-4"><span class="nav-number">5.2.1.0.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#分析-4"><span class="nav-number">5.2.1.0.2.</span> <span class="nav-text">分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有虚函数的虚继承多重继承-包含单继承"><span class="nav-number">5.2.2.</span> <span class="nav-text">有虚函数的虚继承多重继承(包含单继承)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#解释-5"><span class="nav-number">5.2.2.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#疑问"><span class="nav-number">5.2.2.2.</span> <span class="nav-text">疑问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分析-5"><span class="nav-number">5.2.2.3.</span> <span class="nav-text">分析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#虚基表的作用：菱形继承问题"><span class="nav-number">5.2.3.</span> <span class="nav-text">虚基表的作用：菱形继承问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#解释-6"><span class="nav-number">5.2.3.1.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用虚继承的虚基表解决问题"><span class="nav-number">5.2.3.2.</span> <span class="nav-text">使用虚继承的虚基表解决问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#解释-7"><span class="nav-number">5.2.3.3.</span> <span class="nav-text">解释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#分析-6"><span class="nav-number">5.2.3.4.</span> <span class="nav-text">分析</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ConfuseL</span>
+
+  
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+<div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
+</div>
+        
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=66380707";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
+
+  
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
+
+  
+  
+  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
+    
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: 'c7340dd1b5e1cd160cd5',
+          clientSecret: '94f3e08bdae4a44a29c1c03ac424a0eafb81938f',
+          repo: 'blog_comments',
+          owner: 'ConfuseL',
+          admin: ['ConfuseL'],
+          id: md5(location.pathname),
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')           
+       </script>
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!--�뿪����-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+
+</body>
+</html>
