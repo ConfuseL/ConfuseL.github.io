@@ -495,6 +495,16 @@
 
           
             
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/MyAlgorithm-edge/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyAlgorithm-edge/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
           
 
           
@@ -753,9 +763,9 @@
           
 
   
-    <div id="gitalk-container">
+    <div class="comments" id="comments">
     </div>
-    
+
   
 
 
@@ -1092,33 +1102,32 @@
 
 
 
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'LCf64glaHb2Ryr5pykLjeirA-gzGzoHsz',
+        appKey: 'TYnE56DPDroAtbWtcErAyQxS',
+        placeholder: '若有不足麻烦指正',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
 
 
-
-  
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.min.js"></script>
-
-  
-  
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1.4.0/dist/gitalk.css">
-
-  
-  
-  <script type="text/javascript" src="//cdn.jsdelivr.net/npm/js-md5@0.7.3/src/md5.min.js"></script>
-    
-   <script type="text/javascript">
-        var gitalk = new Gitalk({
-          clientID: 'c7340dd1b5e1cd160cd5',
-          clientSecret: '94f3e08bdae4a44a29c1c03ac424a0eafb81938f',
-          repo: 'blog_comments',
-          owner: 'ConfuseL',
-          admin: ['ConfuseL'],
-          id: md5(location.pathname),
-          distractionFreeMode: 'true'
-        })
-        gitalk.render('gitalk-container')           
-       </script>
 
   
 
