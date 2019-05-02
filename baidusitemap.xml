@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://confusel.tech/2019/MyLearn-Anima2D/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyLearn-ComputerNetwork-2/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyLearn-OS-2/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyLearn-OS-3/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyLearn-VirtualCpp/</loc>
+    <lastmod>2019-05-02</lastmod>
+  </url>  <url>
     <loc>https://confusel.tech/2019/MyLearn-STL-1/</loc>
     <lastmod>2019-05-02</lastmod>
   </url>  <url>
@@ -10,21 +28,6 @@
     <loc>https://confusel.tech/2019/MyLearn-ComputerNetwork-3/</loc>
     <lastmod>2019-04-06</lastmod>
   </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-VirtualCpp/</loc>
-    <lastmod>2019-04-06</lastmod>
-  </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-OS-3/</loc>
-    <lastmod>2019-04-04</lastmod>
-  </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-OS-2/</loc>
-    <lastmod>2019-04-03</lastmod>
-  </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-ComputerNetwork-2/</loc>
-    <lastmod>2019-04-02</lastmod>
-  </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-ProcessAndThreadAndCoroutine/</loc>
-    <lastmod>2019-03-31</lastmod>
-  </url>  <url>
     <loc>https://confusel.tech/2019/MyLearn-ComputerNetwork-1/</loc>
     <lastmod>2019-03-31</lastmod>
   </url>  <url>
@@ -33,9 +36,6 @@
   </url>  <url>
     <loc>https://confusel.tech/2019/MyAlgorithm-bigNum/</loc>
     <lastmod>2019-03-23</lastmod>
-  </url>  <url>
-    <loc>https://confusel.tech/2019/MyLearn-Anima2D/</loc>
-    <lastmod>2019-02-26</lastmod>
   </url>  <url>
     <loc>https://confusel.tech/2018/MyIssue-Solution-DLL/</loc>
     <lastmod>2018-12-31</lastmod>
