@@ -691,7 +691,7 @@
 <p>offset：内存偏移量</p>
 <p>vbptr：虚基表指针位置</p>
 <p>vbte：母鸡0 0</p>
-<p>fvtorDisp: 下面引用于<a href="https://www.cnblogs.com/fanzhidongyzby/archive/2013/01/14/2860015.html" target="_blank" rel="noopener">关于vtordisp知多少？</a></p>
+<p>fvtorDisp: 下面引用于<a href="https://www.cnblogs.com/fanzhidongyzby/archive/2013/01/14/2860015.html">关于vtordisp知多少？</a></p>
 <hr>
 <p>MSDN给出的解释是：<strong>虚继承中派生类重写了基类的虚函数，并且在构造函数或者析构函数中使用指向基类的指针调用了该函数，编译器会为虚基类添fVtorDisp域。</strong></p>
 <p>然而，经过VS2010的测试，我们发现上述示例代码便会产生vtordisp字段！条件是。</p>
@@ -706,7 +706,7 @@
 <h6 id="分析-4"><a href="#分析-4" class="headerlink" title="分析"></a>分析</h6><blockquote>
 <p>我们看到，只要虚继承于一个基类，就会为其创建一个虚基表，并且在内存首部生成一个虚基表指针。</p>
 <p>而且，派生类的成员变量内存分布永远在前面(在虚基表指针的后面)，其次是基类的基类成员(如果有)，再到基类的成员。</p>
-<p>下面引用于<a href="https://www.cnblogs.com/yanqi0124/p/3830433.html" target="_blank" rel="noopener">C++ 继承之虚继承与普通继承的内存分布</a></p>
+<p>下面引用于<a href="https://www.cnblogs.com/yanqi0124/p/3830433.html">C++ 继承之虚继承与普通继承的内存分布</a></p>
 <hr>
 <ol>
 <li>普通继承情况下，先父类元素后子类元素，若父类元素本身也是从某个爷爷类继承而来：父类是虚继承而来，则先父后子再爷爷（其实这个分布是满足规则2的）,即爷爷放在最后；父类是普通继承而来，先爷爷后父再子，即爷爷放在前面。</li>
@@ -1131,6 +1131,14 @@
 
 <div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
 </div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
         
 
 

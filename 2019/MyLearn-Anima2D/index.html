@@ -566,8 +566,8 @@
 <p>​    <strong>注意，你要对所有提供换装的精灵网格对它对应骨骼进行单独的绑定！</strong></p>
 <p>​    以下为本篇的换装样例代码</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">using Anima2D;</span><br><span class="line">using System.Collections;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using UnityEngine;</span><br><span class="line"></span><br><span class="line">public class DebugBone : MonoBehaviour &#123;</span><br><span class="line"></span><br><span class="line">    private SpriteMeshInstance body;</span><br><span class="line">    private Object[] clothesMesh;</span><br><span class="line">    int key = 0;</span><br><span class="line">    // Use this for initialization</span><br><span class="line">    void Start () &#123;</span><br><span class="line">        body = GameObject.Find(&quot;身体&quot;).GetComponent&lt;SpriteMeshInstance&gt;();</span><br><span class="line">        clothesMesh = Resources.LoadAll(&quot;SpriteMesh/clothes&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	// Update is called once per frame</span><br><span class="line">	void Update () &#123;</span><br><span class="line">        if (Input.GetKeyDown(KeyCode.A))</span><br><span class="line">        &#123;</span><br><span class="line">            key++;</span><br><span class="line">            key = key % 6;</span><br><span class="line">            body.spriteMesh = (SpriteMesh)clothesMesh[key];</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="参考文章和视频"><a href="#参考文章和视频" class="headerlink" title="参考文章和视频"></a>参考文章和视频</h4><p>​    视频： <a href="https://www.bilibili.com/video/av20868780/?spm_id_from=333.788.videocard.0" target="_blank" rel="noopener">【游戏美术难于上青天】 系列</a></p>
-<p>​    文章： <a href="https://blog.csdn.net/hibernateplus/article/details/79060311" target="_blank" rel="noopener">Anima2D官方中文使用手册（对应Anima2D1.1.4）</a></p>
+<h4 id="参考文章和视频"><a href="#参考文章和视频" class="headerlink" title="参考文章和视频"></a>参考文章和视频</h4><p>​    视频： <a href="https://www.bilibili.com/video/av20868780/?spm_id_from=333.788.videocard.0">【游戏美术难于上青天】 系列</a></p>
+<p>​    文章： <a href="https://blog.csdn.net/hibernateplus/article/details/79060311">Anima2D官方中文使用手册（对应Anima2D1.1.4）</a></p>
 
       
     </div>
@@ -881,6 +881,14 @@
 
 <div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
 </div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
         
 
 

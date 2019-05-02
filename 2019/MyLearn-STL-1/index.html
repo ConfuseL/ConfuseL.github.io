@@ -557,7 +557,7 @@
 </li>
 </ol>
 <hr>
-<p>关于STL版本，可以看一下<a href="https://blog.csdn.net/guowenyan001/article/details/11480141" target="_blank" rel="noopener">STL版本介绍：HP STL、SGI STL、STL Port、PJ STL、RW STL</a></p>
+<p>关于STL版本，可以看一下<a href="https://blog.csdn.net/guowenyan001/article/details/11480141">STL版本介绍：HP STL、SGI STL、STL Port、PJ STL、RW STL</a></p>
 <hr>
 <h2 id="SGI-的特殊空间配置器-std-alloc"><a href="#SGI-的特殊空间配置器-std-alloc" class="headerlink" title="SGI 的特殊空间配置器 std::alloc"></a>SGI 的特殊空间配置器 <code>std::alloc</code></h2><blockquote>
 <p>SGI STL是开源软件，源码可读性甚高。在《STL源码剖析》中作者极力推荐阅读，也将它当作目标源码进行剖析。</p>
@@ -572,7 +572,15 @@
 <p>上面的过程还是非常容易理解的，而在标准的<code>allocator</code>中,规定将new和delete操作分开，由<code>alloc:allocate</code>负责内存的配置，<code>alloc::deallocate</code>负责释放内存。由<code>::construct</code>负责对象的构造，<code>::destroy</code>负责析构对象。</p>
 <p>我们查看·<memory>·头文件，可以看到包含了下面两个头文件</memory></p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stl_alloc.h&gt;//负责内存的配置和释放</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stl_construct.h&gt;//负责对象的构造和析构</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="构造和析构的工具construct和destroy"><a href="#构造和析构的工具construct和destroy" class="headerlink" title="构造和析构的工具construct和destroy"></a>构造和析构的工具<code>construct</code>和<code>destroy</code></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">	destory[&quot;destory()&quot;]--泛化forwardIt_Last_and_first--&gt;_destroy[&quot;_destory()&quot;]</span><br><span class="line">	_destroy[&quot;_destory()&quot;]--&gt;has_trivial_destructor?</span><br><span class="line">	has_trivial_destructor?--false_type--&gt;for[&quot;foreach_destroy&quot;]</span><br><span class="line">	has_trivial_destructor?--true_type--&gt;1[&quot;no-op&quot;]</span><br><span class="line">	destory[&quot;destory()&quot;]--特化char*--&gt;2[&quot;no-op&quot;]</span><br><span class="line">	destory[&quot;destory()&quot;]--特化wchar*--&gt;3[&quot;no-op&quot;]</span><br><span class="line">	destory[&quot;destory()&quot;]--特化pointer--&gt;pointer[&quot;pointer-&gt;~T()&quot;]</span><br></pre></td></tr></table></figure>
+<h3 id="构造和析构的工具construct和destroy"><a href="#构造和析构的工具construct和destroy" class="headerlink" title="构造和析构的工具construct和destroy"></a>构造和析构的工具<code>construct</code>和<code>destroy</code></h3><pre class="mermaid">graph LR
+    destory["destory()"]--泛化forwardIt_Last_and_first-->_destroy["_destory()"]
+    _destroy["_destory()"]-->has_trivial_destructor?
+    has_trivial_destructor?--false_type-->for["foreach_destroy"]
+    has_trivial_destructor?--true_type-->1["no-op"]
+    destory["destory()"]--特化char*-->2["no-op"]
+    destory["destory()"]--特化wchar*-->3["no-op"]
+    destory["destory()"]--特化pointer-->pointer["pointer->~T()"]</pre>
+
 <blockquote>
 <p>​    在STL中空间配置时候<code>destory（）</code>函数会判断要释放的迭代器的指向的对象有没有 <code>trivial destructor</code>（STL中有一个 <code>has_trivial_destructor</code>函数，很容易实现检测）放，如果有<code>trivial destructor</code>则什么都不做，如果没有即需要执行一些操作，则执行真正的<code>destory</code>函数。</p>
 <p>​    <code>destory（）</code>有两个版本，第一个版本接受一个指针，准备将该指针所指之物析构掉，第二个版本接受first和last两个迭代器，准备将[first，last]范围内的所有对象析构掉。</p>
@@ -967,6 +975,14 @@
 
 <div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
 </div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
         
 
 
