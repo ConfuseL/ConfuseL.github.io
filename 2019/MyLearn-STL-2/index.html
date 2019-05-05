@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="通过实现一个简单的链表迭代器，去理解迭代器在STL中的运作方式，以此为起点，学习迭代器型别，以及Traits技法--函数模板的重载以及特性萃取的结合，从而了解STL的架构思想。">
+<meta name="keywords" content="C++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《STL源码剖析》之迭代器相关">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-STL-2/index.html">
+<meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="通过实现一个简单的链表迭代器，去理解迭代器在STL中的运作方式，以此为起点，学习迭代器型别，以及Traits技法--函数模板的重载以及特性萃取的结合，从而了解STL的架构思想。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/2.jfif">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/%E7%89%B9%E6%80%A7%E8%90%83%E5%8F%96%E5%99%A8.png">
+<meta property="og:updated_time" content="2019-05-05T14:36:02.988Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《STL源码剖析》之迭代器相关">
+<meta name="twitter:description" content="通过实现一个简单的链表迭代器，去理解迭代器在STL中的运作方式，以此为起点，学习迭代器型别，以及Traits技法--函数模板的重载以及特性萃取的结合，从而了解STL的架构思想。">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/2.jfif">
+
+
+
+
+
+
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-STL-2/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>《STL源码剖析》之迭代器相关 | ConfuseL的个人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/ConfuseL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ConfuseL的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">独立精神</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-游戏开发记录">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/myGame/" rel="section"><i class="menu-item-icon fa fa-fw fa-gamepad"></i> <br>游戏开发记录</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-STL-2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《STL源码剖析》之迭代器相关
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-03 11:28:06" itemprop="dateCreated datePublished" datetime="2019-05-03T11:28:06+08:00">2019-05-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-05-05 22:36:02" itemprop="dateModified" datetime="2019-05-05T22:36:02+08:00">2019-05-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/MyLearn-STL-2/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-STL-2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">通过实现一个简单的链表迭代器，去理解迭代器在STL中的运作方式，以此为起点，学习迭代器型别，以及Traits技法--函数模板的重载以及特性萃取的结合，从而了解STL的架构思想。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/2.jfif" alt=""></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><blockquote>
+<p>​    不论是泛性思维或者STL的实际运用，迭代器都扮演者重要的角色。STL的中心思想在于：将数据容器和算法分开，彼此独立设计，最后再以一贴胶着剂将它们它们撮合在一起。容器和算法的反省话，从技术角度来看并不难，C++的class template 和 function templates 可分别达成目标，如何设计出两者之间的良好胶着剂，才是大难题。</p>
+</blockquote>
+<p>​    <em>这篇博客不讨论STL实现的迭代器的源码以及SGI中特定的<code>traits</code>技巧。</em></p>
+<h2 id="迭代器是一种类似指针的对象"><a href="#迭代器是一种类似指针的对象" class="headerlink" title="迭代器是一种类似指针的对象"></a>迭代器是一种类似指针的对象</h2><blockquote>
+<p>迭代器是一种行为类似指针的对象，而指针的各种行为中最常见也最重要的便是内容提领和成员访问，因此迭代器最重要的编程工作就是对operator *和operator -&gt; 进行重载工作。</p>
+<p>关于这一点，C++标准程序库有一个 <code>auto_ptr</code>可供我们参考,这是一个用来包装原生指针的对象，声名狼藉的内存漏洞(memory leak)问题可以因此获得解决。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">string</span> value;</span><br><span class="line">    Test(<span class="built_in">string</span> s):value(s)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;value&lt;&lt;<span class="string">"构造"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    ~Test()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;value&lt;&lt;<span class="string">"析构"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">funb</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">Test* <span class="title">ps</span><span class="params">(<span class="keyword">new</span> Test(<span class="string">"funb"</span>))</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">auto_ptr</span>&lt;Test&gt; ps(<span class="keyword">new</span> Test(<span class="string">"func"</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    funb();</span><br><span class="line">    func();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/*输出结果为</span></span><br><span class="line"><span class="comment">funb构造</span></span><br><span class="line"><span class="comment">func构造</span></span><br><span class="line"><span class="comment">func析构</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>​    我们看输出结果，可以看到 <code>auto_ptr</code>自动帮我们释放了内存和析构。</p>
+<h3 id="auto-ptr的简化实现"><a href="#auto-ptr的简化实现" class="headerlink" title="auto_ptr的简化实现"></a><code>auto_ptr</code>的简化实现</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> AUTOPTR_HPP_INCLUDED</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> AUTOPTR_HPP_INCLUDED</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">AutoPtr</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    T *pointee;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//explicit声明不可以隐式转换</span></span><br><span class="line">    explicit AutoPtr(T *p=nullptr):pointee(p)&#123;&#125;</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">U</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">AutoPtr</span>(<span class="title">AutoPtr</span>&lt;U&gt; &amp; <span class="title">rhs</span>):</span>pointee(rhs.release())&#123;&#125;</span><br><span class="line">    ~AutoPtr()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">delete</span> pointee;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">U</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">AutoPtr</span>&lt;T&gt;&amp; <span class="title">operator</span>=(<span class="title">AutoPtr</span>&lt;U&gt; &amp; <span class="title">rhs</span>)</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span>!=rhs)</span><br><span class="line">            reset(rhs.release());</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    T* <span class="keyword">operator</span>*() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *pointee;</span><br><span class="line">    &#125;</span><br><span class="line">    T* <span class="keyword">operator</span>-&gt;() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *pointee;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">T* <span class="title">get</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> pointee;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">// AUTOPTR_HPP_INCLUDED</span></span></span><br></pre></td></tr></table></figure>
+<p>​    不难看出，智能指针对模板对象进行了一层封装，并重载了operator*() 和operator-&gt;()等操作。同时保证在析构的时候释放内存。</p>
+<h2 id="自定义链表并实现迭代器"><a href="#自定义链表并实现迭代器" class="headerlink" title="自定义链表并实现迭代器"></a>自定义链表并实现迭代器</h2><p>​    我的代码并没有和原文中的封装方法一致，因为我觉得原文中的实现方式很容易暴露一些相对使用者没什么必要的对象，实现过程中一直没有去看原文3.2节的最后几段话。后面去才看，发现作者之所以使用如此暴露的封装方法实现迭代器的原意便是想体现出容器和对应迭代器的强连接性。</p>
+<blockquote>
+<p> 为一种容器设计迭代器，需要暴露很多细节，既然无可避免，干脆把迭代器的开发工作交给List的设计者好了，如厕以来，所有实现细节反而得以封装起来不被使用者看到，这正是为什么每一种STL容器都提供专属迭代器的缘故。</p>
+</blockquote>
+<h4 id="存储元素"><a href="#存储元素" class="headerlink" title="存储元素"></a>存储元素</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListItem</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    T value;</span><br><span class="line">    ListItem *next;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ListItem(T v):value(v),next(<span class="literal">nullptr</span>)&#123;&#125;</span><br><span class="line">    <span class="function">T <span class="title">Value</span><span class="params">()</span><span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">ListItem *<span class="title">Next</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> next;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//链接 自己添加的函数</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Insert</span><span class="params">(ListItem* nextValue)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        next=nextValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Item</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">ListIter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    Item* ptr;</span><br><span class="line">    ListIter(Item *p =<span class="literal">nullptr</span>):ptr(p)&#123;&#125;</span><br><span class="line">    Item&amp; <span class="keyword">operator</span>*() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> *ptr;</span><br><span class="line">    &#125;</span><br><span class="line">    Item* <span class="keyword">operator</span>-&gt;() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ptr;</span><br><span class="line">    &#125;</span><br><span class="line">    Item&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> ) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ptr;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//前置式：累加然后取出</span></span><br><span class="line">    ListIter&amp; <span class="keyword">operator</span>++( )</span><br><span class="line">    &#123;</span><br><span class="line">        ptr=ptr-&gt;Next();</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//后置式：取出然后累加</span></span><br><span class="line">    ListIter&amp; <span class="keyword">operator</span>++(<span class="keyword">int</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        ListIter tmp=*<span class="keyword">this</span>;</span><br><span class="line">        ++*<span class="keyword">this</span>;</span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//对比的是迭代器封装的值</span></span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span> == (<span class="keyword">const</span> ListIter&amp; i) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ptr == i.ptr;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">bool</span> <span class="keyword">operator</span> != (<span class="keyword">const</span> ListIter&amp; i) <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> ptr != i.ptr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">List</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">//头元素</span></span><br><span class="line">    ListItem&lt;T&gt;* front;</span><br><span class="line">    <span class="comment">//尾元素</span></span><br><span class="line">    ListItem&lt;T&gt;* last;</span><br><span class="line">    <span class="comment">//首部迭代器 原文不存在</span></span><br><span class="line">    ListIter&lt;ListItem&lt;T&gt; &gt;begin;</span><br><span class="line">    <span class="comment">//尾部迭代器 原文不存在</span></span><br><span class="line">    ListIter&lt;ListItem&lt;T&gt; &gt;end;</span><br><span class="line">    <span class="keyword">long</span> size;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    List():front(<span class="literal">nullptr</span>),last(<span class="literal">nullptr</span>)&#123;&#125;</span><br><span class="line">    <span class="comment">//从前插入 原文不实现</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InsertFront</span><span class="params">(T value)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ListItem&lt;T&gt; * newValue = <span class="keyword">new</span> ListItem&lt;T&gt;(value);</span><br><span class="line">        <span class="keyword">if</span>(front)</span><br><span class="line">        &#123;</span><br><span class="line">            newValue-&gt;Insert(front);</span><br><span class="line">        &#125;</span><br><span class="line">        front=newValue;</span><br><span class="line">        begin.ptr=front;</span><br><span class="line">        <span class="keyword">if</span>(!last)</span><br><span class="line">            last=front;</span><br><span class="line">        ++size;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//从后插入 原文不实现</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">InsertEnd</span><span class="params">(T value)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ListItem&lt;T&gt; * newValue = <span class="keyword">new</span> ListItem&lt;T&gt;(value);</span><br><span class="line">        <span class="keyword">if</span>(last)</span><br><span class="line">        &#123;</span><br><span class="line">            last-&gt;Insert(newValue);</span><br><span class="line">        &#125;</span><br><span class="line">        last=newValue;</span><br><span class="line">        end.ptr=last-&gt;Next();</span><br><span class="line">        <span class="keyword">if</span>(!front)</span><br><span class="line">            front=last;</span><br><span class="line">        ++size;</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">//输出链表 原文不实现</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">display</span><span class="params">(<span class="built_in">std</span>::ostream &amp;os = <span class="built_in">std</span>::<span class="built_in">cout</span>)</span><span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ListItem&lt;T&gt;*iter=front;</span><br><span class="line">        <span class="keyword">while</span>(iter!=<span class="literal">nullptr</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            os&lt;&lt;iter-&gt;Value();</span><br><span class="line">            iter=iter-&gt;Next();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取得尾部迭代器（空） 自己添加的函数</span></span><br><span class="line">    ListIter&lt;ListItem&lt;T&gt; &gt; End() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> end;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取得首部迭代器 自己添加的函数</span></span><br><span class="line">    ListIter&lt;ListItem&lt;T&gt; &gt; Begin() <span class="keyword">const</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> begin;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="comment">//find函数实现</span></span><br><span class="line"><span class="comment">//首尾迭代器以及查找的目标值</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Iterator</span>,<span class="title">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">Iterator</span> <span class="title">Find</span>(<span class="title">Iterator</span> <span class="title">first</span>,<span class="title">Iterator</span> <span class="title">last</span>,<span class="title">const</span> <span class="title">T</span>&amp; <span class="title">target</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">//因为在使用的时候，我们实际比较的是迭代器的值目标值，但是迭代器的值是一个封装的元素，所以还需要获得元素存储的值。</span></span><br><span class="line">    <span class="keyword">while</span>(first!=last&amp;&amp; first-&gt;Value()!=target)</span><br><span class="line">        ++first;</span><br><span class="line">    <span class="keyword">return</span> first;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//大写List，使用上面的自定义链表</span></span><br><span class="line">    List&lt;<span class="keyword">int</span>&gt; myList;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;=<span class="number">5</span>;++i)</span><br><span class="line">    &#123;</span><br><span class="line">        myList.InsertFront(i);</span><br><span class="line">        myList.InsertEnd(i);</span><br><span class="line">    &#125;</span><br><span class="line">    myList.display();<span class="comment">//5432112345</span></span><br><span class="line">    <span class="built_in">cout</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">/* 原文实例代码</span></span><br><span class="line"><span class="comment">    ListIter&lt;ListItem&lt;int&gt; &gt;begin(mylist.front());</span></span><br><span class="line"><span class="comment">    ListIter&lt;ListItem&lt;int&gt; &gt;end;</span></span><br><span class="line"><span class="comment">    ListIter&lt;ListItem&lt;int&gt; &gt;iter;</span></span><br><span class="line"><span class="comment">    iter=find(begin,end,3)</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="comment">//因为自己将迭代器封装到了容器中，直接调用即可</span></span><br><span class="line">    <span class="keyword">if</span>(Find(myList.Begin(),myList.End(),<span class="number">4</span>)!=myList.End())</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"存在4"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;<span class="string">"不存在4"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">//存在4</span></span><br><span class="line">    <span class="keyword">if</span>(Find(myList.Begin(),myList.End(),<span class="number">6</span>)!=myList.End())</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"存在6"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;<span class="string">"不存在6"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    <span class="comment">//不存在6</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    在原文的示例代码中，作者故意没有将迭代器和List一起封装，因此在<code>main()</code>中，特地声明了多个迭代器，去指向链表的<code>front</code>和<code>end</code>以及结果，而我误打误撞的避免了这种情况:sweat_smile:</p>
+<h3 id="迭代器相应型别"><a href="#迭代器相应型别" class="headerlink" title="迭代器相应型别"></a>迭代器相应型别</h3><blockquote>
+<p>​    上述的<code>ListIter</code>提供了一个迭代器雉形。如果将思想拉得更高远一些，我们便会发现，在算法中运用迭代器时，很可能会用到其相应型别(associated type)。什么是相应型别？迭代器所指之物的型别就是其一。假设算法中有必要声明一个变量，以“迭代器所指对象的型别”为型别，如何是好？毕竟C++值支持<code>sizeof()</code>，并未支持<code>typeof()</code>,即便动用<code>RTTI</code>性质中的<code>typeid()</code>,获得的也只是型别名称，不能拿来做变量声明只用。</p>
+</blockquote>
+<p>​    在上面的代码中，我们自己实现的<code>Find()</code>函数，只能应用与这个特定的<code>List</code>中，因为<code>first-&gt;Value()!=target</code>这段代码，并不是所有模板类对象拥有<code>Value()</code>这个方法来获取成员变量，(代码中的<code>Iterator</code>拥有)，因此我们很可能需要在函数模板中，判断参数的实际类型，甚至直接操作这些类型，比如需要生成这个类型的对象等，那么我们需要怎么做呢？</p>
+<p>​    书中给了答案：</p>
+<blockquote>
+<p>解决办法是：利用 <code>function template</code> 的参数推导机制。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>,<span class="title">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">void</span> <span class="title">func_imp1</span>(<span class="title">I</span> <span class="title">iter</span>,<span class="title">T</span> <span class="title">t</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    T target;<span class="comment">//我们这里是不是已经获取到了数据类型T，虽然这样看起来，它只是一个模板类T，但是在编译期后，它就是int了。</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">func</span>(<span class="title">I</span> <span class="title">iter</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    func_imp1(iter,*iter);</span><br><span class="line">    <span class="comment">//这里的I是指针，所以还要调用一次。</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">    func(&amp;i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    函数模板的参数推导实在调用函数时 &lt;类型&gt; 缺省的情况下编译器去推导的，我们可以借用这个方式去获得对应的类型，如果只是获得类型的画，其实也可以用<code>auto</code>。</p>
+<hr>
+<p>关于auto和函数模板的相关知识可以看一下别人的博客<a href="https://www.cnblogs.com/wangxiaobao/p/5829358.html">类型推导：函数模板与auto</a>，总结的很好。</p>
+<hr>
+<h2 id="Traits-编程技法–STL源代码门钥"><a href="#Traits-编程技法–STL源代码门钥" class="headerlink" title="Traits 编程技法–STL源代码门钥"></a>Traits 编程技法–STL源代码门钥</h2><h3 id="通过内嵌型别，来返回对应的类型"><a href="#通过内嵌型别，来返回对应的类型" class="headerlink" title="通过内嵌型别，来返回对应的类型"></a>通过内嵌型别，来返回对应的类型</h3><p>​    虽然我们可以通过函数模板的参数机制来推导类型，但是也只能限制在参数上，如果我们必须要用于返回值，就束手无策了。</p>
+<p>​    原文演示了<code>内嵌型别</code>的方法。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">	<span class="title">struct</span> <span class="title">MyIter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	<span class="keyword">typedef</span> T value_type;</span><br><span class="line">	T* ptr;</span><br><span class="line">    MyIter(T *p=<span class="literal">nullptr</span>):ptr(p)&#123;&#125;</span><br><span class="line">    T&amp; <span class="keyword">operator</span>*()<span class="keyword">const</span></span><br><span class="line">    	&#123;</span><br><span class="line">        	<span class="keyword">return</span> *ptr;</span><br><span class="line">    	&#125;</span><br><span class="line">	...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">	<span class="title">typename</span> <span class="title">I</span>:</span>:value_type</span><br><span class="line">func(I ite)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> *ite;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//一</span></span><br><span class="line">MyIter&lt;<span class="keyword">int</span>&gt; ite(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">8</span>));</span><br><span class="line"><span class="comment">//二</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span>&lt;&lt;fun(ite);<span class="comment">//8</span></span><br></pre></td></tr></table></figure>
+<p>​    我们来捋一捋这段代码，在结构体<code>MyIter</code>中，声明了一个类型别名<code>value_type</code>，这也使得<code>typename I::value_type</code>对于程序来说，是已知的。我们在一中初始化迭代器<code>ite</code>，将一个指向存储类型为<code>int</code>内容为<code>8</code>的地址给迭代器的<code>ptr</code>，在二中调用方法<code>fun()</code>，将<code>ptr</code>的解引用返回，这个时候，因为我们规定了<code>fun()</code>的返回值类型为传参类<code>I</code>中的<code>value_type</code>，而<code>value_type</code>在<code>MyIter&lt;int&gt;</code>中就是<code>int</code>的别名，所以返回的值类型就是<code>int</code>。</p>
+<blockquote>
+<p>​    看起来不错。但是有个隐晦的陷阱并不是所有迭代器都是<code>class type</code>，原生指针就不是！如果不是<code>class type</code>，就无法为它定义内嵌型别。但STL(以及整个泛型思维)绝对必须接受原生指针作为一种迭代器，所以上面这样还不够，有没有办法可以让上述的一般化概念针对特定情况做特殊化处理呢？</p>
+</blockquote>
+<h3 id="Partial-Specialization-偏特化"><a href="#Partial-Specialization-偏特化" class="headerlink" title="Partial Specialization 偏特化"></a><code>Partial Specialization</code> 偏特化</h3><h4 id="Partial-Specialization-的-含义"><a href="#Partial-Specialization-的-含义" class="headerlink" title="Partial Specialization 的 含义"></a><code>Partial Specialization</code> 的 含义</h4><blockquote>
+<p>   大致的意义是：如果<code>class template</code> 拥有一个以上的 <code>template</code>参数，我们可以针对其中某个(或数个，但非全部) <code>template</code>参数进行特化工作。换句话说，我们可以在泛化设计中提供一个特化版本(也就是将泛化版本中的某些<code>template</code>参数赋予明确的指定)。</p>
+</blockquote>
+<h4 id="简单特性萃取iterator-traits实现"><a href="#简单特性萃取iterator-traits实现" class="headerlink" title="简单特性萃取iterator_traits实现"></a>简单特性萃取<code>iterator_traits</code>实现</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//特征萃取，萃取类I中的value_type</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">typename</span> I::value_type  value_type; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//pointer</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> T  value_type; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//pointer to const </span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;const T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> T  value_type; </span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//直白来看，只是比上面的代码多了一层封装,但是通过这层封装，我们能更准确的在不同复杂理性中萃取到真正的类型</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">	<span class="title">typename</span> <span class="title">iterator_traits</span>&lt;I&gt;:</span>:value_type</span><br><span class="line">func(I ite)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> *ite;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/%E7%89%B9%E6%80%A7%E8%90%83%E5%8F%96%E5%99%A8.png" alt=""></p>
+<h3 id="五个常用迭代器相应型别"><a href="#五个常用迭代器相应型别" class="headerlink" title="五个常用迭代器相应型别"></a>五个常用迭代器相应型别</h3><h4 id="迭代器相应型别之一：value-type"><a href="#迭代器相应型别之一：value-type" class="headerlink" title="迭代器相应型别之一：value_type"></a>迭代器相应型别之一：<code>value_type</code></h4><blockquote>
+<p>所谓<code>value_type</code>，是指迭代器所指对象的型别，任何一个打算与STL算法有完美搭配的class，都应该定义自己的<code>value_type</code>内嵌型类别，做法就像上节所述。</p>
+</blockquote>
+<h4 id="迭代器相应型别之二：different-type"><a href="#迭代器相应型别之二：different-type" class="headerlink" title="迭代器相应型别之二：different_type"></a>迭代器相应型别之二：<code>different_type</code></h4><blockquote>
+<p><code>different_type</code>用来表示两个迭代器之间的距离，因此它也可以用来表示一个容器的最大容量，因为对于连续空间的容器而言，头尾之间的距离就是器最大容量。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//pointer</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">    <span class="comment">//用ptrdiff_t 来保存两个指针相减的结果</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">ptrdiff_t</span>  different_type; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//pointer to const </span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;const T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">ptrdiff_t</span>  different_type; </span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>,<span class="title">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    //写明返回的类型</span></span><br><span class="line"><span class="class">    <span class="title">typename</span> <span class="title">iterator_traits</span>&lt;I&gt;:</span>:different_type</span><br><span class="line">    count(I first,I last,<span class="keyword">const</span> T&amp; value)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">typename</span> iterator_traits&lt;I&gt;::different_type n=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(;first!=last;++first)</span><br><span class="line">            <span class="comment">//这个函数的作用是统计在连续容器中，value出现了多少次</span></span><br><span class="line">            <span class="keyword">if</span>(*first==value)</span><br><span class="line">                n++;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="迭代器相应型别之三：reference-type"><a href="#迭代器相应型别之三：reference-type" class="headerlink" title="迭代器相应型别之三：reference_type"></a>迭代器相应型别之三：<code>reference_type</code></h4><blockquote>
+<p>从“迭代器所指之物的内容是否允许改变”的角度观之，迭代器分为两种：</p>
+<ul>
+<li>不允许改变“所指对象之内容”，成为<code>constant iterators</code>，例如 <code>const int * pic</code></li>
+<li>允许改变“所指对象之内容”，成为<code>mustable iterators</code>，例如 <code>int * pic</code></li>
+</ul>
+<p>当我们对一个<code>mustable iterators</code>进行提领操作时，获得的不应该是一个右值，而是一个左值，因为右值不允许赋值操作，左值才允许。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> *pi = <span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">5</span>);</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *pci = <span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">9</span>);</span><br><span class="line">*pi=<span class="number">7</span>;</span><br><span class="line">*pci=<span class="number">1</span>;<span class="comment">//错误，pic是右值</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在C++中，函数如果要传回左值，都是以<code>by reference</code>的方式进行，所以当<code>p</code>是一个<code>mustable iterators</code>时，如果其<code>value_type</code>是<code>T</code>，那么<code>*p</code>的型别不应该是<code>T</code>，应该是<code>T&amp;</code>，当<code>p</code>是一个<code>constant iterators</code>时，如果其<code>value_type</code>是<code>T</code>，那么<code>*p</code>的型别不应该是<code>const T</code>，应该是<code>const T&amp;</code>，这里所讨论的<code>-[]</code>写别，即所谓的<code>reference type</code>，实现细节将在下一小节一并展示。</p>
+</blockquote>
+<h4 id="迭代器相应型别之四：pointer-type"><a href="#迭代器相应型别之四：pointer-type" class="headerlink" title="迭代器相应型别之四：pointer_type"></a>迭代器相应型别之四：<code>pointer_type</code></h4><blockquote>
+<p><code>pointer</code>和<code>references</code>在C++中有非常密切的挂变脸，如果”传回一个左值,令它代表p所指之物”是可能的，那么”传回一个左值,令它代表p所指之物的地址”也一定可以，也就是说，我们能够传回一个<code>pointer</code>，指向迭代器所指之物。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">typename</span> I::pointer  pointer; </span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">typename</span> I::reference  reference; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//pointer</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> T*  pointer; </span><br><span class="line">      <span class="keyword">typedef</span> T&amp;  reference; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="comment">//pointer to const </span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;const T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">const</span> T*  pointer; </span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">const</span> T&amp;  reference; </span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<p>​    和上面的<a href="#简单特性萃取`iterator_traits`实现">简单特性萃取</a>实现区分开来，那里只是指值，这里是专门指引用和指针。</p>
+<h4 id="迭代器相应型别之五：iterator-category"><a href="#迭代器相应型别之五：iterator-category" class="headerlink" title="迭代器相应型别之五：iterator_category"></a>迭代器相应型别之五：<code>iterator_category</code></h4><h5 id="五类迭代器"><a href="#五类迭代器" class="headerlink" title="五类迭代器"></a>五类迭代器</h5><blockquote>
+<p>根据移动特性与施行操作，迭代器被分为五类：</p>
+<ul>
+<li><code>input iterator</code>:这种迭代器所指的对象，<strong>不允许被外界改变</strong>。只读。</li>
+<li><code>output iterator</code>:只写。</li>
+<li><code>Forward iterator</code>:允许”写入型”算法在这种迭代器形成的区间上进行读写操作。</li>
+<li><code>Bidrectional iterator</code>:可双向移动，某些算法需要逆向走访某个迭代器区间(例如逆向拷贝某范围内的元素)，可以使用<code>Bidrectional iterator</code></li>
+<li><code>Random Accesson iterator</code>：前四种迭代器都只供应一部分指针算数能力(前三种支持<code>operator ++</code>，第四种加上<code>operator--</code>)，第五种则覆盖所有指针算数能力，包括<code>p+n,p-n,p[n],p1-p2,pq&lt;p2</code>;</li>
+</ul>
+</blockquote>
+<p>​    它们之间可以用继承关系表示：</p>
+<pre class="mermaid">graph TB
+    input_iterator-->Forward_iterator
+    output_iterator-->Forward_iterator
+    Forward_iterator-->Bidrectional_iterator
+    Bidrectional_iterator-->Random_Access_Iterator</pre>
+
+<p>​    在设计算法的时候，应该尽力为每个迭代器提供一个明确定义，以保证提供最大的效率，因为它们是继承关系，所有派生类对象是可以向上转换成基类对象的，意味着派生类对象可以使用针对基类对象的算法，但是这个算法对于派生类对象来说可能不是最佳的，虽然能用。</p>
+<p>​    以原文提到的<code>advanced()</code>为例。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">InputIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">advance_II</span>(<span class="title">InputIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">while</span>(n--)++i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//可以双向移动，所以要考虑n为负数</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">BidirectuibIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">advance_BI</span>(<span class="title">BidirectuibIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">if</span>(n&gt;=<span class="number">0</span>)</span><br><span class="line">    	<span class="keyword">while</span>(n--)++i;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">while</span>(n++)--i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//因为随机访问迭代器支持指针算术，所以直接+=</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">RandomAccessonIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">advance_RAI</span>(<span class="title">BidirectuibIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	i+=n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Inputerator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">advance</span>(<span class="title">InputIterator</span> &amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">//判断是否是某种迭代器而去调用</span></span><br><span class="line">    <span class="keyword">if</span>(is_random_accesson_iterator(i))</span><br><span class="line">        advance_RAI(I,n);</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(is_bidirectuib_iterator(i))</span><br><span class="line">        advance_BI(I,n);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        advance_II(I,n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    相信刚接触迭代器设计思想时，应该也会写出上面的代码，或者说时习惯性写法，不过在接触更多的更棒的源码之后，就会感受到这样写的不足了，每一次调用<code>advance()</code>都会判断几次，效率太低了。</p>
+<h5 id="利用重载函数和萃取器特性以及继承性提高效率"><a href="#利用重载函数和萃取器特性以及继承性提高效率" class="headerlink" title="利用重载函数和萃取器特性以及继承性提高效率"></a>利用重载函数和萃取器特性以及继承性提高效率</h5><p>​    我们定义五个类/结构体，利用继承的特性把它们定义一下。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//仅仅拿来做一个标识，不去实现内部成员。</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">input_iterator_tag</span>&#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">output_iterator_tag</span>&#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">forward_iterator_tag</span>:</span>input_iterator_tag&#123;&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">bidirectional_iterator_tag</span>:</span>forward_iterator_tag&#123;&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">random_access_iterator_tag</span>:</span>bidirectional_iterator_tag&#123;&#125;;</span><br></pre></td></tr></table></figure>
+<p>​    我们通过同参数数量，不同参数类型的方式重载<code>__advance()</code>函数。这里除了新添加的第三个参数，其余和上面原先的<code>advance()</code>函数差不多。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">InputIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> __<span class="title">advance</span>(<span class="title">InputIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>,<span class="title">input_iterator_tag</span>)//不需要用到实参，我们可以不接受</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">while</span>(n--)++i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">ForwardIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> __<span class="title">advance</span>(<span class="title">InputIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>,<span class="title">forward_iterator_tag</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    __advance(i,n,input_iterator_tag());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//可以双向移动，所以要考虑n为负数</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">BidirectuibIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> __<span class="title">advance</span>(<span class="title">BidirectuibIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>,<span class="title">bidirectional_iterator_tag</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">if</span>(n&gt;=<span class="number">0</span>)</span><br><span class="line">    	<span class="keyword">while</span>(n--)++i;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">while</span>(n++)--i;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//因为随机访问迭代器支持指针算术，所以直接+=</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">RandomAccessonIterator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> __<span class="title">advance</span>(<span class="title">BidirectuibIterator</span>&amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>,<span class="title">random_access_iterator_tag</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	i+=n;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    我们再针对上面的信息，在特征萃取器中添加一个起到迭代器类型别名作用的成员<code>iterator_category</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//特征萃取，萃取iterator_category </span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        <span class="comment">//原有部分</span></span><br><span class="line">      ...</span><br><span class="line">          <span class="comment">//添加部分</span></span><br><span class="line">      <span class="keyword">typedef</span> <span class="keyword">typename</span> I::iterator_category  iterator_category; </span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">//以随机访问迭代器 iterator_category 为例子的偏特化中，添加别名，</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//这样，当取iterator_category的时候，实际上得到的就是random_access_iterator_tag</span></span><br><span class="line">     <span class="keyword">typedef</span> random_access_iterator_tag  iterator_category; </span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="title">struct</span> <span class="title">iterator_traits</span>&lt;const T*&gt;</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">    ...</span><br><span class="line">      <span class="keyword">typedef</span> random_access_iterator_tag  iterator_category; </span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+<p>​    再写一个获得临时类型的复制函数。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">I</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">typename</span> <span class="title">iterator_traits</span>&lt;I&gt;:</span>:iterator_category</span><br><span class="line">iterator_category(<span class="keyword">const</span> I&amp;)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">typename</span> iterator_traits&lt;I&gt;::iterator_category category;</span><br><span class="line">    <span class="keyword">return</span> category();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//参数名取InputIterator的原因是STL算分的一个命名规则：以算法所能接受的最低阶迭代器类型，来为迭代器型别参数命名。</span></span><br><span class="line"><span class="comment">//这个也很好理解，因为每个作用于基类对象的函数都可以被派生类使用。</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Inputerator</span>,<span class="title">class</span> <span class="title">Distance</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">inline</span> <span class="title">void</span> <span class="title">advance</span>(<span class="title">InputIterator</span> &amp; <span class="title">i</span>,<span class="title">Distance</span> <span class="title">n</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	__advance(i,n,iterator_traits&lt;InputIterator&gt;::iterator_category());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    这样我们是不是就不需要每次调用<code>advance</code>时进行判断了，因为在编译期，我们就已经获得了每个声过的迭代器的类型<code>iterator_category</code>。</p>
+<h2 id="stl-iterator的保证"><a href="#stl-iterator的保证" class="headerlink" title="stl::iterator的保证"></a><code>stl::iterator</code>的保证</h2><blockquote>
+<p>为了符合规范，任何迭代器都应该提供五个内嵌相应型别，以利于<code>traits</code>萃取，否则便是自别于整个STL架构，可能无法与其它STL组件顺利搭配，然而写代码难免挂一漏万，谁也不能保证不会有粗心大意的时候，如果能够将事情简化，就好多了。</p>
+<p>STL提供了一个<code>iterators class</code>如下，如果每个新设计的迭代器都能继承自它，就可保证符合STL所需规范：</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Category</span>,</span></span><br><span class="line"><span class="class">        <span class="title">class</span> <span class="title">T</span>,</span></span><br><span class="line"><span class="class">        <span class="title">class</span> <span class="title">Distance</span> = <span class="title">ptrdiff_t</span>,</span></span><br><span class="line"><span class="class">        <span class="title">class</span> <span class="title">Pointer</span> = <span class="title">T</span>*,</span></span><br><span class="line"><span class="class">        <span class="title">class</span> <span class="title">Refernce</span> = <span class="title">T</span>&amp;&gt;       </span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">iterator</span>&#123;</span></span><br><span class="line">	<span class="keyword">typedef</span> Category iterator_category;</span><br><span class="line">	<span class="keyword">typedef</span> T value_type;</span><br><span class="line">	<span class="keyword">typedef</span> Distance distance_type;</span><br><span class="line">	<span class="keyword">typedef</span> Pointer pointer;</span><br><span class="line">	<span class="keyword">typedef</span> Refernce refernce;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>iterators class</code>不含任何成员，纯粹只是型别定义，所以继承它并不会招致任何额外负担，由于后三个参数皆有默认值，故新的迭代器只需提供两个参数即可。</p>
+</blockquote>
+<p>​    因此，在前文提到自己实现的链表<a href="#迭代器">迭代器</a>，可以直接这样实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">input_iterator_tag</span>&#123;</span>&#125;;</span><br><span class="line">...</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">forward_iterator_tag</span>:</span>input_iterator_tag&#123;&#125;;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">    </span><br><span class="line"><span class="comment">//继承与std提供的迭代器型别</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Item</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">ListIter</span>:</span><span class="keyword">public</span> <span class="built_in">std</span>::iterator&lt;<span class="built_in">std</span>::forward_iterator_tag,Item&gt;</span><br><span class="line">&#123;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>符合STL标准的迭代器，需要具有获取自身型别、 元素、指针差、 元素指针以及引用。</li>
+<li>可以利用继承性与函数模板的重载优化对不同迭代器的同种函数操作。</li>
+<li>设置适当的迭代器型别，是迭代器的责任，设计适当的迭代器，是容器的责任。</li>
+<li>函数模板参数推导机制可以实现迭代器所存储的数据类型的获取。</li>
+<li><code>traits</code>的编程技巧之巧妙，需要好好研究。</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-STL-2/">《STL源码剖析》之迭代器相关</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
+  <p><span>发布时间:</span>2019年05月03日 - 11:05</p>
+  <p><span>最后更新:</span>2019年05月05日 - 22:05</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-STL-2/" title="《STL源码剖析》之迭代器相关">https://confusel.tech/2019/MyLearn-STL-2/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-STL-2/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyLearn-STL-1/" rel="next" title="《STL源码剖析》之空间配置器">
+                <i class="fa fa-chevron-left"></i> 《STL源码剖析》之空间配置器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg" alt="ConfuseL">
+            
+              <p class="site-author-name" itemprop="name">ConfuseL</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:895210069@gmail.com" title="E-Mail &rarr; mailto:895210069@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://bitbucket.org/ConfuseL/" title="Bitbucket &rarr; https://bitbucket.org/ConfuseL/" rel="noopener" target="_blank"><i class="fa fa-fw fa-bitbucket"></i>Bitbucket</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器是一种类似指针的对象"><span class="nav-number">2.</span> <span class="nav-text">迭代器是一种类似指针的对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#auto-ptr的简化实现"><span class="nav-number">2.1.</span> <span class="nav-text">auto_ptr的简化实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义链表并实现迭代器"><span class="nav-number">3.</span> <span class="nav-text">自定义链表并实现迭代器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#存储元素"><span class="nav-number">3.0.1.</span> <span class="nav-text">存储元素</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器"><span class="nav-number">3.0.2.</span> <span class="nav-text">迭代器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#链表"><span class="nav-number">3.0.3.</span> <span class="nav-text">链表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">3.0.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#迭代器相应型别"><span class="nav-number">3.1.</span> <span class="nav-text">迭代器相应型别</span></a></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#Traits-编程技法–STL源代码门钥"><span class="nav-number">4.</span> <span class="nav-text">Traits 编程技法–STL源代码门钥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#通过内嵌型别，来返回对应的类型"><span class="nav-number">4.1.</span> <span class="nav-text">通过内嵌型别，来返回对应的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Partial-Specialization-偏特化"><span class="nav-number">4.2.</span> <span class="nav-text">Partial Specialization 偏特化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Partial-Specialization-的-含义"><span class="nav-number">4.2.1.</span> <span class="nav-text">Partial Specialization 的 含义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简单特性萃取iterator-traits实现"><span class="nav-number">4.2.2.</span> <span class="nav-text">简单特性萃取iterator_traits实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五个常用迭代器相应型别"><span class="nav-number">4.3.</span> <span class="nav-text">五个常用迭代器相应型别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器相应型别之一：value-type"><span class="nav-number">4.3.1.</span> <span class="nav-text">迭代器相应型别之一：value_type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器相应型别之二：different-type"><span class="nav-number">4.3.2.</span> <span class="nav-text">迭代器相应型别之二：different_type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器相应型别之三：reference-type"><span class="nav-number">4.3.3.</span> <span class="nav-text">迭代器相应型别之三：reference_type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器相应型别之四：pointer-type"><span class="nav-number">4.3.4.</span> <span class="nav-text">迭代器相应型别之四：pointer_type</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#迭代器相应型别之五：iterator-category"><span class="nav-number">4.3.5.</span> <span class="nav-text">迭代器相应型别之五：iterator_category</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#五类迭代器"><span class="nav-number">4.3.5.1.</span> <span class="nav-text">五类迭代器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#利用重载函数和萃取器特性以及继承性提高效率"><span class="nav-number">4.3.5.2.</span> <span class="nav-text">利用重载函数和萃取器特性以及继承性提高效率</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stl-iterator的保证"><span class="nav-number">5.</span> <span class="nav-text">stl::iterator的保证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ConfuseL</span>
+
+  
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+<div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
+</div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+        
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=66380707";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'LCf64glaHb2Ryr5pykLjeirA-gzGzoHsz',
+        appKey: 'TYnE56DPDroAtbWtcErAyQxS',
+        placeholder: '若有不足麻烦指正',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!--�뿪����-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+
+</body>
+</html>
