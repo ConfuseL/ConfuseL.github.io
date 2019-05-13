@@ -108,38 +108,33 @@
 
 
 
-  <meta name="description" content="一个很简单的Anima2D骨骼动画和换装教程">
-<meta name="keywords" content="Unity3D,Anima2D,骨骼动画，换装">
+  <meta name="description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
+<meta name="keywords" content="Unity,Mono,IL2CPP">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Unity Anima2D编辑器的轻量骨骼动画和换装使用">
-<meta property="og:url" content="https://confusel.tech/2019/MyLearn-Anima2D/index.html">
+<meta property="og:title" content="简单了解Mono和IL2CPP">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/index.html">
 <meta property="og:site_name" content="ConfuseL的个人博客">
-<meta property="og:description" content="一个很简单的Anima2D骨骼动画和换装教程">
+<meta property="og:description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-25/9150e4e5gy1fygz3nlw8bj20qo0qo3zr.jpg">
-<meta property="og:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%9B%BE%E7%89%87%E8%AE%BE%E7%BD%AE.png">
-<meta property="og:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E8%AE%BE%E7%BD%AE%E7%B2%BE%E7%81%B5%E5%9B%BE%E5%B1%82.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E8%AE%BE%E7%BD%AE%E9%AA%A8%E9%AA%BC.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%8F%B3%E6%89%8B%E9%AA%A8%E9%AA%BC.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E7%BB%91%E5%AE%9A%E9%AA%A8%E9%AA%BC.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%BA%94%E7%94%A8%E9%AA%A8%E9%AA%BC.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E9%AA%A8%E9%AA%BC%E7%A7%BB%E5%8A%A8%E9%A2%84%E8%A7%88.gif">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/IK%E7%A7%BB%E5%8A%A8%E9%A2%84%E8%A7%88.gif">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%8F%B3%E6%89%8BIK.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/IK%E7%BB%91%E5%AE%9A%E9%AA%A8%E9%AA%BC.png">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E6%8D%A2%E8%82%A4%E9%A2%84%E8%A7%88.gif">
-<meta property="og:updated_time" content="2019-05-02T06:00:38.617Z">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif">
+<meta property="og:image" content="https://pic3.zhimg.com/f1c18ef3b344b657a9c236258d1b4c7e_b.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/cef19147534ab017c59b755b15766679_b.jpg">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/269770-1716159336861dd8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/NET/IL2CPP.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/1ac61dcf8ccdf4c3f80ed81afcac5fe3_b.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/127145eba0473bbe7ae9fd371cf28d85_b.jpg">
+<meta property="og:updated_time" content="2019-05-13T09:58:58.870Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Unity Anima2D编辑器的轻量骨骼动画和换装使用">
-<meta name="twitter:description" content="一个很简单的Anima2D骨骼动画和换装教程">
-<meta name="twitter:image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-25/9150e4e5gy1fygz3nlw8bj20qo0qo3zr.jpg">
+<meta name="twitter:title" content="简单了解Mono和IL2CPP">
+<meta name="twitter:description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif">
 
 
 
 
 
 
-  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-Anima2D/">
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/">
 
 
 
@@ -149,7 +144,7 @@
   };
 </script>
 
-  <title>Unity Anima2D编辑器的轻量骨骼动画和换装使用 | ConfuseL的个人博客</title>
+  <title>简单了解Mono和IL2CPP | ConfuseL的个人博客</title>
   
 
 
@@ -415,7 +410,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-Anima2D/">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ConfuseL">
@@ -432,7 +427,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Unity Anima2D编辑器的轻量骨骼动画和换装使用
+          <h1 class="post-title" itemprop="name headline">简单了解Mono和IL2CPP
               
             
           </h1>
@@ -457,24 +452,12 @@
                 
               
 
-              <time title="创建时间：2019-02-26 20:47:51" itemprop="dateCreated datePublished" datetime="2019-02-26T20:47:51+08:00">2019-02-26</time>
+              <time title="创建时间：2019-05-13 14:53:04 / 修改时间：17:58:58" itemprop="dateCreated datePublished" datetime="2019-05-13T14:53:04+08:00">2019-05-13</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-05-02 14:00:38" itemprop="dateModified" datetime="2019-05-02T14:00:38+08:00">2019-05-02</time>
               
             
           </span>
@@ -491,7 +474,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Unity3D/" itemprop="url" rel="index"><span itemprop="name">Unity3D</span></a></span>
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a></span>
 
                 
                 
@@ -506,8 +489,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/MyLearn-Anima2D/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-Anima2D/" itemprop="commentCount"></span>
+                <a href="/2019/MyLearn-Mono&IL2CPP/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-Mono&IL2CPP/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -521,7 +504,7 @@
           
 
           
-              <div class="post-description">一个很简单的Anima2D骨骼动画和换装教程</div>
+              <div class="post-description">都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。</div>
           
 
         </div>
@@ -537,37 +520,100 @@
       
 
       
-        <p>[TOC]</p>
-<h3 id="lt-学习记录-gt-Unity-Anima2D编辑器的轻量骨骼动画和换装使用"><a href="#lt-学习记录-gt-Unity-Anima2D编辑器的轻量骨骼动画和换装使用" class="headerlink" title="&lt;学习记录&gt;Unity Anima2D编辑器的轻量骨骼动画和换装使用"></a>&lt;学习记录&gt;Unity Anima2D编辑器的轻量骨骼动画和换装使用</h3><h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>​    前不久觉得骨骼动画难弄而选择帧动画，现在发现，一个人制作帧动画的工作量真的大，特别是发现需要换肤功能的时候，目前没有找到可以让同一个帧动画替换特定像素达到换肤效果的简易方法（<del>shader可以简单换色，但是如果要有特别的形状图案就很复杂了</del>），于是乎找到了一些关于Unity5.x版本之后自带的anima2D骨骼动画系统的一些文档，决定弃用帧动画使用骨骼动画。</p>
-<p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-25/9150e4e5gy1fygz3nlw8bj20qo0qo3zr.jpg" alt=""></p>
-<p>​    这篇来做一个简易演示。</p>
-<h4 id="图片准备"><a href="#图片准备" class="headerlink" title="图片准备"></a>图片准备</h4><p>​    将精灵图拖到Unity之后设置属性，因为画的时候是以1像素为单位，所以选择了FilterMode为Point。随后通过SpriteEditor将图片切割好，注意这里一定要<strong>规定好切割区域的大小</strong>，也就是规定如所有头部、身体精灵图的共同切割大小，以便骨骼的绑定不会产生换肤的图片偏移，对碰撞体有要求的同样可以设置得精细一点。</p>
-<p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%9B%BE%E7%89%87%E8%AE%BE%E7%BD%AE.png" alt=""></p>
-<h4 id="精灵网格和骨骼设置"><a href="#精灵网格和骨骼设置" class="headerlink" title="精灵网格和骨骼设置"></a>精灵网格和骨骼设置</h4><p>​    将必要的头、身体、腿的图片拖入视图后，摆好位置，创建父物体Player，对其一一设置精灵网格，右键2D Object-&gt;SpriteMesh</p>
-<p><img src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E8%AE%BE%E7%BD%AE%E7%B2%BE%E7%81%B5%E5%9B%BE%E5%B1%82.png" alt=""></p>
-<p>​    随后可以在父物体Player下创建骨骼，右键2D Object-&gt;Bone</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E8%AE%BE%E7%BD%AE%E9%AA%A8%E9%AA%BC.png" alt=""></p>
-<p>​    将创建的骨骼与摆好的图片对齐，如果在骨骼下创建骨骼，会生成子骨骼，子骨骼会随着父骨骼移动。</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%8F%B3%E6%89%8B%E9%AA%A8%E9%AA%BC.png" alt=""></p>
-<p>​    </p>
-<h4 id="骨骼绑定"><a href="#骨骼绑定" class="headerlink" title="骨骼绑定"></a>骨骼绑定</h4><p>​    设置好骨骼，图片也对应好之后，将网格与骨骼绑定，点击视图中的头，查看监视面板，创建了网格会绑定的两个组件分别是SpriteMeshInstance和SpriteMeshRenderer，本篇只讲解SpriteMeshInstance的用法，SpriteMesh是精灵网格，可以在面板上设置，也可以在代码上设置，这也是本篇换装的重要途径，随后是颜色、材质、层级、Set bones骨骼设置，我们将对应的骨骼拖入这里，<strong>注意，拖入带有子骨骼的骨骼，会将子骨骼一起绑定，若子骨骼需要与其他图片绑定，请删除掉，以免冲突。</strong></p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E7%BB%91%E5%AE%9A%E9%AA%A8%E9%AA%BC.png" alt=""></p>
-<p>​    拖入以后并没有直接绑定成功，这时候我们需要通过Anima2D编辑器绑定骨骼，菜单栏Winodws-&gt;Anima2D-&gt;SpriteMesh Editor，点击Bind按钮将自动的计算骨骼的权重。点击Apply即可绑定，也可以通过Weight Editor设置影响程度，在此之前也可以在编辑器上通过鼠标来划分你的蒙皮需求。如果一张图片上有多个骨骼，那么你就要设置每个骨骼在某些三角形上的权重，让骨骼动作时图片动作的更逼真。而个人不需要过于精细，因此本篇没有特定设置蒙皮划分。</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%BA%94%E7%94%A8%E9%AA%A8%E9%AA%BC.png" alt=""></p>
-<p>​    绑定骨骼以后，可以在视图界面控制骨骼，查看是否绑定成功。</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E9%AA%A8%E9%AA%BC%E7%A7%BB%E5%8A%A8%E9%A2%84%E8%A7%88.gif" alt=""></p>
-<h4 id="IK绑定"><a href="#IK绑定" class="headerlink" title="IK绑定"></a>IK绑定</h4><p>​    反向力学系统，一般我们是通过骨骼的动作去控制图片，设置IK并绑定骨骼的话，通过操作IK控件，骨骼也会随着移动。这样我们可以更方便的做一些动画了。（展示图没有绑定武器，所以效果并不明显，但是骨骼效果随着IK的移动而移动很直白）</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/IK%E7%A7%BB%E5%8A%A8%E9%A2%84%E8%A7%88.gif" alt=""></p>
-<p>​    IK动画分两种:IK CCD、IK Limb。<br>​    IK Limb适合肢体骨骼动画。IK CCD适合更长的骨骼。本篇使用Limb，在父物体Player下创建IK，右键2D Object-&gt;IK Limb ，在视图将IK部件移动到合适的位置之后，监视面板绑定骨骼，在这里，我们可以想像IK为关节，我们人体控制关节，骨骼也会随之移动，所以将IK绑定到对应的骨骼就好了。</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E5%8F%B3%E6%89%8BIK.png" alt=""></p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/IK%E7%BB%91%E5%AE%9A%E9%AA%A8%E9%AA%BC.png" alt=""></p>
-<h4 id="骨骼动画和换装"><a href="#骨骼动画和换装" class="headerlink" title="骨骼动画和换装"></a>骨骼动画和换装</h4><p>​    利用Animation编辑器，新建anim动画，对骨骼进行操作录制即可，然后播放的时候，通过改变对应SpriteMeshInstance的精灵网格即可。</p>
-<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/19-2-26/%E6%8D%A2%E8%82%A4%E9%A2%84%E8%A7%88.gif" alt=""></p>
-<p>​    <strong>注意，你要对所有提供换装的精灵网格对它对应骨骼进行单独的绑定！</strong></p>
-<p>​    以下为本篇的换装样例代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">using Anima2D;</span><br><span class="line">using System.Collections;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using UnityEngine;</span><br><span class="line"></span><br><span class="line">public class DebugBone : MonoBehaviour &#123;</span><br><span class="line"></span><br><span class="line">    private SpriteMeshInstance body;</span><br><span class="line">    private Object[] clothesMesh;</span><br><span class="line">    int key = 0;</span><br><span class="line">    // Use this for initialization</span><br><span class="line">    void Start () &#123;</span><br><span class="line">        body = GameObject.Find(&quot;身体&quot;).GetComponent&lt;SpriteMeshInstance&gt;();</span><br><span class="line">        clothesMesh = Resources.LoadAll(&quot;SpriteMesh/clothes&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">	// Update is called once per frame</span><br><span class="line">	void Update () &#123;</span><br><span class="line">        if (Input.GetKeyDown(KeyCode.A))</span><br><span class="line">        &#123;</span><br><span class="line">            key++;</span><br><span class="line">            key = key % 6;</span><br><span class="line">            body.spriteMesh = (SpriteMesh)clothesMesh[key];</span><br><span class="line">        &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="参考文章和视频"><a href="#参考文章和视频" class="headerlink" title="参考文章和视频"></a>参考文章和视频</h4><p>​    视频： <a href="https://www.bilibili.com/video/av20868780/?spm_id_from=333.788.videocard.0">【游戏美术难于上青天】 系列</a></p>
-<p>​    文章： <a href="https://blog.csdn.net/hibernateplus/article/details/79060311">Anima2D官方中文使用手册（对应Anima2D1.1.4）</a></p>
+        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif" alt=""></p>
+<h2 id="NET-应用程序是怎么运行的？"><a href="#NET-应用程序是怎么运行的？" class="headerlink" title=".NET 应用程序是怎么运行的？"></a>.NET 应用程序是怎么运行的？</h2><p>​    开篇先自问个问题，<strong>.NET 应用程序是怎么运行的？</strong>，在没有去探索这些知识点的时候，自己是一片空白的，因为自己完全是为了使用Unity3D而去学习的C#，却没有去了解这个语言的执行过程(又不是不能用)。</p>
+<p>​    百度启动，我们发现<strong>.NET平台的实现</strong>有两大派系：<strong>曾今闭源的.Net Framework</strong>和<strong>开源的Mono</strong>，那么，我们首先得知道，执行.NET程序为何需要它们。</p>
+<h3 id="跨平台需求"><a href="#跨平台需求" class="headerlink" title="跨平台需求"></a>跨平台需求</h3><p>​    跨平台是个好东西，我们写了一个程序，不需要多大精力就可以将它发布在多个平台上，那么我们如何实现这个过程呢？绞尽脑汁，想了想，“把源代码编译成不同平台对应的机器码？”</p>
+<p>​    咦，感觉八九不离十了，因为我们想到c/c++，每个平台都有对应的gcc，在linux上写的代码，<strong>大部分</strong>都可以在各个linux派生系统上直接编译运行，但是应该能马上意识到，linux和winodws有些api并不通用啊。</p>
+<p>​    聪明的我们想到，宏定义判断平台，编码的时候写多个方式，通过makefile来自动选择编译的参数。</p>
+<p>​    是的，我们开发是能这么做，我们也能体会到这样开发带来的成本很高，并且我们的角度只是以开发者的角度去思考这个问题，那么作为一个面向开发者的公司要如何思考呢。毕竟开发成本降低了，才能迎来更多的开发者，因此我们不应该让开发者去做这些繁重的事，我们需要实现一个东西，让开发者只需要按照某个规定/协议/规则编码，我们的东西识别这些符合定义的编码，将他们自动转换成各平台的机器码不就行了么。</p>
+<p>​    因此，微软开发了一个称为<a href="http://zh.wikipedia.org/wiki/通用语言架构">通用语言架构</a>（Shared Source Common Language Infrastructure，Shared Source CLI)；也就是上面提到的，让开发者遵守的一种技术规范，它定义了一个语言无关的跨体系结构的运行环境，这使得开发者可以用规范内定义的各种高级语言来开发软件，并且无需修正即可将软件运行在不同的计算机体系结构上。</p>
+<h3 id="CIL，公共中间语言（Common-Intermediate-Language）"><a href="#CIL，公共中间语言（Common-Intermediate-Language）" class="headerlink" title="CIL，公共中间语言（Common Intermediate Language）"></a>CIL，公共中间语言（Common Intermediate Language）</h3><p>​    我们遵守CLI规则，编译器会将我们编写的代码变成中间语言IL，我们还需要一个东西，专门负责翻译开发者的代码，变成对应的机器码。<em>注意别把CLI和CIL弄混。</em></p>
+<h3 id="CLR，公共语言运行时（Common-Language-Runtime）"><a href="#CLR，公共语言运行时（Common-Language-Runtime）" class="headerlink" title="CLR，公共语言运行时（Common Language Runtime）"></a>CLR，公共语言运行时（Common Language Runtime）</h3><blockquote>
+<p>无论通过任何语言构建产品，都必须寄宿到一个平台中运行，这正如我们的软件运行在操作系统环境一样，操作系统为CLR提供了运行环境，使用.NET构建的程序又运行在CLR之上，CRL为.NET程序的运行提供了温床，CLR提供基本的类库和运行引擎，基本类库封装操作系统函数供开发者方便调用，运行引擎用于编译并运行我们开发的程序。CLR包含.NET运行引擎和符合CLI的类库。通过.NET平台构建的程序都基于CLR基础类库来实现，并且运行在CLR提供的运行引擎之上。</p>
+</blockquote>
+<p>​    显然，这个CLR就是上文所需要的”东西“(是不是和java虚拟机差不多)，能把基于CLI规范的语言编写出来的IL代码翻译为机器代码运行，这是CLR最重要的功能。</p>
+<p>​    那么CLR是如何对IL语言进行翻译的呢？CLR提供了JIT，即Just-in-time,动态(即时)编译，边运行边编译；AOT，Ahead Of Time，指运行前编译，两种程序的编译方式。</p>
+<p>​    JIT具体的做法是这样的:当载入一个类型时,CLR为该类型创建一个内部数据结构和相应的函数,当函数第一次被调用时,JIT将该函数编译成<a href="https://baike.baidu.com/item/机器语言">机器语言</a>.当再次遇到该函数时则直接从cache中执行已编译好的机器语言。而AOT则是提前编译好所有代码。</p>
+<h3 id="C-的执行过程"><a href="#C-的执行过程" class="headerlink" title="C#的执行过程"></a>C#的执行过程</h3><p>​    经过上面的探讨，相信运行过程开始清晰起来了。C#是遵循CLI规范的高级语言，被先被各自的编译器编译成中间语言：IL（CIL），等到需要真正执行的时候，这些IL会被加载到运行时库CLR中，由CLR动态的编译成汇编代码（JIT）然后在执行。</p>
+<p><img src="https://pic3.zhimg.com/f1c18ef3b344b657a9c236258d1b4c7e_b.jpg" alt="img"></p>
+<p>​        可能加上才刚认识的英文专有词缩写，这么表述还是有一点绕，那么通俗来解释，我们写完C#代码，编译器开始编译操作，编译器将它变成了一种中间语言，运行的时候，操作系统会调用一个解释器对这些中间语言进行动态解释或者提前编译运行。</p>
+<h2 id="Net-Framework和Mono"><a href="#Net-Framework和Mono" class="headerlink" title=".Net Framework和Mono"></a>.Net Framework和Mono</h2><p>​    上面那一块主要功能就包含在叫做<strong>.Net Framework</strong>的框架中，那么既然有了<strong>.Net Framework</strong>,为何还需要<strong>Mono</strong>呢？下面引用别人的博客内容，阐述了<strong>Mono</strong>出现的原因。</p>
+<blockquote>
+<p>​    我想表达什么呢？其实我们现在在 Windows 平台下开发的 .NET 应用程序，是深深依赖于 .NET Framework（深深的那种），你的应用程序代码基本上都是在它之上完成的，而 .NET Framework 又是深深依赖于 Windows 平台下的 CLR（也是深深的那种），在这种情况下，根本就无法使你的应用程序跨平台，因为微软紧紧的抱住 Windows 平台，妄想 Windows 可以实现“大一统”，但现实是很残酷的，这次的 .NET 开源、跨平台，其实也是微软的无奈之举。但就是在这种背景下，Mono 出现了，并且在微软的各种“排挤”下坚持了下来，这是非常不容易的，其实实现 .NET 跨平台的三个关键是：<strong>编译器</strong>、<strong>CLR</strong> 和<strong>基础类库</strong>，而 Mono 实质上就是把他们三个进行跨平台实现了，一个很小团队完成了一个巨头需要完成的工作，而且还是在这个巨头的“排挤”下，其实这就是<strong>开源</strong>和<strong>社区</strong>的力量。</p>
+</blockquote>
+<p>​    是的，<strong>.Net Framework</strong>没有真正意义上实现跨平台，它只能在不同windows版本上工作，这是<strong>Mono</strong>出现的原因。我们来看看百度百科的介绍。</p>
+<blockquote>
+<p><strong>Mono</strong>是一个由 Xamarin公司（先前是Novell,最早为Ximian）所主持的自由开放源代码项目。该项目的目标是创建一系列符合ECMA标准（Ecma- 334和Ecma-335）的.NET工具，包括C#编译器和通用语言架构。与微软的.NET Framework（共通语言运行平台）不同，Mono项目不仅可以运行于Windows系统上，还可以运行于 Linux，FreeBSD，Unix，OS X和Solaris，甚至一些游戏平台，例如：Playstation 3，Wii或XBox 360之上。        </p>
+</blockquote>
+<p>​    Mono使得C#这门语言有了很好的跨平台能力。相对于微软的.Net Framework运行时库<strong>Mono</strong>使用自己的Mono VM作为运行时库。 加上C#本身快速友好的开发能力，最终使得Unity团队在创建之初就决定将<strong>Mono</strong>，C#作为其核心。</p>
+<p>​    而<strong>Mono</strong>的执行方式和<strong>.Net Framework</strong>大致上差不多，只不过使用的改编后的CLR，使得在各平台上可以变成对应机器码。</p>
+<h2 id="Mono"><a href="#Mono" class="headerlink" title="Mono"></a>Mono</h2><p>​    现在我们抛开<strong>.Net Framework</strong>，因为Unity目前支持<strong>Mono</strong>和<strong>IL2CPP</strong>，<strong>IL2CPP</strong>是后来加上的(Unity2017.3 版本以后)，先来后到，我们先谈谈<strong>Mono</strong>。</p>
+<h3 id="Mono的组成"><a href="#Mono的组成" class="headerlink" title="Mono的组成"></a>Mono的组成</h3><ol>
+<li><p>C#编译器<br>最新的Momo版本（5.0+）c#编译器完全兼容c#4.0以上，unity 2018 使用的依旧是 Mono 2.0 版本，它的编译器(mcs)就不支持c#4.0以上。</p>
+</li>
+<li><p>Mono运行时CLR<br>上面提到过，提供了JIT（即时编译器），AOT（提前编译器）两种编译器。</p>
+<p>类库加载器。<br>垃圾回收器(Unity使用的是贝姆垃圾回收器)。</p>
+</li>
+<li><p>基础类库（与.net框架兼容）+Mono类库</p>
+</li>
+</ol>
+<h3 id="Mono的执行流程"><a href="#Mono的执行流程" class="headerlink" title="Mono的执行流程"></a>Mono的执行流程</h3><p>   <img src="https://pic2.zhimg.com/cef19147534ab017c59b755b15766679_b.jpg" alt="img"></p>
+<h3 id="Mono的优点"><a href="#Mono的优点" class="headerlink" title="Mono的优点"></a>Mono的优点</h3><ul>
+<li>构建应用非常快</li>
+<li>由于Mono的JIT(Just In Time compilation ) 机制, 所以支持更多托管类库</li>
+<li>支持运行时代码执行(译者注: 由于JIT机制，所以能在运行的过程中执行新生成的或者动态加载的代码)</li>
+</ul>
+<h3 id="Mono的缺点"><a href="#Mono的缺点" class="headerlink" title="Mono的缺点"></a>Mono的缺点</h3><ul>
+<li>​    Mono VM在各个平台移植，维护非常耗时，有时甚至不可能完成。<br>​    Mono的跨平台是通过Mono VM实现的，有几个平台，就要实现几个VM，像Unity这样支持多平台的引擎，Mono官方的VM肯定是不能满足需求的。所以针对不同的新平 台，Unity的项目组就要把VM给移植一遍，同时解决VM里面发现的bug。这非常耗时耗力。这些能移植的平台还好说，还有比如WebGL这样基于浏览器的平台。要让WebGL支持Mono的VM几乎是不可能的。</li>
+<li>​    必须将代码发布成托管程序集(.dll 文件 ,  由mono或者.net 生成 )</li>
+</ul>
+<h2 id="IL2CPP"><a href="#IL2CPP" class="headerlink" title="IL2CPP"></a>IL2CPP</h2><p>​    从名字上看就很清楚了，IL to cpp 即IL翻译成cpp。根据Unity官方博客上的文章指出，使用.NET和Mono编译器对代码进行编译。</p>
+<blockquote>
+<p>​    我们可以在Windows平台的Unity安装路径Editor\Data\il2cpp目录下找到。对于OSX平台，它位于Unity安装路径的Contents/Frameworks/il2cpp/build目录内。 il2cpp.exe这个工具是一个托管代码可执行文件，其完全由C#写成。在开发IL2CPP的过程中，我们同时使用.NET和Mono编译器对其进行编译。</p>
+</blockquote>
+<p>​    而对于GC，官方是这么解释的：</p>
+<blockquote>
+<p>​    运行时的另外一个重要的部分，就是垃圾收集器。在Unity 5中，我们使用libgc垃圾收集器。它是一个典型的贝姆垃圾收集器（Boehm-Demers-Weiser garbage collector）。（译注：相对使用保守垃圾回收策略）。然而我们的libil2cpp被设计成可以方便使用其他垃圾回收器。因此我们现在也在研究集成微软开源的垃圾回收器（Microsoft GC）。对于垃圾回收器这一点，我们会在后续的一篇中专门的讨论，这里就不多说了。</p>
+</blockquote>
+<p><em>以上翻译内容来自<a href="https://www.jianshu.com/p/dd430c991d0b">用Unity做游戏，你需要深入了解一下IL2CPP</a></em></p>
+<h3 id="IL2CPP的组成"><a href="#IL2CPP的组成" class="headerlink" title="IL2CPP的组成"></a>IL2CPP的组成</h3><ol>
+<li><p>AOT编译器</p>
+<p>il2cpp 接受来自Unity自带的或者由Mono编译器产生的托管程序集，将这些程序集转换成C++代码。这些转换出的C++代码最终由部署目标平台上的C++编译器进行编译。</p>
+</li>
+<li><p>一个支持虚拟机的运行时库</p>
+<p>AOT编译器将由.NET 输出的中间语言(IL)代码生成为C++代码。运行时库则提供诸如垃圾回收，与平台无关的线程，IO以及内部调用（C++原生代码直接访问托管代码结构）这样的服务和抽象层。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/269770-1716159336861dd8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800" alt="img"></p>
+</li>
+</ol>
+<h3 id="IL2CPP的执行流程"><a href="#IL2CPP的执行流程" class="headerlink" title="IL2CPP的执行流程"></a>IL2CPP的执行流程</h3><p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/NET/IL2CPP.jpg" alt="img"></p>
+<h3 id="IL2CPP的优点"><a href="#IL2CPP的优点" class="headerlink" title="IL2CPP的优点"></a>IL2CPP的优点</h3><ul>
+<li>相比Mono, 代码生成有很大的提高</li>
+<li>可以调试生成的C ++代码</li>
+<li>可以启用引擎代码剥离(Engine code stripping)来减少代码的大小</li>
+</ul>
+<h3 id="IL2CPP的缺点"><a href="#IL2CPP的缺点" class="headerlink" title="IL2CPP的缺点"></a>IL2CPP的缺点</h3><ul>
+<li>相比Mono构建应用非常慢</li>
+<li>只支持AOT(Ahead of  Time)编译</li>
+</ul>
+<h3 id="可能产生的疑问"><a href="#可能产生的疑问" class="headerlink" title="可能产生的疑问"></a>可能产生的疑问</h3><ol>
+<li><p>IL2CPP多了一次编译过程啊，从效率上来说为什么值得的使用呢？</p>
+<p>​    IL2CPP多了一次的编译过程是将IL转成CPP，执行的时候还需要C++编译器编译一次，而在Mono中没有，所以在IL2CPP的缺点中，构建应用的时间很长，但是，Mono的JIT只在运行的时候将IL执行成机器码，意味着每一次运行都需要动态加载一些代码，而IL2CPP已经预先编译好了，可以利用现成的在各个平台的C++编译器对代码执行编译期优化，这样可以进一步减小最终游戏的尺寸并提高游戏运行速度。</p>
+<p>​    并且Cpp效率之快是大家都承认的。</p>
+</li>
+<li><p>CPP是静态的，那么还需要IL2CPP虚拟机干吗？</p>
+<p>​    虽然通过IL2CPP以后代码变成了静态的C++，但是内存管理这块还是遵循C#的方式，这也是为什么最后还要有一个 IL2CPP VM的原因：它负责提供诸如GC管理，线程创建这类的服务性工作。但是由于去除了IL加载和动态解析的工作，使得IL2CPP VM可以做的很小，并且使得游戏载入时间缩短。</p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>​    C#是一种高级语言，需要编译转换成中间语言，通过不同平台的CLR解释成机器码，才能运行。</p>
+<p>​    现在在Unity3D中，我们可以选择Mono和IL2CPP两种编译方式，各有优缺点，而一般都在开发阶段选择Mono，在发布的时候选择IL2CPP。</p>
+<p>​    不过呢，据说现在IL2CPP的成熟程度挺高，也有人推荐开发阶段使用。</p>
+<p><img src="https://pic4.zhimg.com/1ac61dcf8ccdf4c3f80ed81afcac5fe3_b.jpg" alt="img"><img src="https://pic2.zhimg.com/127145eba0473bbe7ae9fd371cf28d85_b.jpg" alt="img"></p>
+<center>Unite 2014上官方给出的性能测试截图（数字越小表示运行得越快）</center>
+
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a href="https://www.jianshu.com/p/dd430c991d0b">用Unity做游戏，你需要深入了解一下IL2CPP</a></p>
+<p><a href="">Unity将来时：IL2CPP是什么？</a> <a href="https://www.cnblogs.com/lancidie/p/6258154.html">https://www.cnblogs.com/lancidie/p/6258154.html</a>)</p>
+<p><a href="https://www.cnblogs.com/zjoch/p/6197025.html">魅力 .NET：从 Mono、.NET Core 说起</a></p>
 
       
     </div>
@@ -587,12 +633,12 @@
   <!-- JS库 sweetalert 可修改路径 -->
   <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
   <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/MyLearn-Anima2D/">Unity Anima2D编辑器的轻量骨骼动画和换装使用</a></p>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-Mono&IL2CPP/">简单了解Mono和IL2CPP</a></p>
   <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
-  <p><span>发布时间:</span>2019年02月26日 - 20:02</p>
-  <p><span>最后更新:</span>2019年05月02日 - 14:05</p>
-  <p><span>原始链接:</span><a href="/2019/MyLearn-Anima2D/" title="Unity Anima2D编辑器的轻量骨骼动画和换装使用">https://confusel.tech/2019/MyLearn-Anima2D/</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-Anima2D/" aria-label="复制成功！"></i></span>
+  <p><span>发布时间:</span>2019年05月13日 - 14:05</p>
+  <p><span>最后更新:</span>2019年05月13日 - 17:05</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-Mono&IL2CPP/" title="简单了解Mono和IL2CPP">https://confusel.tech/2019/MyLearn-Mono&IL2CPP/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/" aria-label="复制成功！"></i></span>
   </p>
   <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
 </div>
@@ -628,7 +674,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/问题以及解决方案/" rel="tag"># 问题以及解决方案</a>
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
           
         </div>
       
@@ -641,8 +687,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/MyIssue-Solution-DLL/" rel="next" title="关于Unity3D引用某些DLL发布之后可能出现的错误">
-                <i class="fa fa-chevron-left"></i> 关于Unity3D引用某些DLL发布之后可能出现的错误
+              <a href="/2019/MyLearn-STL-2/" rel="next" title="《STL源码剖析》之迭代器相关">
+                <i class="fa fa-chevron-left"></i> 《STL源码剖析》之迭代器相关
               </a>
             
           </div>
@@ -650,10 +696,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/MyAlgorithm-bigNum/" rel="prev" title="<常用算法的C++实现>大整数字符串的加减乘(含负数)">
-                <常用算法的c++实现>大整数字符串的加减乘(含负数) <i class="fa fa-chevron-right"></i>
-              </常用算法的c++实现></a>
             
           </div>
         </div>
@@ -832,7 +874,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-学习记录-gt-Unity-Anima2D编辑器的轻量骨骼动画和换装使用"><span class="nav-number">1.</span> <span class="nav-text">&lt;学习记录&gt;Unity Anima2D编辑器的轻量骨骼动画和换装使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片准备"><span class="nav-number">1.2.</span> <span class="nav-text">图片准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#精灵网格和骨骼设置"><span class="nav-number">1.3.</span> <span class="nav-text">精灵网格和骨骼设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#骨骼绑定"><span class="nav-number">1.4.</span> <span class="nav-text">骨骼绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IK绑定"><span class="nav-number">1.5.</span> <span class="nav-text">IK绑定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#骨骼动画和换装"><span class="nav-number">1.6.</span> <span class="nav-text">骨骼动画和换装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章和视频"><span class="nav-number">1.7.</span> <span class="nav-text">参考文章和视频</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NET-应用程序是怎么运行的？"><span class="nav-number">1.</span> <span class="nav-text">.NET 应用程序是怎么运行的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#跨平台需求"><span class="nav-number">1.1.</span> <span class="nav-text">跨平台需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CIL，公共中间语言（Common-Intermediate-Language）"><span class="nav-number">1.2.</span> <span class="nav-text">CIL，公共中间语言（Common Intermediate Language）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLR，公共语言运行时（Common-Language-Runtime）"><span class="nav-number">1.3.</span> <span class="nav-text">CLR，公共语言运行时（Common Language Runtime）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-的执行过程"><span class="nav-number">1.4.</span> <span class="nav-text">C#的执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Net-Framework和Mono"><span class="nav-number">2.</span> <span class="nav-text">.Net Framework和Mono</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mono"><span class="nav-number">3.</span> <span class="nav-text">Mono</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的组成"><span class="nav-number">3.1.</span> <span class="nav-text">Mono的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的执行流程"><span class="nav-number">3.2.</span> <span class="nav-text">Mono的执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的优点"><span class="nav-number">3.3.</span> <span class="nav-text">Mono的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的缺点"><span class="nav-number">3.4.</span> <span class="nav-text">Mono的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IL2CPP"><span class="nav-number">4.</span> <span class="nav-text">IL2CPP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的组成"><span class="nav-number">4.1.</span> <span class="nav-text">IL2CPP的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的执行流程"><span class="nav-number">4.2.</span> <span class="nav-text">IL2CPP的执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的优点"><span class="nav-number">4.3.</span> <span class="nav-text">IL2CPP的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的缺点"><span class="nav-number">4.4.</span> <span class="nav-text">IL2CPP的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可能产生的疑问"><span class="nav-number">4.5.</span> <span class="nav-text">可能产生的疑问</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number"></span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文章"><span class="nav-number"></span> <span class="nav-text">参考文章</span></a></li></div>
             
 
           </div>
