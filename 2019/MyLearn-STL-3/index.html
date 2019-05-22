@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="SGI STL中vector源码阅读和解析。">
+<meta name="keywords" content="C++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《STL源码剖析》之序列式容器vector">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-STL-3/index.html">
+<meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="SGI STL中vector源码阅读和解析。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/3.jfif">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E6%8F%92%E5%85%A59.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/%E8%B0%83%E7%94%A8%E5%86%85%E5%AD%98%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vectotr%E6%96%B0%E5%86%85%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A51.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A52.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A53.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A54.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A55.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A56.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A57.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A58.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/Vector%E9%97%AE%E9%A2%98.png">
+<meta property="og:updated_time" content="2019-05-22T15:13:22.152Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《STL源码剖析》之序列式容器vector">
+<meta name="twitter:description" content="SGI STL中vector源码阅读和解析。">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/3.jfif">
+
+
+
+
+
+
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-STL-3/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>《STL源码剖析》之序列式容器vector | ConfuseL的个人博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/ConfuseL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ConfuseL的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">独立精神</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-游戏开发记录">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/myGame/" rel="section"><i class="menu-item-icon fa fa-fw fa-gamepad"></i> <br>游戏开发记录</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-STL-3/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《STL源码剖析》之序列式容器vector
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-22 23:13:32 / 修改时间：23:13:22" itemprop="dateCreated datePublished" datetime="2019-05-22T23:13:32+08:00">2019-05-22</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/STL/" itemprop="url" rel="index"><span itemprop="name">STL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/MyLearn-STL-3/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-STL-3/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">SGI STL中vector源码阅读和解析。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/3.jfif" alt=""></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><blockquote>
+<p>研究数据的特定排列方式，以利于搜寻或排序或其它特殊目的，这一专门学科我们成为数据结构。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>序列式容器</th>
+<th>关联式容器</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>array(build-in)</code></td>
+<td><code>RB-tree</code></td>
+</tr>
+<tr>
+<td><code>vector</code></td>
+<td><code>set</code></td>
+</tr>
+<tr>
+<td><code>heap</code></td>
+<td><code>map</code></td>
+</tr>
+<tr>
+<td><code>priority-queue</code></td>
+<td><code>multiset</code></td>
+</tr>
+<tr>
+<td><code>list</code></td>
+<td><code>multimap</code></td>
+</tr>
+<tr>
+<td><code>slist</code></td>
+<td><code>hashtable</code></td>
+</tr>
+<tr>
+<td><code>deque</code></td>
+<td><code>hash_set</code></td>
+</tr>
+<tr>
+<td><code>stack</code></td>
+<td><code>hash_map</code></td>
+</tr>
+<tr>
+<td><code>queue</code></td>
+<td><code>hash_multiset</code></td>
+</tr>
+<tr>
+<td></td>
+<td><code>hash_multmap</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="序列式容器"><a href="#序列式容器" class="headerlink" title="序列式容器"></a>序列式容器</h2><blockquote>
+<p>所谓序列式容器，其中的元素都可序(ordered)，但未必有序(sorted)。C++语言本身提供了一个序列式容器<code>array</code>，STL另外在提供<code>vector，list,deque,stack,queue,priority-queue</code>等等序列式容器。其中stack和queue由于只是将<code>deque</code>改头换面而成，技术上被归类为一种配接器，但我仍把它放在本章讨论。</p>
+</blockquote>
+<h3 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h3><h4 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h4><blockquote>
+<p><code>vector</code>的数据安排以及操作方式，与<code>array</code>非常相似，两者的唯一差别在于空间的运用的灵活性。<code>array</code>是静态控件，一旦配置了就不能改变；要换个大(或小)一点的房子，可以，一切琐细得由客户端自己来：首先配置一块新空间，然后将元素从旧址一一搬往新址，再把原来得空间释放给系统。<code>vector</code>是动态空间，随着元素得加入，它的内部机制会自行扩充以容纳新元素。</p>
+</blockquote>
+<h4 id="SGI的vector定义摘要"><a href="#SGI的vector定义摘要" class="headerlink" title="SGI的vector定义摘要"></a>SGI的<code>vector</code>定义摘要</h4><p>​    为了阅读方便，我把原文的代码中一些声明顺序按照被调用的顺序而调换了，不影响实际效果。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//首先是类模板的声明，除了存储的数据之外，还默认了空间配置器为STL提供的alloc</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>,<span class="title">class</span> <span class="title">Alloc</span> = <span class="title">alloc</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">vector</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">typedef</span> T			value_type;</span><br><span class="line">    <span class="keyword">typedef</span> value_type*	pointer;</span><br><span class="line">    <span class="keyword">typedef</span> value_type*	iterator;</span><br><span class="line">    <span class="keyword">typedef</span> value_type&amp;	reference;</span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">size_t</span>		size_type;</span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">ptrdiff_t</span>	difference_type;</span><br><span class="line">	<span class="comment">//在公共成员中，定义了几个嵌套型别，分别是值类型、 指针、 迭代器、 引用、计量单位、指针差。</span></span><br><span class="line">    </span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">typedef</span> simple_alloc&lt;value_type,Alloc&gt;data_allocator;</span><br><span class="line">    <span class="comment">//simple_alloc是SGI对所使用的空间配置器的再度封装，它提供了符合STL规格的接口。</span></span><br><span class="line">    iterator start;			<span class="comment">//指向数据头部的迭代器</span></span><br><span class="line">    iterator finish;		<span class="comment">//指向数据尾部的迭代器</span></span><br><span class="line">    iterator end_of_storage;<span class="comment">//指向可用空间尾部的迭代器</span></span><br><span class="line">    <span class="comment">//在原文中没有详细讲述这个函数的实现，这个函数的作用是在position后面申请一个空间，然后赋予元素x。</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert_aux</span><span class="params">(iterator position,<span class="keyword">const</span> T&amp; x)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deallocate</span><span class="params">()</span><span class="comment">//释放空间函数</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//如果首部迭代器不为空，代表已经存储至少一个数据</span></span><br><span class="line">		<span class="keyword">if</span>(start)</span><br><span class="line">            <span class="comment">//调用空间配置器的内存释放函数，其中end_of_storage-start会在二级配置器中使用到，一级配置器会直接从start释放</span></span><br><span class="line">            <span class="comment">//大于128字节使用一级，小于则二级</span></span><br><span class="line">            data_allocator::deallocate(start,end_of_storage-start);</span><br><span class="line">        	<span class="comment">//可以回顾一下 http://confusel.tech/2019/MyLearn-STL-1/</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//配置空间并填满内容</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">allocate_and_fill</span><span class="params">(size_type n,<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        iterator result=data_allocator::allocate(n);</span><br><span class="line">        	<span class="comment">//STL内存处理函数，大致作用是：参数包括 : 一个迭代器，一个计数器以及一个值。该函数从迭代器指向的元素开始，将指定数量的元素设置为给定的值。</span></span><br><span class="line">        	uninitialized_fill_n(result,n,x);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//填充式初始化，把容器元素变成n个value</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">fill_initialize</span><span class="params">(size_type n,<span class="keyword">const</span> T&amp; value)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//调用了上面那个函数</span></span><br><span class="line">        start=allocate_and_fill(n,value);</span><br><span class="line">        <span class="comment">//调整尾部迭代器</span></span><br><span class="line">        finish=start+n;</span><br><span class="line">        end_of_storage=finish;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*********构造析构********/</span></span><br><span class="line">     <span class="comment">//无参构造函数，初始化三个迭代器</span></span><br><span class="line">    <span class="built_in">vector</span>():start(<span class="literal">nullptr</span>),end(<span class="literal">nullptr</span>),end_of_storage(<span class="literal">nullptr</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>(size_type n,<span class="keyword">const</span> T&amp; value)</span><br><span class="line">    &#123;</span><br><span class="line">        fill_initialize(n,value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>(<span class="keyword">int</span> n,<span class="keyword">const</span> T&amp; value)</span><br><span class="line">    &#123;</span><br><span class="line">        fill_initialize(n,value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">vector</span>(<span class="keyword">long</span> n,<span class="keyword">const</span> T&amp; value)</span><br><span class="line">    &#123;</span><br><span class="line">        fill_initialize(n,value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">vector</span><span class="params">(size_type n)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//调用T的构造函数返回一个默认值</span></span><br><span class="line">        fill_initialize(n,T());</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">vector</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//这是STL的全局函数，从start到finish一一析构</span></span><br><span class="line">        destory(start,finish);</span><br><span class="line">        <span class="comment">//已在上面声明</span></span><br><span class="line">        deallocate();</span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="comment">/*********结束********/</span></span><br><span class="line">    </span><br><span class="line">    <span class="function">iterator <span class="title">begin</span><span class="params">()</span> </span>&#123;<span class="keyword">return</span> start;&#125;</span><br><span class="line">    <span class="function">iterator <span class="title">end</span><span class="params">()</span> </span>&#123;<span class="keyword">return</span> finish;&#125;</span><br><span class="line">    <span class="comment">//获得实际数据存储大小</span></span><br><span class="line">    <span class="function">size_type <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> size_type(end()-begin());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获得容器大小</span></span><br><span class="line">    <span class="function">size_type <span class="title">capacity</span><span class="params">()</span> <span class="keyword">const</span> </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> size_type(end_of_storage-begin());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//判断是否为空</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> begin()==end();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//重写操作符[]，通过下标访问元素</span></span><br><span class="line">    <span class="comment">//返回一个引用</span></span><br><span class="line">    reference <span class="keyword">operator</span>[](size_type n)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//指针加法+解引用</span></span><br><span class="line">        <span class="keyword">return</span> *(begin()+n);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取第一个元素</span></span><br><span class="line">   	<span class="function">reference <span class="title">front</span><span class="params">()</span></span></span><br><span class="line"><span class="function">   	</span>&#123;</span><br><span class="line">       	<span class="keyword">return</span> *begin();</span><br><span class="line">   	&#125;</span><br><span class="line">    <span class="comment">//取最后一个元素</span></span><br><span class="line">    <span class="function">reference <span class="title">back</span><span class="params">()</span></span></span><br><span class="line"><span class="function">   	</span>&#123;</span><br><span class="line">        <span class="comment">//end()永远指向空，即最后一个元素的下一个位置</span></span><br><span class="line">       	<span class="keyword">return</span> *(end()<span class="number">-1</span>);</span><br><span class="line">   	&#125;</span><br><span class="line">    <span class="comment">//从后面插入一个元素</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">push_back</span><span class="params">(<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//如果空间没满</span></span><br><span class="line">        <span class="keyword">if</span> (finish != end_of_storage)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//全局函数，内部实现主要是</span></span><br><span class="line">            <span class="comment">//new(p) T1(value);</span></span><br><span class="line">       		<span class="comment">//placement new,在指针p所指向的内存空间创建一个类型为T1的对象。</span></span><br><span class="line">            <span class="comment">//也就是在finish处，生成一个x数据</span></span><br><span class="line">            construct(finish,x);</span><br><span class="line">            <span class="comment">//后移</span></span><br><span class="line">            ++finish;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            insert_aux(end(),x);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将最尾端元素取出</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pop_back</span><span class="params">(<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//finish指向空，--才得到想要删除的元素迭代器</span></span><br><span class="line">        --finish;</span><br><span class="line">        <span class="comment">//全局函数 析构对象finish</span></span><br><span class="line">        destroy(finish);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//通过迭代器删除元素</span></span><br><span class="line">    <span class="function">iterator <span class="title">erase</span><span class="params">(iterator position)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//如果不是最后一个有效元素</span></span><br><span class="line">        <span class="keyword">if</span>(position+<span class="number">1</span>!=end())</span><br><span class="line">            copy(position+<span class="number">1</span>,finish,position);</span><br><span class="line">        <span class="comment">//copy也是STL算法，实现内部如下，也就是将position以后的元素逐一前移。</span></span><br><span class="line">        <span class="comment">/*template&lt;class InputIterator, class OutputIterator&gt;</span></span><br><span class="line"><span class="comment">          OutputIterator copy (InputIterator first, InputIterator last, OutputIterator result)</span></span><br><span class="line"><span class="comment">        &#123;</span></span><br><span class="line"><span class="comment">          while (first!=last) &#123;</span></span><br><span class="line"><span class="comment">            *result = *first;</span></span><br><span class="line"><span class="comment">            ++result;</span></span><br><span class="line"><span class="comment">            ++first;</span></span><br><span class="line"><span class="comment">          &#125;</span></span><br><span class="line"><span class="comment">          return result;</span></span><br><span class="line"><span class="comment">        &#125;*/</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//与pop_back()一致</span></span><br><span class="line">        --finish;</span><br><span class="line">        destroy(finish);</span><br><span class="line">        <span class="comment">//这里返回的是原本position的下一个元素</span></span><br><span class="line">        <span class="keyword">return</span> position;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//重新设置大小</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">resize</span><span class="params">(size_type new_size,<span class="keyword">const</span> T&amp; x)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//如果新容量小于当前，那么将多余部分删除</span></span><br><span class="line">        <span class="keyword">if</span>(new_size&lt;size())</span><br><span class="line">            <span class="comment">//std全局函数，删除两个迭代器之间的元素</span></span><br><span class="line">            erase(begin()+new_size,end());</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="comment">//否则插入部分</span></span><br><span class="line">            <span class="comment">//std全局函数，在某个迭代器后面插入n个元素</span></span><br><span class="line">            insert(end(),new_size-size(),x);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">resize</span><span class="params">(size_type new_size)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">		resize(new_size,T());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//清空函数</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//std全局函数，删除两个迭代器之间的元素</span></span><br><span class="line">          erase(begin(),end());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>​    可以看到，<code>vector</code>在构造函数和析构函数中调用了空间配置器，几乎所有成员函数如插入删除操作的实现，都是以迭代器为操作的基本单位而不是存储的元素本身。</p>
+<p>​    而且，<code>vector</code>的迭代器类型竟然就是元素的原生指针。</p>
+<h4 id="vector的迭代器"><a href="#vector的迭代器" class="headerlink" title="vector的迭代器"></a><code>vector</code>的迭代器</h4><blockquote>
+<p><code>vector</code>维护的是一个连续线性空间，所以不论其元素型别为何，普通指针都可以作为<code>vector</code>的迭代器而满足所有必要条件，因为<code>vector</code>迭代器所需要的操作行为，如<code>operator\*,operator\-&gt;,operator++,operator--,operator+,operator-,operator+=,operator\-=</code>。普通指针天生就具备。所以,<code>vector</code>提供的是<code>Random Access Iterators</code>。</p>
+</blockquote>
+<h4 id="vector的成员函数insert-aux"><a href="#vector的成员函数insert-aux" class="headerlink" title="vector的成员函数insert_aux()"></a><code>vector</code>的成员函数<code>insert_aux()</code></h4><p>​    这个函数一般被调用于<code>push_back()</code>，也就是从后面插入新元素时，此时没有可用空间而触发。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>,<span class="title">class</span> <span class="title">Alloc</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">vector</span>&lt;T,Alloc&gt;:</span>:insert_aux(iterator position,<span class="keyword">const</span> T&amp;x)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//如果还有剩余的可用空间</span></span><br><span class="line">    <span class="keyword">if</span> (finish != end_of_storage)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//在finish处申请一个空间并赋值*(finish-1)</span></span><br><span class="line">        construct(finish,*(finish<span class="number">-1</span>));</span><br><span class="line">        <span class="comment">//因为多了一个元素，所以finish要向后移</span></span><br><span class="line">        ++finish;</span><br><span class="line">        T x_copy=x;</span><br><span class="line">        <span class="comment">//STL算法，作用是把(position,finish-2)之间的元素移动到finish-1的前面</span></span><br><span class="line">        copy_backward(position,finish<span class="number">-2</span>,finish<span class="number">-1</span>);</span><br><span class="line">        <span class="comment">//让目的位置正确赋值</span></span><br><span class="line">        *position = x_copy;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//没有可用空间</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">const</span> size_type old_size = size();</span><br><span class="line">        <span class="comment">//如果当前空间为空，我们申请1个，否则我们申请原先的两倍</span></span><br><span class="line">        <span class="keyword">const</span> size_type len = old_size != <span class="number">0</span>? <span class="number">2</span>*old_size:<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//利用空间配置器申请新空间</span></span><br><span class="line">        iterator new_start = data_allocator::allocate(len);</span><br><span class="line">        iterator new_finish = new_start;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//STL内存处理工具函数之一，作用是把start到position的内容拷贝到new_start里，并返回末端。</span></span><br><span class="line">			new_finish = uninitialized_copy(start,position,new_start);</span><br><span class="line">            <span class="comment">//赋值</span></span><br><span class="line">        	construct(new_finish,x);</span><br><span class="line">            ++new_finish;</span><br><span class="line">            new_finish = uninitialized_copy(position,finish,new_finish);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span>(...)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//析构新容器的所有元素</span></span><br><span class="line">            destroy(new_start,new_finish);</span><br><span class="line">            <span class="comment">//释放空间</span></span><br><span class="line">            data_allocator::deallocate()new_start,len;</span><br><span class="line">            <span class="keyword">throw</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//析构旧元素</span></span><br><span class="line">        destroy(begin(),end());</span><br><span class="line">        <span class="comment">//释放</span></span><br><span class="line">        deallocate();</span><br><span class="line">        <span class="comment">//吧新容器的迭代器赋值给当前容器的迭代器</span></span><br><span class="line">        start=new_start;</span><br><span class="line">        finish=new_finish;</span><br><span class="line">        end_of_storage = new_start + len;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    我们画几个图片方便理解。</p>
+<p>​    以存储<code>int</code>数据类型的<code>vector</code>为例。</p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E5%AE%B9%E5%99%A8%E5%86%85%E9%83%A8.png" alt=""></p>
+<center>当前总容量为8，已经填充了5个元素</center>
+
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E6%8F%92%E5%85%A59.png" alt=""></p>
+<center>我们填满vector，此时我们想在元素为5的位置插入新元素9</center>
+
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/%E8%B0%83%E7%94%A8%E5%86%85%E5%AD%98%E5%A4%84%E7%90%86%E5%B7%A5%E5%85%B7.png" alt=""></p>
+<center>调用insert_aux的过程，因为可用空间不足，申请了新的双倍的空间</center>
+
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vectotr%E6%96%B0%E5%86%85%E7%BB%93%E6%9E%9C.png" alt=""></p>
+<center>最后把新的迭代器赋值给当前容器的迭代器并维护。旧内存将释放掉</center>
+
+
+
+<h4 id="vector的成员函数insert"><a href="#vector的成员函数insert" class="headerlink" title="vector的成员函数insert()"></a><code>vector</code>的成员函数<code>insert()</code></h4><p>​    这个函数常用于在任意位置插入，与<code>insert_</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>,<span class="title">class</span> <span class="title">Alloc</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> <span class="title">vector</span>&lt;T,Alloc&gt;:</span>:insert(iterator position,size_type n,<span class="keyword">const</span> T&amp; x)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (n != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(size_type(end_of_storage-finish)&gt;= n)</span><br><span class="line">        &#123;</span><br><span class="line">            T x_copy =x;</span><br><span class="line">            <span class="comment">//当前插入点后面有多少</span></span><br><span class="line">            <span class="keyword">const</span> size_type elems_after = finish - position;</span><br><span class="line">            iterator old_finish = finish;</span><br><span class="line">            <span class="keyword">if</span> (elems_after &gt; n)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//将当前尾迭代器的前n个元素移动到尾迭代器的后面</span></span><br><span class="line">                uninitialized_copy(finish - n,finish,finish)</span><br><span class="line">                <span class="comment">//维护尾迭代器</span></span><br><span class="line">                finish+=n;</span><br><span class="line">                <span class="comment">//再把插入点后面剩余的元素移动到尾迭代器前面</span></span><br><span class="line">                copy_backward(position,old_finish-n,old_finish);</span><br><span class="line">                <span class="comment">//以上步骤结束后，会在插入点后面剩出n个空位</span></span><br><span class="line">                <span class="comment">//填充x_copy</span></span><br><span class="line">                fill(position,position+n,x_copy);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//现在尾迭代器处填充n-elems_after个元素</span></span><br><span class="line">                uninitialized_fill_n(finish,n-elems_after,x_copy);</span><br><span class="line">                finish += n-elems_after;</span><br><span class="line">                <span class="comment">//再把插入点到原来尾迭代器之间的所有元素移动到新的尾迭代器后面</span></span><br><span class="line">                uninitialized_copy(position,old_finish,finish);</span><br><span class="line">                finish += elems_after;</span><br><span class="line">                <span class="comment">//插入点和旧尾迭代器填充之间的元素</span></span><br><span class="line">                fill(position,old_finish,x_copy);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果备用空间不足，那么需要重新申请</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">const</span> size_type old_size = size();</span><br><span class="line">            <span class="comment">//申请两倍或者更长(至少满足正好插入)</span></span><br><span class="line">            <span class="keyword">const</span> size_type len = old_size + max(old_size, n);</span><br><span class="line">            <span class="comment">//利用空间配置器申请len个空间</span></span><br><span class="line">            iterator new_start=data_allocator::allocate(len);</span><br><span class="line">            iterator new_finish=new_start;</span><br><span class="line">            <span class="comment">//#define __STL_TRY   try</span></span><br><span class="line">            __STL_TRY</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">//三部分逐一赋值给新空间，插入点之前，插入的n个元素，原来插入点之后的元素</span></span><br><span class="line">                new_finish = uninitiallzed_copy(start,position,new_start);</span><br><span class="line">                new_finish = uninitiallzed_fill_n(new_finish,n,x);</span><br><span class="line">                new_finish = uninitiallzed_copy(position,finish,new_finish);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">ifdef</span> __STL_USE_EXCEPTIONS</span></span><br><span class="line">            	<span class="keyword">catch</span>(...)</span><br><span class="line">                &#123;</span><br><span class="line">                    destory(new_start,new_finish);</span><br><span class="line">                    data_allocator::deallocate(new_start,len);</span><br><span class="line">                    <span class="keyword">throw</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">            <span class="comment">//析构</span></span><br><span class="line">            destory(start,finish);</span><br><span class="line">            <span class="comment">//释放之前的空间</span></span><br><span class="line">            deallocate();</span><br><span class="line">            <span class="comment">//维护三个迭代器</span></span><br><span class="line">            start=new_start;</span><br><span class="line">            finish=new_finish;</span><br><span class="line">            end_of_storage=new_start+len;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="图解"><a href="#图解" class="headerlink" title="图解"></a>图解</h5><ul>
+<li>当备用空间足够的时候: 我们想在其中插入2个元素。<ul>
+<li>可用空间剩余2，我们想插入2个，插入点之后有3和元素，明显3&gt;2</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A51.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A52.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A53.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A54.png" alt=""></p>
+<p>​        大致流程，是将<strong>原本的元素</strong>按<strong>两</strong>步移动，假设添加n个元素，那么首先移动插入点后的n个元素到尾迭代器后，然后再把剩余的前半段移动到尾迭代器的前面。</p>
+<p>​        最后填充好中间的空闲元素。</p>
+<ul>
+<li><ul>
+<li>可用空间剩余3，我们想插入3个，插入点之后有2个元素，明显2&lt;3。</li>
+</ul>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A55.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A56.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A57.png" alt=""></p>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/vector%E4%B8%AD%E9%97%B4%E6%8F%92%E5%85%A58.png" alt=""></p>
+<p>​        大致流程，是将<strong>填充的元素</strong>按<strong>两</strong>步移动，假设添加n个元素，那么首先在尾迭代器后填充(可用空闲数量-n)个目标元素。</p>
+<p>​        将要被替换的、插入点之后到原尾迭代器之间的元素移动到新尾迭代器后面。</p>
+<p>​        最后填充好中间的空闲元素。</p>
+</li>
+</ul>
+<h5 id="不解"><a href="#不解" class="headerlink" title="不解"></a>不解</h5><p>​    为啥不直接把旧的元素移动完毕，再直接填充呢。</p>
+<h4 id="代码测试push-back的内存和构造析构变化"><a href="#代码测试push-back的内存和构造析构变化" class="headerlink" title="代码测试push_back的内存和构造析构变化"></a>代码测试<code>push_back</code>的内存和构造析构变化</h4><p>看看下面的代码，猜猜会输出什么？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">role</span>&#123;</span></span><br><span class="line">		<span class="built_in">string</span> name;</span><br><span class="line">		role(<span class="keyword">const</span> <span class="keyword">char</span>* n) : name(n) &#123;&#125;</span><br><span class="line">		~role() &#123;<span class="built_in">cout</span>&lt;&lt;name&lt;&lt;<span class="built_in">endl</span>;&#125;</span><br><span class="line">	&#125;; 	</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	role r1("小李"), r2("小强") ,r3("小狗"), r4("小明");</span><br><span class="line">	<span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;role&gt; RoleVec;	</span><br><span class="line">	RoleVec rvec;  </span><br><span class="line">	rvec.push_back(r1);</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	rvec.push_back(r2);</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">    rvec.push_back(r3);</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	rvec.push_back(r4);</span><br><span class="line">	<span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	rvec.erase(rvec.begin());</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="答案"><a href="#答案" class="headerlink" title="答案"></a>答案</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">小李</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">小李</span></span><br><span class="line"><span class="comment">小强</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">1</span></span><br><span class="line"><span class="comment">小明</span></span><br><span class="line"><span class="comment">小强</span></span><br><span class="line"><span class="comment">小狗</span></span><br><span class="line"><span class="comment">小明</span></span><br><span class="line"><span class="comment">小明</span></span><br><span class="line"><span class="comment">小狗</span></span><br><span class="line"><span class="comment">小强</span></span><br><span class="line"><span class="comment">小李</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>我们结合代码来分析：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">role r1("小李"), r2("小强") ,r3("小狗"), r4("小明");</span><br><span class="line"><span class="comment">//这四个，在栈上，顺序从上到下，从r1到r4</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;role&gt; RoleVec;	</span><br><span class="line">RoleVec rvec;  </span><br><span class="line"><span class="comment">//rvec进入栈 在r4下</span></span><br><span class="line">rvec.push_back(r1);</span><br><span class="line"><span class="comment">//空间为0，我们调用index_aux，申请了1的空间，将r1小李深拷贝进去</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//1</span></span><br><span class="line">rvec.push_back(r2);</span><br><span class="line"><span class="comment">//空间为1，我们调用index_aux，申请了2的空间，将r1 r2深拷贝进去</span></span><br><span class="line"><span class="comment">//原来的空间元素被析构 </span></span><br><span class="line"><span class="comment">//小李</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="comment">//1</span></span><br><span class="line">rvec.push_back(r3);</span><br><span class="line"><span class="comment">//空间为2，我们调用index_aux，申请了4的空间，将r1 r2 r3深拷贝进去</span></span><br><span class="line"><span class="comment">//原来的空间元素被析构 </span></span><br><span class="line"><span class="comment">//小李</span></span><br><span class="line"><span class="comment">//小强</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">rvec.push_back(r4);</span><br><span class="line"><span class="comment">//空间足够</span></span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="number">1</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">rvec.erase(rvec.begin());</span><br><span class="line"><span class="comment">//vector 中的 r2 r3 r4向前拷贝,原r4被析构</span></span><br><span class="line"><span class="comment">//小明</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//这时候vector先被析构，因为栈高位向低位。</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">小强</span></span><br><span class="line"><span class="comment">小狗</span></span><br><span class="line"><span class="comment">小明</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//然后从下到上析构栈上的r4 r3 r2 r1</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">小明</span></span><br><span class="line"><span class="comment">小狗</span></span><br><span class="line"><span class="comment">小强</span></span><br><span class="line"><span class="comment">小李</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="不解-1"><a href="#不解-1" class="headerlink" title="不解"></a>不解</h2><p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/STL/Vector%E9%97%AE%E9%A2%98.png" alt=""></p>
+<p>​    为啥Diana析构出现了两次，<br>​    前三次push_back已经确保容器空间为4了，用push_back插入尾部或者insert插入尾部都不会发成Diana析构。<br>但是在中间insert就会出现 ，SGI的insert源码里，只有空间不足才会扩张，否则都是移动+填充，按理来说Diana应该直接命中，只是被拷贝了一次才对嘛。。。<br>​    即使出现扩张空间，交换新旧内存引发的析构，也是旧内存里的ABC一起析构才对啊。。</p>
+<p><em>以后解决了补上。</em></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-STL-3/">《STL源码剖析》之序列式容器vector</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
+  <p><span>发布时间:</span>2019年05月22日 - 23:05</p>
+  <p><span>最后更新:</span>2019年05月22日 - 23:05</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-STL-3/" title="《STL源码剖析》之序列式容器vector">https://confusel.tech/2019/MyLearn-STL-3/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-STL-3/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyLearn-Mono&IL2CPP/" rel="next" title="简单了解Mono和IL2CPP">
+                <i class="fa fa-chevron-left"></i> 简单了解Mono和IL2CPP
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg" alt="ConfuseL">
+            
+              <p class="site-author-name" itemprop="name">ConfuseL</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:895210069@gmail.com" title="E-Mail &rarr; mailto:895210069@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://bitbucket.org/ConfuseL/" title="Bitbucket &rarr; https://bitbucket.org/ConfuseL/" rel="noopener" target="_blank"><i class="fa fa-fw fa-bitbucket"></i>Bitbucket</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#序列式容器"><span class="nav-number">2.</span> <span class="nav-text">序列式容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Vector"><span class="nav-number">2.1.</span> <span class="nav-text">Vector</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概述"><span class="nav-number">2.1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SGI的vector定义摘要"><span class="nav-number">2.1.2.</span> <span class="nav-text">SGI的vector定义摘要</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector的迭代器"><span class="nav-number">2.1.3.</span> <span class="nav-text">vector的迭代器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector的成员函数insert-aux"><span class="nav-number">2.1.4.</span> <span class="nav-text">vector的成员函数insert_aux()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector的成员函数insert"><span class="nav-number">2.1.5.</span> <span class="nav-text">vector的成员函数insert()</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#图解"><span class="nav-number">2.1.5.1.</span> <span class="nav-text">图解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#不解"><span class="nav-number">2.1.5.2.</span> <span class="nav-text">不解</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码测试push-back的内存和构造析构变化"><span class="nav-number">2.1.6.</span> <span class="nav-text">代码测试push_back的内存和构造析构变化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#答案"><span class="nav-number">2.1.6.1.</span> <span class="nav-text">答案</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不解-1"><span class="nav-number">3.</span> <span class="nav-text">不解</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ConfuseL</span>
+
+  
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+<div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
+</div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+        
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=66380707";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'LCf64glaHb2Ryr5pykLjeirA-gzGzoHsz',
+        appKey: 'TYnE56DPDroAtbWtcErAyQxS',
+        placeholder: '若有不足麻烦指正',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!--�뿪����-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+
+</body>
+</html>
