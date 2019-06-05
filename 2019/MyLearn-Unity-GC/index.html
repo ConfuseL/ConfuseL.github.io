@@ -108,21 +108,28 @@
 
 
 
-  <meta name="keywords" content="ConfuseL">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ConfuseL的个人博客">
-<meta property="og:url" content="https://confusel.tech/categories/Unity3D/index.html">
+  <meta name="description" content="Unity3D 性能优化中的GC相关，看了很多博客自己简单总结下。">
+<meta name="keywords" content="Unity3D,GC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity3D内存优化-GC">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-Unity-GC/index.html">
 <meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="Unity3D 性能优化中的GC相关，看了很多博客自己简单总结下。">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/GC/GC.png">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/GC/%E6%A0%88%E5%A0%86.png">
+<meta property="og:updated_time" content="2019-06-05T10:20:26.509Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ConfuseL的个人博客">
+<meta name="twitter:title" content="Unity3D内存优化-GC">
+<meta name="twitter:description" content="Unity3D 性能优化中的GC相关，看了很多博客自己简单总结下。">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/GC/GC.png">
 
 
 
 
 
 
-  <link rel="canonical" href="https://confusel.tech/categories/Unity3D/">
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-Unity-GC/">
 
 
 
@@ -132,7 +139,7 @@
   };
 </script>
 
-  <title>分类: Unity3D | ConfuseL的个人博客</title>
+  <title>Unity3D内存优化-GC | ConfuseL的个人博客</title>
   
 
 
@@ -181,7 +188,7 @@
     
   
 
-  <div class="container sidebar-position-left ">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 <a href="https://github.com/ConfuseL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -273,7 +280,7 @@
         
         
           
-          <li class="menu-item menu-item-categories menu-item-active">
+          <li class="menu-item menu-item-categories">
 
     
     
@@ -378,138 +385,329 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block category">
 
-    <div id="posts" class="posts-collapse">
-      <div class="collection-title">
-        <h1>Unity3D<small>分类</small>
-        </h1>
-      </div>
-
-      
-        
+  
 
   <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-Unity-GC/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/MyLearn-Unity-GC/" itemprop="url">
-              
-                <span itemprop="name">Unity3D内存优化-GC</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">Unity3D内存优化-GC
+              
+            
+          </h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-05-28T12:44:22+08:00" content="2019-05-28">
-          05-28
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
 
-    </header>
-  </article>
+            
+            
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-28 12:44:22" itemprop="dateCreated datePublished" datetime="2019-05-28T12:44:22+08:00">2019-05-28</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-06-05 18:20:26" itemprop="dateModified" datetime="2019-06-05T18:20:26+08:00">2019-06-05</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Unity3D/" itemprop="url" rel="index"><span itemprop="name">Unity3D</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/MyLearn-Unity-GC/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-Unity-GC/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">Unity3D 性能优化中的GC相关，看了很多博客自己简单总结下。</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-        
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2019/MyLearn-Anima2D/" itemprop="url">
-              
-                <span itemprop="name">Unity Anima2D编辑器的轻量骨骼动画和换装使用</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-02-26T20:47:51+08:00" content="2019-02-26">
-          02-26
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+      
 
       
-        
+        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/GC/GC.png" alt=""></p>
+<h2 id="什么是GC"><a href="#什么是GC" class="headerlink" title="什么是GC"></a>什么是GC</h2><p>​    本篇重点介绍GC，因此我们必须了解什么是GC，GC是<strong>Garbage collection</strong>的缩写，中文翻译为垃圾回收，可以理解为负责回收无用内存的一个机制，只要熟悉JAVA或者C#语言的程序猿应该都了解过GC，因为这两个语言大部分情况下都是运行在虚拟机上的，并非C/C++那样直接汇编成机器代码在操作系统上运行。而虚拟机为了减轻编程的负担，装备了GC这一机制。</p>
+<p>​    那么在Unity3D中，GC是如何触发和如何运作的呢？</p>
+<h3 id="GC的运行时机"><a href="#GC的运行时机" class="headerlink" title="GC的运行时机"></a>GC的运行时机</h3><p>​    GC是一个周期性或触发性的机制，并不是每分每秒都在执行的，它的运行触发条件如下：</p>
+<ol>
+<li>堆分配时堆上的可用内存不足时触发GC。</li>
+<li>GC会不时的自动运行（频率因平台而异）。</li>
+<li>手动强制调用GC</li>
+</ol>
+<h3 id="Unity的GC算法"><a href="#Unity的GC算法" class="headerlink" title="Unity的GC算法"></a>Unity的GC算法</h3><p>​    在<strong>.NET Framework</strong>环境下，提供的GC算法是代数的，分有<strong>012</strong>三代(似乎有<strong>3</strong>第四代)，每一代管理着不同相对内存大小的资源。</p>
+<p>​    而目前已知<strong>Mono2.0</strong>(<a href="http://confusel.tech/2019/MyLearn-Mono&amp;IL2CPP/">什么是Mono</a>)采用的<strong>Boehm GC算法</strong>- 是非代数和非压缩的。“非世代”意味着GC在执行收集传递时必须扫描整个堆，因此其性能因堆扩展而降低。“非压缩”意味着内存中的对象不会被重新定位以便关闭对象之间的间隙。</p>
+<p>​    IL2CPP的GC不知道是否像官方所说的利用.NET Core。</p>
+<h4 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h4><p>每次执行GC时，将执行以下步骤：</p>
+<ul>
+<li>垃圾收集器检索堆上的每个对象。</li>
+<li>垃圾收集器搜索所有当前对象引用以确定堆上的对象是否仍在作用域内。</li>
+<li>不在作用域内的对象被标记为删除。</li>
+<li>删除被标记的对象并将内存返回给堆。</li>
+</ul>
+<h4 id="这个算法产生的问题"><a href="#这个算法产生的问题" class="headerlink" title="这个算法产生的问题"></a>这个算法产生的问题</h4><blockquote>
+<ol>
+<li>最明显的问题是GC可能花费相当长的时间来运行。 如果堆上有很多对象和大量的对象引用要检查，则检查所有这些对象的过程可能很慢。 这可能会导致我们的游戏卡顿或运行缓慢。</li>
+<li>另一个问题是GC可能在不合时宜的时刻被触发。 如果CPU在我们游戏的性能关键部分已经满负荷了，那此时即使是少量的GC额外开销也可能导致我们的帧速率下降和性能问题。</li>
+<li>另一个不太明显的问题是<strong>堆碎片</strong>。当从堆中分配内存时，会根据必须存储的数据大小从不同大小的块中的可用空间中获取内存。当这些内存块返回到堆时，堆可能分成很多由分配块分隔的小空闲块。这意味着虽然可用内存总量可能很高，但由于碎片化太过严重而无法分配一块连续的大内存块。导致GC被触发或不得不扩大堆大小。</li>
+</ol>
+</blockquote>
+<p>注：堆内存碎片化有两个后果，一是游戏内存大小会远高于实际所需要的大小，二是GC会被更频繁的触发。</p>
+<p>我们可以围绕以上前两点，见招拆招。</p>
+<h3 id="如何优化"><a href="#如何优化" class="headerlink" title="如何优化"></a>如何优化</h3><h4 id="1-尽可能的减少堆内存的分配"><a href="#1-尽可能的减少堆内存的分配" class="headerlink" title="1.尽可能的减少堆内存的分配"></a>1.尽可能的减少堆内存的分配</h4><blockquote>
+<ol>
+<li>如果堆上有很多对象和大量的对象引用要检查，则检查所有这些对象的过程可能很慢。 这可能会导致我们的游戏卡顿或运行缓慢。</li>
+</ol>
+</blockquote>
+<p>上面问题的解决方案可以归结为如何减少堆上的对象数量。在此之前，我们好好理解下，Unity是如何管理内存的。</p>
+<h5 id="Unity内存管理"><a href="#Unity内存管理" class="headerlink" title="Unity内存管理"></a>Unity内存管理</h5><p>​    Unity的内存占用分为三类：代码内存、托管内存 (Managed Memory)和原生内存 (Native Memory )</p>
+<ul>
+<li>代码内存 是指Unity引擎原生代码、类库(Native Plugins)、以及我们编写的代码 编译以后形成的原生二进制文件(Native binary)在运行时所占用的内存</li>
+<li>托管内存 是指脚本后处理机制(Mono/IL2CPP)的内存管理模块所控制的托管堆(managed heap)内存</li>
+<li>原生内存 是指Unity引擎本身模块系统运转时申请的内存以及场景内用到的资源(网格，纹理，动画，音频等)所占用的内存</li>
+</ul>
+<p>本篇介绍的GC，即负责<strong>托管内存</strong>部分，因为目前版本的Unity3D可以说只支持C#了，而在C#中的内存结构，主要由以下两个：</p>
+<h6 id="Stack栈"><a href="#Stack栈" class="headerlink" title="Stack栈"></a>Stack栈</h6><p>​    每个正在运行的程序都对应着一个进程，在一个进程内部，可以有一个或多个线程，每个线程都拥有一块“自留地”，称为“线程堆栈”，大小为1M，用于保存自身的一些数据，比如函数中定义的局部变量、函数调用时传送的参数值等，这部分由编译器自动释放，地址从高往底分配。</p>
+<h6 id="Heap堆-托管堆"><a href="#Heap堆-托管堆" class="headerlink" title="Heap堆/托管堆"></a>Heap堆/托管堆</h6><p>​    GC负责的部分，存储引用类型，任何需要new操作的对象都在Heap上生成。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">void TestFun()</span><br><span class="line">&#123;</span><br><span class="line">int a=0;//栈上</span><br><span class="line">int b=1;//栈上</span><br><span class="line">TestObject test;//自定义的对象，这个test只是一个引用，本身存储在栈上。</span><br><span class="line">test = new TestObject();//在堆上申请了一块内存，并调用构造函数，被test指向。</span><br><span class="line">&#125;//这个时候 a，b，test一定会从栈上被删除。</span><br><span class="line">//但是test所指向堆上的那个TestObject对象，不一定会被删除，因为这不是栈的负责部分，是GC负责，在执行一次GC的时候才会删除。</span><br></pre></td></tr></table></figure>
+<p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/GC/%E6%A0%88%E5%A0%86.png" alt=""></p>
+<center><br>    上面的函数结束，栈中的数据会被直接释放，但是堆中的数据需要等垃圾收集器GC回收。多次<br></center>
 
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/2018/MyIssue-Solution-DLL/" itemprop="url">
-              
-                <span itemprop="name">关于Unity3D引用某些DLL发布之后可能出现的错误</span>
-              
-            </a>
-        
-      </h2>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2018-12-31T19:26:51+08:00" content="2018-12-31">
-          12-31
-        </time>
-      </div>
-
-    </header>
-  </article>
-
+<h5 id="常用的优化方案"><a href="#常用的优化方案" class="headerlink" title="常用的优化方案"></a>常用的优化方案</h5><p><strong>1.同一容器(如Generic提供的泛型数据结构)配合如<code>clear()</code>这样的清空函数重复使用，避免产生多次仅仅使用一次的引用类型。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">List&lt;int&gt;tempList;//声明</span><br><span class="line">Dictionary&lt;int,Weapon&gt;Dic;</span><br><span class="line">void Start()</span><br><span class="line">&#123;</span><br><span class="line">    tempList=new List&lt;int&gt;();//初始化</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void Delete()</span><br><span class="line">&#123;</span><br><span class="line">    //List&lt;int&gt;tempList=new List&lt;int&gt;(); 而不是在这里</span><br><span class="line">    tempList.clear();</span><br><span class="line">    foreach(var i in Dic)</span><br><span class="line">    &#123;</span><br><span class="line">        if(i.value.dura==0)//删除符合某种条件的键值对</span><br><span class="line">            tempList.add(i.key);</span><br><span class="line">    &#125;</span><br><span class="line">    for(int i=0;i&lt;tempList.Count;i++)</span><br><span class="line">    &#123;</span><br><span class="line">        Dic.remove(tempList[i]);//因为上面保证key绝对在字典里，所以不需要判断null</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    C#中字典的foreach遍历过程是不允许删除键值对的，对于删除操作，一般都是利用额外的数据结构去存储需要删除数据的key，然后依次删除，如果在<code>Delete</code>函数中再去<code>new</code>一个<code>List</code>,意味着每一次执行该函数都会多一个引用对象。</p>
+<p>​    也许单单从这里并不会觉得多占用内存，但是如果每一个类似的操作都是通过申请新引用对象来完成的，特别是放在循环中执行该函数的画，造成的内存浪费和GC频率可能就不可收拾了。。。</p>
+<p><strong>2.对于内容一定的字符串使用<code>StringBuilder</code>代替<code>String</code></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string test=&quot;hello&quot;;</span><br><span class="line">test=test.ToUpper()+&quot;world&quot;;</span><br></pre></td></tr></table></figure>
+<p>​    <code>string</code>在C#中是引用类型，并且有<strong>不可变</strong>的性质，因为不可变的性质，在每一次我们对<code>string</code>的大部分操作    中，都会产生临时的引用对象，这些临时的引用对象存储在堆中，也并不会立即回收。</p>
+<p>如上面的代码，产生了一下几个临时对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;hello&quot;</span><br><span class="line">&quot;HELLO&quot;</span><br><span class="line">&quot;world~&quot;</span><br><span class="line">&quot;HELLO world&quot;</span><br></pre></td></tr></table></figure>
+<p>​    <code>StringBuilde</code>r是由<code>Char</code>数组构成的。构建新的<code>StringBuilder</code>时能设置容量大小，当添加字符串，超过已分配的数组大小时，就会创建一个新的数组，此时容量会翻倍，旧的数据就会等待垃圾回收。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">StringBuilder test = new StringBuilder(&quot;hello&quot;);  </span><br><span class="line">foreach(char i in test)</span><br><span class="line">	Char.ToUpper(i);</span><br><span class="line">test.append(&quot;world&quot;);</span><br></pre></td></tr></table></figure>
+<p><strong>3.Unity内置函数的调用相关</strong></p>
+<p>​    3.1 Unity一些字符串属性可以利用<code>CompareTag</code>比较。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private string playerTag=&quot;Player&quot;;</span><br><span class="line">void OnTriggerEnter(Collider other)</span><br><span class="line">&#123;</span><br><span class="line">   b//ool isPlayer = other.gameObject.tag == playerTag;</span><br><span class="line">   bool isPlayer = other.gameObject.CompareTag(playerTag);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    3.2协程不使用<code>yield return</code>匿名对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">WaitForSeconds delay = new WaiForSeconds(1f);</span><br><span class="line">while(true)</span><br><span class="line">&#123;</span><br><span class="line">   //yield return new WaitForSeconds(1f); 每次返回都是一个新的WaitForSeconds</span><br><span class="line">    yield return delay;</span><br><span class="line">    //yield return 0; 0也会产生引用，应该用return null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.<strong>如果可以，使用值类型类型的数组代替结构体</strong></p>
+<p>​    这样面向过程的开发一定程度上减少了由引用类型引起的频繁GC，不过开发效率可能会降低。</p>
+<p><strong>5.对于值类型的传参，善于使用ref关键字，把它当作一个引用，减少深拷贝的出现。</strong></p>
+<h4 id="2-合适的实际手动调用GC"><a href="#2-合适的实际手动调用GC" class="headerlink" title="2.合适的实际手动调用GC"></a>2.合适的实际手动调用GC</h4><p>​    什么时候合适手动GC呢，个人觉得，在玩家不需要集中精力于游戏上时，例如在加载新场景的时候，在加载页面阶段可以手动GC，因为旧场景的大部分引用是不需要再用的。</p>
+<h1 id="相关文献"><a href="#相关文献" class="headerlink" title="相关文献"></a>相关文献</h1><p><a href="http://www.newhappy.com.cn/?p=1058">一文搞懂Unity内存</a></p>
+<p><a href="https://blog.csdn.net/diudiu5201/article/details/62220456">【Unity3d游戏开发】浅谈Unity中的GC以及优化</a></p>
 
       
     </div>
 
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-Unity-GC/">Unity3D内存优化-GC</a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
+  <p><span>发布时间:</span>2019年05月28日 - 12:05</p>
+  <p><span>最后更新:</span>2019年06月05日 - 18:06</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-Unity-GC/" title="Unity3D内存优化-GC">https://confusel.tech/2019/MyLearn-Unity-GC/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-Unity-GC/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyLearn-STL-3/" rel="next" title="《STL源码剖析》之序列式容器vector">
+                <i class="fa fa-chevron-left"></i> 《STL源码剖析》之序列式容器vector
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
 
         </div>
         
@@ -530,8 +728,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -641,6 +848,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是GC"><span class="nav-number">1.</span> <span class="nav-text">什么是GC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GC的运行时机"><span class="nav-number">1.1.</span> <span class="nav-text">GC的运行时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity的GC算法"><span class="nav-number">1.2.</span> <span class="nav-text">Unity的GC算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#步骤"><span class="nav-number">1.2.1.</span> <span class="nav-text">步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#这个算法产生的问题"><span class="nav-number">1.2.2.</span> <span class="nav-text">这个算法产生的问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何优化"><span class="nav-number">1.3.</span> <span class="nav-text">如何优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-尽可能的减少堆内存的分配"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.尽可能的减少堆内存的分配</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Unity内存管理"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">Unity内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Stack栈"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">Stack栈</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Heap堆-托管堆"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">Heap堆/托管堆</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#常用的优化方案"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">常用的优化方案</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-合适的实际手动调用GC"><span class="nav-number">1.3.2.</span> <span class="nav-text">2.合适的实际手动调用GC</span></a></li></ol></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#相关文献"><span class="nav-number"></span> <span class="nav-text">相关文献</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -803,6 +1026,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
 
   
 
