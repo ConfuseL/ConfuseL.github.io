@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.5.0" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/32.png?v=6.5.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/16.png?v=6.5.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.5.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '6.5.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="实现在Scene窗口绘制以及游戏实体和管理脚本">
+<meta name="keywords" content="Unity3D,碰撞检测。四叉树，空间划分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="&lt;游戏算法&gt;Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2)">
+<meta property="og:url" content="https://confusel.tech/2019/MyLearn-QTree2/index.html">
+<meta property="og:site_name" content="ConfuseL的个人博客">
+<meta property="og:description" content="实现在Scene窗口绘制以及游戏实体和管理脚本">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E7%AE%97%E6%B3%95/ConfuseL%E5%9B%9B%E5%8F%89%E6%A0%91%E4%B8%8E%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B.gif">
+<meta property="og:updated_time" content="2019-07-13T08:38:21.057Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="&lt;游戏算法&gt;Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2)">
+<meta name="twitter:description" content="实现在Scene窗口绘制以及游戏实体和管理脚本">
+<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E7%AE%97%E6%B3%95/ConfuseL%E5%9B%9B%E5%8F%89%E6%A0%91%E4%B8%8E%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B.gif">
+
+
+
+
+
+
+  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-QTree2/">
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title><游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2) | ConfuseL的个人博客</游戏算法></title>
+  
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+<a href="https://github.com/ConfuseL" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ConfuseL的个人博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">独立精神</p>
+      
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-游戏开发记录">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/myGame/" rel="section"><i class="menu-item-icon fa fa-fw fa-gamepad"></i> <br>游戏开发记录</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-QTree2/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ConfuseL">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ConfuseL的个人博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"><游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2)
+              
+            
+          </游戏算法></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-13 16:38:25 / 修改时间：16:38:21" itemprop="dateCreated datePublished" datetime="2019-07-13T16:38:25+08:00">2019-07-13</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/Unity3D/" itemprop="url" rel="index"><span itemprop="name">Unity3D</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/MyLearn-QTree2/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-QTree2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">实现在Scene窗口绘制以及游戏实体和管理脚本</div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E7%AE%97%E6%B3%95/ConfuseL%E5%9B%9B%E5%8F%89%E6%A0%91%E4%B8%8E%E7%A2%B0%E6%92%9E%E6%A3%80%E6%B5%8B.gif" alt=""></p>
+<h1 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h1><h2 id="携带碰撞盒的游戏实体QEntity以及实体管理脚本QEnityManager"><a href="#携带碰撞盒的游戏实体QEntity以及实体管理脚本QEnityManager" class="headerlink" title="携带碰撞盒的游戏实体QEntity以及实体管理脚本QEnityManager"></a>携带碰撞盒的游戏实体<code>QEntity</code>以及实体管理脚本<code>QEnityManager</code></h2><p>​    前一篇博客中，四叉树部分基本完成了，现在就剩一个带有碰撞盒，并且实时检测的MONO游戏脚本，还有一个管理类。</p>
+<h3 id="实体管理脚本QEntityManager"><a href="#实体管理脚本QEntityManager" class="headerlink" title="实体管理脚本QEntityManager"></a>实体管理脚本<code>QEntityManager</code></h3><p>​    在实现<code>QEntity</code>之前，我们需要实现管理脚本。管理脚本需要管理<code>id</code>到Qobj以及Tranform的映射/字典，这样我们可以通过id去控制各个实体的矩形以及位置信息。</p>
+<p>​    当然最重要的就是，管理游戏四叉树的根节点。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public class QEntityManager  &#123;</span><br><span class="line">    //单例模式</span><br><span class="line">    public static QEntityManager Instance &#123; get &#123; if (qEntityManager == null) qEntityManager = new QEntityManager();return qEntityManager; &#125; &#125;</span><br><span class="line">    private static QEntityManager  qEntityManager;</span><br><span class="line">    //用于自增的id计数</span><br><span class="line">    private int cnt = 0;</span><br><span class="line">    //映射的字典</span><br><span class="line">    Dictionary&lt;int, QObj&gt; EntityMap;</span><br><span class="line">    Dictionary&lt;int, Transform&gt; TransfromMap;</span><br><span class="line">    //四叉树的根节点</span><br><span class="line">    public QuadTree quadTree;</span><br><span class="line"></span><br><span class="line">    //用于临时引用 减少内存消耗</span><br><span class="line">    private QObj tempQObj;</span><br><span class="line">    private Transform tempTransform;</span><br><span class="line"></span><br><span class="line">    //构造函数 初始化两个字典</span><br><span class="line">    public QEntityManager()</span><br><span class="line">    &#123;</span><br><span class="line">        EntityMap = new Dictionary&lt;int, QObj&gt;();</span><br><span class="line">        TransfromMap = new Dictionary&lt;int, Transform&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //初始化函数 给定四叉树根节点</span><br><span class="line">    public void Init(QuadTree quadTree)</span><br><span class="line">    &#123;</span><br><span class="line">       this.quadTree = quadTree;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //注册一个游戏实体 </span><br><span class="line">    public void Register(QObj qObj,Transform transform)</span><br><span class="line">    &#123;</span><br><span class="line">        qObj.SetID(++cnt);//设置ID</span><br><span class="line">        EntityMap.Add(qObj.id, qObj);//添加到字典中</span><br><span class="line">        TransfromMap.Add(qObj.id, transform);</span><br><span class="line">        quadTree.AddObj(qObj);//添加到树中</span><br><span class="line">    &#125;</span><br><span class="line">    //获得碰撞盒信息</span><br><span class="line">    public QObj GetPiont(ref int id)</span><br><span class="line">    &#123;</span><br><span class="line">        return EntityMap[id];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    上面实现了对四叉树的静态管理，能够注册游戏实体，将<code>Qobj</code>和<code>Transforms</code>作为参数注册，为什么不用封装的<code>QEntity</code>呢，我们在前一篇实现的碰撞盒检测，以及四叉树中的象限检测，都是通过<code>QObj</code>为操作单位的，而不是<code>QEntity</code>，然后这么分开也是为了位移和碰撞盒分离，好控制一些，也为了在今后学习ECS的时候方便更新代码吧。</p>
+<h4 id="游戏物体的移动"><a href="#游戏物体的移动" class="headerlink" title="游戏物体的移动"></a>游戏物体的移动</h4><p>​    然后该考虑移动了，我们的游戏物体会出现移动的情况，我们需要实现游戏物体自发的移动而导致四叉树更新的行为，同时也要实现从四叉树空控制游戏物体位移的行为(即修复发生碰撞的游戏物体)。</p>
+<h5 id="主动移动的游戏物体"><a href="#主动移动的游戏物体" class="headerlink" title="主动移动的游戏物体"></a>主动移动的游戏物体</h5><p>​    作为主角，大部分游戏都是可移动的，移动的过程中，就要时刻触发四叉树空间的象限检测，一旦某物体超出某象限，就要重新规划一下管理的游戏物体。</p>
+<p>​    但是Unity的移动只能保证自身物体移动，而我们设计的碰撞盒并不会实时更新，所以我们需要在实体管理脚本中添加一个函数，当游戏实体移动时，同步自己的碰撞盒坐标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    //在实体的循环中调用，是物体主动移动，这时候需要更改碰撞盒的位置</span><br><span class="line">//Vector3 point 这个是游戏的坐标</span><br><span class="line">    public void ChangePoint( int id, Vector3 point)//改变点的信息</span><br><span class="line">    &#123;</span><br><span class="line">        tempQObj = EntityMap[id];</span><br><span class="line">        tempQObj.rect.o.x = point.x;</span><br><span class="line">        tempQObj.rect.o.y = point.z;</span><br><span class="line">        //这个是绘制在Scene窗口的一个类</span><br><span class="line">        DrawLine.Instance.ChangeADrawObj(ref id);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h5 id="被动移动的游戏物体"><a href="#被动移动的游戏物体" class="headerlink" title="被动移动的游戏物体"></a>被动移动的游戏物体</h5><p>​    当游戏物体发生碰撞的时候，我们需要修复它的坐标，因此我们也需要在实体管理脚本种添加一个函数，当游戏物体发生碰撞时，修复自身的游戏物体坐标。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">    //在实体的碰撞修复时调用，是物体被动移动，这时候需要更改物体的位置</span><br><span class="line">//Point point 这是我们碰撞盒保存的碰撞坐标</span><br><span class="line">    public void ChangePoint(int id, Point point)//改变点的信息并移动</span><br><span class="line">    &#123;</span><br><span class="line">        tempQObj = EntityMap[id];</span><br><span class="line">        tempTransform = TransfromMap[id];</span><br><span class="line">        tempQObj.rect.o.x = point.x;</span><br><span class="line">        tempQObj.rect.o.y = point.y;</span><br><span class="line">        tempTransform.position = new Vector3((float)point.x, tempTransform.position.y, (float)point.y);</span><br><span class="line">        //这个是绘制在Scene窗口的一个类</span><br><span class="line">        DrawLine.Instance.ChangeADrawObj(ref id);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="游戏实体QEntity"><a href="#游戏实体QEntity" class="headerlink" title="游戏实体QEntity"></a>游戏实体<code>QEntity</code></h3><p>​    一个游戏实体<code>QEntity</code>，包含一个碰撞盒，提供监视面板设置的宽高，一个<code>bool</code>变量存储是否打开碰撞器。</p>
+<p>​    在脚本初始化<code>Awake</code>的时候，我们查找我们绑定游戏实体的游戏物体是否有2D精灵图，如果有，我们直接从精灵图上获得宽高，否则，我们从监视面板上自己设置的宽高。</p>
+<p>​    在脚本开始<code>Start</code>的时候，我们向实体管理脚本注册一个游戏实体。</p>
+<p>​    接下来，我们在物理循环中，每一帧上传自己的位移操作给实体管理脚本，同时调用碰撞盒的碰撞检测算法，检测当前所属象限的所有物体是否发生碰撞，随后判断自身是否超出所属象限。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">public class QEntity : MonoBehaviour &#123;</span><br><span class="line"></span><br><span class="line">    public QObj self;</span><br><span class="line">    Point remain;//用来恢复的位置</span><br><span class="line">    [Range(1, 1000)]</span><br><span class="line">    public double weight;</span><br><span class="line">    [Range(1, 1000)]</span><br><span class="line">    public double hight;</span><br><span class="line">    public bool isTrigger &#123; set &#123; self.isTrigger = value; &#125; get &#123; return self.isTrigger; &#125; &#125;</span><br><span class="line">    private void Awake()</span><br><span class="line">    &#123;</span><br><span class="line">        //优先读取图片的宽高</span><br><span class="line">        if(GetComponent&lt;SpriteRenderer&gt;()!=null)</span><br><span class="line">        &#123;</span><br><span class="line">            self = new QObj(new Point(transform.position.x, transform.position.z), GetComponent&lt;SpriteRenderer&gt;().bounds.size.x, GetComponent&lt;SpriteRenderer&gt;().bounds.size.z );</span><br><span class="line">        &#125;</span><br><span class="line">        else</span><br><span class="line">        self = new QObj(new Point(transform.position.x, transform.position.z), weight, hight);</span><br><span class="line">        self.isTrigger = isTrigger;</span><br><span class="line">        self.qEntity = this;</span><br><span class="line">        //初始化的时候，记录位置</span><br><span class="line">        remain = new Point(self.rect.o.x, self.rect.o.y);</span><br><span class="line">    &#125;</span><br><span class="line">    private void Start()</span><br><span class="line">    &#123;</span><br><span class="line">        //向管理脚本注册</span><br><span class="line">        QEntityManager.Instance.Register(self,transform); ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void FixedUpdate()</span><br><span class="line">    &#123;</span><br><span class="line">        //主动更改位置信息</span><br><span class="line">        QEntityManager.Instance.ChangePoint(self.id, transform.position);</span><br><span class="line">        //判断是否超出当前节点位置</span><br><span class="line">        self.ISOutOfLocate();</span><br><span class="line">        //碰撞检测</span><br><span class="line">        self.locate.Collide(self,ref remain);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private void OnDestroy()</span><br><span class="line">    &#123;</span><br><span class="line">        self.qEntity = null;//解除循环引用</span><br><span class="line">        self = null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="绘制类DrawLine"><a href="#绘制类DrawLine" class="headerlink" title="绘制类DrawLine"></a>绘制类<code>DrawLine</code></h2><p>​    接下来就是绘制了，绘制只是更方便的观察四叉树以及碰撞过程，对于游戏本身是无所谓的，但是在演示的工程中，我们四叉树的初始化写在了<code>DrawLine</code>里，因此对于演示工程，它是必要的。</p>
+<p>​    <code>DrawLine</code>同样是一个单例，它维护者需要绘制的四叉树矩阵链表，以及不同颜色的字典映射和游戏实体id到向量坐标的映射。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">public class DrawLine: MonoBehaviour &#123;</span><br><span class="line"></span><br><span class="line">    public static DrawLine Instance;</span><br><span class="line">    List&lt;Vector3[]&gt; DrawRect;//这个存储的是四叉树的绘制矩形</span><br><span class="line">    Dictionary&lt;int,Vector3[]&gt; qObjs;//这个是游戏物体的碰撞盒矩形</span><br><span class="line">    Dictionary&lt;int,int&gt; colors;</span><br><span class="line">    List&lt;Color&gt; colorList;</span><br><span class="line">    Color temp;</span><br><span class="line"></span><br><span class="line">    //这里提供面板设置四叉树根节点的范围和每一层节点的最大管理数量</span><br><span class="line">    [Range(1,1e9f)]</span><br><span class="line">    public double x, y, w, h;</span><br><span class="line">    [Range(4,1e6f)]</span><br><span class="line">    public int maxSum;</span><br><span class="line"></span><br><span class="line">    // Use this for initialization</span><br><span class="line">    private void Awake()</span><br><span class="line">    &#123;</span><br><span class="line">        DrawRect = new List&lt;Vector3[]&gt;();</span><br><span class="line">        qObjs = new Dictionary&lt;int, Vector3[]&gt;();</span><br><span class="line">        colors = new Dictionary&lt;int, int&gt;();</span><br><span class="line">        colorList = new List&lt;Color&gt;();</span><br><span class="line">        //随机颜色</span><br><span class="line">        for (int i = 0; i &lt; 10; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            colorList.Add(new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Instance = this;</span><br><span class="line">        //调用实体管理脚本初始化四叉树</span><br><span class="line">        QEntityManager.Instance.Init(new QuadTree(new Rect(x,y,w,h), maxSum,0));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	</span><br><span class="line">	// 每一帧绘制绘制的矩阵</span><br><span class="line">	void Update () &#123;</span><br><span class="line">		foreach(Vector3[] rects in DrawRect)//四叉树范围</span><br><span class="line">        &#123;</span><br><span class="line">            Debug.DrawLine(rects[0], rects[1]);</span><br><span class="line">            Debug.DrawLine(rects[1], rects[2]);</span><br><span class="line">            Debug.DrawLine(rects[2], rects[3]);</span><br><span class="line">            Debug.DrawLine(rects[3], rects[0]);</span><br><span class="line">        &#125;</span><br><span class="line">        foreach (KeyValuePair&lt;int, Vector3[]&gt; rects in qObjs)//游戏实体碰撞盒范围</span><br><span class="line">        &#123;</span><br><span class="line">            temp = colorList[colors[rects.Key]];</span><br><span class="line">            Debug.DrawLine(rects.Value[0], rects.Value[1], temp);</span><br><span class="line">            Debug.DrawLine(rects.Value[1], rects.Value[2], temp);</span><br><span class="line">            Debug.DrawLine(rects.Value[2], rects.Value[3], temp);</span><br><span class="line">            Debug.DrawLine(rects.Value[3], rects.Value[0], temp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    接下来，我们编写两个函数，用来在四叉树划分时添加四叉树节点的矩形，以及添加游戏实体时添加游戏实体的碰撞盒范围。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> public void AddDrawObj(Rect rect)//四叉树的范围</span><br><span class="line">   &#123;</span><br><span class="line">       Vector3[] temp = new Vector3[4];//用数组表示</span><br><span class="line">     //表示矩形的四个点</span><br><span class="line">       temp[0] = new Vector3((float)(rect.o.x-rect.Rwidth), 1, (float)(rect.o.y - rect.Rheight));</span><br><span class="line">       temp[1] = new Vector3((float)(rect.o.x - rect.Rwidth), 1, (float)(rect.o.y + rect.Rheight));</span><br><span class="line">       temp[2] = new Vector3((float)(rect.o.x + rect.Rwidth), 1, (float)(rect.o.y + rect.Rheight));</span><br><span class="line">       temp[3] = new Vector3((float)(rect.o.x + rect.Rwidth), 1, (float)(rect.o.y - rect.Rheight));</span><br><span class="line">       DrawRect.Add(temp);</span><br><span class="line">   &#125;</span><br><span class="line">//游戏实体的碰撞盒范围</span><br><span class="line">   public void AddDrawObj(int id,Point point,ref double w,ref double h,int deep)</span><br><span class="line">   &#123;</span><br><span class="line">       if (colors.ContainsKey(id))//根据游戏实体所在的四叉树深度决定绘制的颜色</span><br><span class="line">           colors[id] = deep;</span><br><span class="line">       else</span><br><span class="line">           colors.Add(id, deep);//每种游戏实体id对应一种颜色</span><br><span class="line">       if (qObjs.ContainsKey(id))//如果游戏实体存在了就不添加</span><br><span class="line">           return;</span><br><span class="line">       Vector3[] temp = new Vector3[4];//同样是四个点</span><br><span class="line">       temp[0] = new Vector3((float)(point.x- w), 1, (float)(point.y - h));</span><br><span class="line">       temp[1] = new Vector3((float)(point.x - w), 1, (float)(point.y + h));</span><br><span class="line">       temp[2] = new Vector3((float)(point.x + w), 1, (float)(point.y + h));</span><br><span class="line">       temp[3] = new Vector3((float)(point.x + w), 1, (float)(point.y - h ));</span><br><span class="line">       qObjs.Add(id,temp);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>​    当然，我们的游戏实体是可以移动的，所以不光是在游戏实体管理脚本<code>QEntityManager</code>中添加更改实体坐标的方法，我们也要提供更改绘制坐标的方法。</p>
+<p>​    我们只需要传入需要更新实体的id即可，我们根据id从游戏实体管理脚本<code>QEntityManager</code>中获取到它的碰撞盒信息，利用其信息来更新矩形坐标就好了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public void ChangeADrawObj(ref int id)</span><br><span class="line">&#123;</span><br><span class="line">    if (!qObjs.ContainsKey(id))</span><br><span class="line">        return;</span><br><span class="line">    QObj obj = QEntityManager.Instance.GetPiont(ref id);</span><br><span class="line">    Vector3[] temp;</span><br><span class="line">    qObjs.TryGetValue(id, out temp);</span><br><span class="line">    temp[0].x = (float)(obj.rect.o.x - obj.rect.Rwidth);</span><br><span class="line">    temp[0].z = (float)(obj.rect.o.y - obj.rect.Rheight);</span><br><span class="line"></span><br><span class="line">    temp[1].x = (float)(obj.rect.o.x - obj.rect.Rwidth);</span><br><span class="line">    temp[1].z = (float)(obj.rect.o.y + obj.rect.Rheight);</span><br><span class="line"></span><br><span class="line">    temp[2].x = (float)(obj.rect.o.x + obj.rect.Rwidth);</span><br><span class="line">    temp[2].z = (float)(obj.rect.o.y + obj.rect.Rheight );</span><br><span class="line"></span><br><span class="line">    temp[3].x = (float)(obj.rect.o.x + obj.rect.Rwidth);</span><br><span class="line">    temp[3].z = (float)(obj.rect.o.y - obj.rect.Rheight);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    现在整个代码的大致情况已经介绍完毕了，在学习和总结上感觉这些代码还是可以行的，对于实际使用不知道这些代码能否承受住大数量的运算和完全的碰撞逻辑正确。。。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>​    其实代码两三天就撸完了，但是博客很久才写，是因为临近期末要弄课设和考试没得时间。</p>
+<p>​    四叉树和碰撞检测似乎是各游戏开发面试官常问的问题，自己实现一遍有助于理解，但可靠性不可预知了，希望今后有机会学习了ECS框架并重构这些代码。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+	
+	<div>
+      
+        ﻿
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <p><span>本文标题:</span><a href="/2019/MyLearn-QTree2/"><游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2)</游戏算法></a></p>
+  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
+  <p><span>发布时间:</span>2019年07月13日 - 16:07</p>
+  <p><span>最后更新:</span>2019年07月13日 - 16:07</p>
+  <p><span>原始链接:</span><a href="/2019/MyLearn-QTree2/" title="<游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(2)">https://confusel.tech/2019/MyLearn-QTree2/</a>
+    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-QTree2/" aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
+</div>
+<script> 
+    var clipboard = new Clipboard('.fa-clipboard');
+    $(".fa-clipboard").click(function(){
+      clipboard.on('success', function(){
+        swal({   
+          title: "",   
+          text: '复制成功',
+          icon: "success", 
+          showConfirmButton: true
+          });
+    });
+    });  
+</script>
+
+
+
+      
+</div>
+
+    
+
+    
+       
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/MyLearn-QTree1/" rel="next" title="<游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(1)">
+                <i class="fa fa-chevron-left"></i> <游戏算法>Unity 实现2D游戏中的四叉树空间管理和矩形碰撞检测(1)
+              </游戏算法></a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="http://confusel-images.oss-cn-shenzhen.aliyuncs.com/18-11-30/63201918.jpg" alt="ConfuseL">
+            
+              <p class="site-author-name" itemprop="name">ConfuseL</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">19</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:895210069@gmail.com" title="E-Mail &rarr; mailto:895210069@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://bitbucket.org/ConfuseL/" title="Bitbucket &rarr; https://bitbucket.org/ConfuseL/" rel="noopener" target="_blank"><i class="fa fa-fw fa-bitbucket"></i>Bitbucket</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#源码下载"><span class="nav-number">1.</span> <span class="nav-text">源码下载</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#携带碰撞盒的游戏实体QEntity以及实体管理脚本QEnityManager"><span class="nav-number">1.1.</span> <span class="nav-text">携带碰撞盒的游戏实体QEntity以及实体管理脚本QEnityManager</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实体管理脚本QEntityManager"><span class="nav-number">1.1.1.</span> <span class="nav-text">实体管理脚本QEntityManager</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#游戏物体的移动"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">游戏物体的移动</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#主动移动的游戏物体"><span class="nav-number">1.1.1.1.1.</span> <span class="nav-text">主动移动的游戏物体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#被动移动的游戏物体"><span class="nav-number">1.1.1.1.2.</span> <span class="nav-text">被动移动的游戏物体</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#游戏实体QEntity"><span class="nav-number">1.1.2.</span> <span class="nav-text">游戏实体QEntity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制类DrawLine"><span class="nav-number">1.2.</span> <span class="nav-text">绘制类DrawLine</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+<div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ConfuseL</span>
+
+  
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v6.5.0</div>
+
+
+
+
+<div>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a>
+</div>
+
+  <script src="https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js"></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'forest'});
+    }
+  </script>
+
+        
+
+
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=66380707";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+	
+    
+
+    
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+      
+  
+  <script type="text/javascript" color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.5.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.5.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.5.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.5.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.5.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  
+  
+  <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(function (item) {
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: true,
+        appId: 'LCf64glaHb2Ryr5pykLjeirA-gzGzoHsz',
+        appKey: 'TYnE56DPDroAtbWtcErAyQxS',
+        placeholder: '若有不足麻烦指正',
+        avatar:'mm',
+        meta:guest,
+        pageSize:'10' || 10,
+        visitor: false
+    });
+  </script>
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  <!--�뿪����-->
+<script type="text/javascript" src="/js/src/crash_cheat.js"></script>
+
+</body>
+</html>
