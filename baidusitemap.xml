@@ -2,7 +2,10 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://confusel.tech/2019/MyLearn-QTree2/</loc>
-    <lastmod>2019-07-13</lastmod>
+    <lastmod>2019-07-15</lastmod>
+  </url>  <url>
+    <loc>https://confusel.tech/2019/MyAlgorithm-Trie/</loc>
+    <lastmod>2019-07-14</lastmod>
   </url>  <url>
     <loc>https://confusel.tech/2019/MyLearn-QTree1/</loc>
     <lastmod>2019-07-13</lastmod>

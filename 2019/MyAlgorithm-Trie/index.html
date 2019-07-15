@@ -108,33 +108,25 @@
 
 
 
-  <meta name="description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
-<meta name="keywords" content="Unity,Mono,IL2CPP">
+  <meta name="description" content="大整数经常在算法比赛、面试中被考到，在这里详细总结一下通过字符串处理大整数的加法、 减法、 乘法方法。不定期更新除法。">
+<meta name="keywords" content="C++,大数,算法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="简单了解Mono和IL2CPP">
-<meta property="og:url" content="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/index.html">
+<meta property="og:title" content="&lt;常用算法的C++实现&gt;字典树">
+<meta property="og:url" content="https://confusel.tech/2019/MyAlgorithm-Trie/index.html">
 <meta property="og:site_name" content="ConfuseL的个人博客">
-<meta property="og:description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
+<meta property="og:description" content="大整数经常在算法比赛、面试中被考到，在这里详细总结一下通过字符串处理大整数的加法、 减法、 乘法方法。不定期更新除法。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif">
-<meta property="og:image" content="https://pic3.zhimg.com/f1c18ef3b344b657a9c236258d1b4c7e_b.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/cef19147534ab017c59b755b15766679_b.jpg">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/269770-1716159336861dd8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800">
-<meta property="og:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/NET/IL2CPP.jpg">
-<meta property="og:image" content="https://pic4.zhimg.com/1ac61dcf8ccdf4c3f80ed81afcac5fe3_b.jpg">
-<meta property="og:image" content="https://pic2.zhimg.com/127145eba0473bbe7ae9fd371cf28d85_b.jpg">
-<meta property="og:updated_time" content="2019-05-13T09:58:58.870Z">
+<meta property="og:updated_time" content="2019-07-14T15:09:18.675Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="简单了解Mono和IL2CPP">
-<meta name="twitter:description" content="都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。">
-<meta name="twitter:image" content="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif">
+<meta name="twitter:title" content="&lt;常用算法的C++实现&gt;字典树">
+<meta name="twitter:description" content="大整数经常在算法比赛、面试中被考到，在这里详细总结一下通过字符串处理大整数的加法、 减法、 乘法方法。不定期更新除法。">
 
 
 
 
 
 
-  <link rel="canonical" href="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/">
+  <link rel="canonical" href="https://confusel.tech/2019/MyAlgorithm-Trie/">
 
 
 
@@ -144,7 +136,7 @@
   };
 </script>
 
-  <title>简单了解Mono和IL2CPP | ConfuseL的个人博客</title>
+  <title><常用算法的c++实现>字典树 | ConfuseL的个人博客</常用算法的c++实现></title>
   
 
 
@@ -410,7 +402,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/">
+    <link itemprop="mainEntityOfPage" href="https://confusel.tech/2019/MyAlgorithm-Trie/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ConfuseL">
@@ -427,10 +419,10 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">简单了解Mono和IL2CPP
+          <h1 class="post-title" itemprop="name headline"><常用算法的c++实现>字典树
               
             
-          </h1>
+          </常用算法的c++实现></h1>
         
 
         <div class="post-meta">
@@ -452,12 +444,24 @@
                 
               
 
-              <time title="创建时间：2019-05-13 14:53:04 / 修改时间：17:58:58" itemprop="dateCreated datePublished" datetime="2019-05-13T14:53:04+08:00">2019-05-13</time>
+              <time title="创建时间：2019-03-20 19:26:51" itemprop="dateCreated datePublished" datetime="2019-03-20T19:26:51+08:00">2019-03-20</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-07-14 23:09:18" itemprop="dateModified" datetime="2019-07-14T23:09:18+08:00">2019-07-14</time>
               
             
           </span>
@@ -489,8 +493,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2019/MyLearn-Mono&IL2CPP/#comments" itemprop="discussionUrl">
-                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyLearn-Mono&IL2CPP/" itemprop="commentCount"></span>
+                <a href="/2019/MyAlgorithm-Trie/#comments" itemprop="discussionUrl">
+                  <span class="post-meta-item-text">评论数：</span> <span class="post-comments-count valine-comment-count" data-xid="/2019/MyAlgorithm-Trie/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -504,7 +508,7 @@
           
 
           
-              <div class="post-description">都知道C#是目前Unity脚本支持的语言，而C#在Unity中编译运行的过程我却没怎么深入，稍微去搜索理解，发现会被.NET、mono、CLR、CLI、IL2CPP整懵，所以打算把收集起来的知识点写成博客，方便加深理解和日后复习。</div>
+              <div class="post-description">大整数经常在算法比赛、面试中被考到，在这里详细总结一下通过字符串处理大整数的加法、 减法、 乘法方法。不定期更新除法。</div>
           
 
         </div>
@@ -520,100 +524,7 @@
       
 
       
-        <p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/%E8%83%8C%E6%99%AF/4.jfif" alt=""></p>
-<h2 id="NET-应用程序是怎么运行的？"><a href="#NET-应用程序是怎么运行的？" class="headerlink" title=".NET 应用程序是怎么运行的？"></a>.NET 应用程序是怎么运行的？</h2><p>​    开篇先自问个问题，<strong>.NET 应用程序是怎么运行的？</strong>，在没有去探索这些知识点的时候，自己是一片空白的，因为自己完全是为了使用Unity3D而去学习的C#，却没有去了解这个语言的执行过程(又不是不能用)。</p>
-<p>​    百度启动，我们发现<strong>.NET平台的实现</strong>有两大派系：<strong>曾今闭源的.Net Framework</strong>和<strong>开源的Mono</strong>，那么，我们首先得知道，执行.NET程序为何需要它们。</p>
-<h3 id="跨平台需求"><a href="#跨平台需求" class="headerlink" title="跨平台需求"></a>跨平台需求</h3><p>​    跨平台是个好东西，我们写了一个程序，不需要多大精力就可以将它发布在多个平台上，那么我们如何实现这个过程呢？绞尽脑汁，想了想，“把源代码编译成不同平台对应的机器码？”</p>
-<p>​    咦，感觉八九不离十了，因为我们想到c/c++，每个平台都有对应的gcc，在linux上写的代码，<strong>大部分</strong>都可以在各个linux派生系统上直接编译运行，但是应该能马上意识到，linux和winodws有些api并不通用啊。</p>
-<p>​    聪明的我们想到，宏定义判断平台，编码的时候写多个方式，通过makefile来自动选择编译的参数。</p>
-<p>​    是的，我们开发是能这么做，我们也能体会到这样开发带来的成本很高，并且我们的角度只是以开发者的角度去思考这个问题，那么作为一个面向开发者的公司要如何思考呢。毕竟开发成本降低了，才能迎来更多的开发者，因此我们不应该让开发者去做这些繁重的事，我们需要实现一个东西，让开发者只需要按照某个规定/协议/规则编码，我们的东西识别这些符合定义的编码，将他们自动转换成各平台的机器码不就行了么。</p>
-<p>​    因此，微软开发了一个称为<a href="http://zh.wikipedia.org/wiki/通用语言架构">通用语言架构</a>（Shared Source Common Language Infrastructure，Shared Source CLI)；也就是上面提到的，让开发者遵守的一种技术规范，它定义了一个语言无关的跨体系结构的运行环境，这使得开发者可以用规范内定义的各种高级语言来开发软件，并且无需修正即可将软件运行在不同的计算机体系结构上。</p>
-<h3 id="CIL，公共中间语言（Common-Intermediate-Language）"><a href="#CIL，公共中间语言（Common-Intermediate-Language）" class="headerlink" title="CIL，公共中间语言（Common Intermediate Language）"></a>CIL，公共中间语言（Common Intermediate Language）</h3><p>​    我们遵守CLI规则，编译器会将我们编写的代码变成中间语言IL，我们还需要一个东西，专门负责翻译开发者的代码，变成对应的机器码。<em>注意别把CLI和CIL弄混。</em></p>
-<h3 id="CLR，公共语言运行时（Common-Language-Runtime）"><a href="#CLR，公共语言运行时（Common-Language-Runtime）" class="headerlink" title="CLR，公共语言运行时（Common Language Runtime）"></a>CLR，公共语言运行时（Common Language Runtime）</h3><blockquote>
-<p>无论通过任何语言构建产品，都必须寄宿到一个平台中运行，这正如我们的软件运行在操作系统环境一样，操作系统为CLR提供了运行环境，使用.NET构建的程序又运行在CLR之上，CRL为.NET程序的运行提供了温床，CLR提供基本的类库和运行引擎，基本类库封装操作系统函数供开发者方便调用，运行引擎用于编译并运行我们开发的程序。CLR包含.NET运行引擎和符合CLI的类库。通过.NET平台构建的程序都基于CLR基础类库来实现，并且运行在CLR提供的运行引擎之上。</p>
-</blockquote>
-<p>​    显然，这个CLR就是上文所需要的”东西“(是不是和java虚拟机差不多)，能把基于CLI规范的语言编写出来的IL代码翻译为机器代码运行，这是CLR最重要的功能。</p>
-<p>​    那么CLR是如何对IL语言进行翻译的呢？CLR提供了JIT，即Just-in-time,动态(即时)编译，边运行边编译；AOT，Ahead Of Time，指运行前编译，两种程序的编译方式。</p>
-<p>​    JIT具体的做法是这样的:当载入一个类型时,CLR为该类型创建一个内部数据结构和相应的函数,当函数第一次被调用时,JIT将该函数编译成<a href="https://baike.baidu.com/item/机器语言">机器语言</a>.当再次遇到该函数时则直接从cache中执行已编译好的机器语言。而AOT则是提前编译好所有代码。</p>
-<h3 id="C-的执行过程"><a href="#C-的执行过程" class="headerlink" title="C#的执行过程"></a>C#的执行过程</h3><p>​    经过上面的探讨，相信运行过程开始清晰起来了。C#是遵循CLI规范的高级语言，被先被各自的编译器编译成中间语言：IL（CIL），等到需要真正执行的时候，这些IL会被加载到运行时库CLR中，由CLR动态的编译成汇编代码（JIT）然后在执行。</p>
-<p><img src="https://pic3.zhimg.com/f1c18ef3b344b657a9c236258d1b4c7e_b.jpg" alt="img"></p>
-<p>​        可能加上才刚认识的英文专有词缩写，这么表述还是有一点绕，那么通俗来解释，我们写完C#代码，编译器开始编译操作，编译器将它变成了一种中间语言，运行的时候，操作系统会调用一个解释器对这些中间语言进行动态解释或者提前编译运行。</p>
-<h2 id="Net-Framework和Mono"><a href="#Net-Framework和Mono" class="headerlink" title=".Net Framework和Mono"></a>.Net Framework和Mono</h2><p>​    上面那一块主要功能就包含在叫做<strong>.Net Framework</strong>的框架中，那么既然有了<strong>.Net Framework</strong>,为何还需要<strong>Mono</strong>呢？下面引用别人的博客内容，阐述了<strong>Mono</strong>出现的原因。</p>
-<blockquote>
-<p>​    我想表达什么呢？其实我们现在在 Windows 平台下开发的 .NET 应用程序，是深深依赖于 .NET Framework（深深的那种），你的应用程序代码基本上都是在它之上完成的，而 .NET Framework 又是深深依赖于 Windows 平台下的 CLR（也是深深的那种），在这种情况下，根本就无法使你的应用程序跨平台，因为微软紧紧的抱住 Windows 平台，妄想 Windows 可以实现“大一统”，但现实是很残酷的，这次的 .NET 开源、跨平台，其实也是微软的无奈之举。但就是在这种背景下，Mono 出现了，并且在微软的各种“排挤”下坚持了下来，这是非常不容易的，其实实现 .NET 跨平台的三个关键是：<strong>编译器</strong>、<strong>CLR</strong> 和<strong>基础类库</strong>，而 Mono 实质上就是把他们三个进行跨平台实现了，一个很小团队完成了一个巨头需要完成的工作，而且还是在这个巨头的“排挤”下，其实这就是<strong>开源</strong>和<strong>社区</strong>的力量。</p>
-</blockquote>
-<p>​    是的，<strong>.Net Framework</strong>没有真正意义上实现跨平台，它只能在不同windows版本上工作，这是<strong>Mono</strong>出现的原因。我们来看看百度百科的介绍。</p>
-<blockquote>
-<p><strong>Mono</strong>是一个由 Xamarin公司（先前是Novell,最早为Ximian）所主持的自由开放源代码项目。该项目的目标是创建一系列符合ECMA标准（Ecma- 334和Ecma-335）的.NET工具，包括C#编译器和通用语言架构。与微软的.NET Framework（共通语言运行平台）不同，Mono项目不仅可以运行于Windows系统上，还可以运行于 Linux，FreeBSD，Unix，OS X和Solaris，甚至一些游戏平台，例如：Playstation 3，Wii或XBox 360之上。        </p>
-</blockquote>
-<p>​    Mono使得C#这门语言有了很好的跨平台能力。相对于微软的.Net Framework运行时库<strong>Mono</strong>使用自己的Mono VM作为运行时库。 加上C#本身快速友好的开发能力，最终使得Unity团队在创建之初就决定将<strong>Mono</strong>，C#作为其核心。</p>
-<p>​    而<strong>Mono</strong>的执行方式和<strong>.Net Framework</strong>大致上差不多，只不过使用的改编后的CLR，使得在各平台上可以变成对应机器码。</p>
-<h2 id="Mono"><a href="#Mono" class="headerlink" title="Mono"></a>Mono</h2><p>​    现在我们抛开<strong>.Net Framework</strong>，因为Unity目前支持<strong>Mono</strong>和<strong>IL2CPP</strong>，<strong>IL2CPP</strong>是后来加上的(Unity2017.3 版本以后)，先来后到，我们先谈谈<strong>Mono</strong>。</p>
-<h3 id="Mono的组成"><a href="#Mono的组成" class="headerlink" title="Mono的组成"></a>Mono的组成</h3><ol>
-<li><p>C#编译器<br>最新的Momo版本（5.0+）c#编译器完全兼容c#4.0以上，unity 2018 使用的依旧是 Mono 2.0 版本，它的编译器(mcs)就不支持c#4.0以上。</p>
-</li>
-<li><p>Mono运行时CLR<br>上面提到过，提供了JIT（即时编译器），AOT（提前编译器）两种编译器。</p>
-<p>类库加载器。<br>垃圾回收器(Unity使用的是贝姆垃圾回收器)。</p>
-</li>
-<li><p>基础类库（与.net框架兼容）+Mono类库</p>
-</li>
-</ol>
-<h3 id="Mono的执行流程"><a href="#Mono的执行流程" class="headerlink" title="Mono的执行流程"></a>Mono的执行流程</h3><p>   <img src="https://pic2.zhimg.com/cef19147534ab017c59b755b15766679_b.jpg" alt="img"></p>
-<h3 id="Mono的优点"><a href="#Mono的优点" class="headerlink" title="Mono的优点"></a>Mono的优点</h3><ul>
-<li>构建应用非常快</li>
-<li>由于Mono的JIT(Just In Time compilation ) 机制, 所以支持更多托管类库</li>
-<li>支持运行时代码执行(译者注: 由于JIT机制，所以能在运行的过程中执行新生成的或者动态加载的代码)</li>
-</ul>
-<h3 id="Mono的缺点"><a href="#Mono的缺点" class="headerlink" title="Mono的缺点"></a>Mono的缺点</h3><ul>
-<li>​    Mono VM在各个平台移植，维护非常耗时，有时甚至不可能完成。<br>​    Mono的跨平台是通过Mono VM实现的，有几个平台，就要实现几个VM，像Unity这样支持多平台的引擎，Mono官方的VM肯定是不能满足需求的。所以针对不同的新平 台，Unity的项目组就要把VM给移植一遍，同时解决VM里面发现的bug。这非常耗时耗力。这些能移植的平台还好说，还有比如WebGL这样基于浏览器的平台。要让WebGL支持Mono的VM几乎是不可能的。</li>
-<li>​    必须将代码发布成托管程序集(.dll 文件 ,  由mono或者.net 生成 )</li>
-</ul>
-<h2 id="IL2CPP"><a href="#IL2CPP" class="headerlink" title="IL2CPP"></a>IL2CPP</h2><p>​    从名字上看就很清楚了，IL to cpp 即IL翻译成cpp。根据Unity官方博客上的文章指出，使用.NET和Mono编译器对代码进行编译。</p>
-<blockquote>
-<p>​    我们可以在Windows平台的Unity安装路径Editor\Data\il2cpp目录下找到。对于OSX平台，它位于Unity安装路径的Contents/Frameworks/il2cpp/build目录内。 il2cpp.exe这个工具是一个托管代码可执行文件，其完全由C#写成。在开发IL2CPP的过程中，我们同时使用.NET和Mono编译器对其进行编译。</p>
-</blockquote>
-<p>​    而对于GC，官方是这么解释的：</p>
-<blockquote>
-<p>​    运行时的另外一个重要的部分，就是垃圾收集器。在Unity 5中，我们使用libgc垃圾收集器。它是一个典型的贝姆垃圾收集器（Boehm-Demers-Weiser garbage collector）。（译注：相对使用保守垃圾回收策略）。然而我们的libil2cpp被设计成可以方便使用其他垃圾回收器。因此我们现在也在研究集成微软开源的垃圾回收器（Microsoft GC）。对于垃圾回收器这一点，我们会在后续的一篇中专门的讨论，这里就不多说了。</p>
-</blockquote>
-<p><em>以上翻译内容来自<a href="https://www.jianshu.com/p/dd430c991d0b">用Unity做游戏，你需要深入了解一下IL2CPP</a></em></p>
-<h3 id="IL2CPP的组成"><a href="#IL2CPP的组成" class="headerlink" title="IL2CPP的组成"></a>IL2CPP的组成</h3><ol>
-<li><p>AOT编译器</p>
-<p>il2cpp 接受来自Unity自带的或者由Mono编译器产生的托管程序集，将这些程序集转换成C++代码。这些转换出的C++代码最终由部署目标平台上的C++编译器进行编译。</p>
-</li>
-<li><p>一个支持虚拟机的运行时库</p>
-<p>AOT编译器将由.NET 输出的中间语言(IL)代码生成为C++代码。运行时库则提供诸如垃圾回收，与平台无关的线程，IO以及内部调用（C++原生代码直接访问托管代码结构）这样的服务和抽象层。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/269770-1716159336861dd8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/800" alt="img"></p>
-</li>
-</ol>
-<h3 id="IL2CPP的执行流程"><a href="#IL2CPP的执行流程" class="headerlink" title="IL2CPP的执行流程"></a>IL2CPP的执行流程</h3><p><img src="https://confusel-images.oss-cn-shenzhen.aliyuncs.com/%E5%8D%9A%E5%AE%A2%E5%9B%BE%E5%BA%93/NET/IL2CPP.jpg" alt="img"></p>
-<h3 id="IL2CPP的优点"><a href="#IL2CPP的优点" class="headerlink" title="IL2CPP的优点"></a>IL2CPP的优点</h3><ul>
-<li>相比Mono, 代码生成有很大的提高</li>
-<li>可以调试生成的C ++代码</li>
-<li>可以启用引擎代码剥离(Engine code stripping)来减少代码的大小</li>
-</ul>
-<h3 id="IL2CPP的缺点"><a href="#IL2CPP的缺点" class="headerlink" title="IL2CPP的缺点"></a>IL2CPP的缺点</h3><ul>
-<li>相比Mono构建应用非常慢</li>
-<li>只支持AOT(Ahead of  Time)编译</li>
-</ul>
-<h3 id="可能产生的疑问"><a href="#可能产生的疑问" class="headerlink" title="可能产生的疑问"></a>可能产生的疑问</h3><ol>
-<li><p>IL2CPP多了一次编译过程啊，从效率上来说为什么值得的使用呢？</p>
-<p>​    IL2CPP多了一次的编译过程是将IL转成CPP，执行的时候还需要C++编译器编译一次，而在Mono中没有，所以在IL2CPP的缺点中，构建应用的时间很长，但是，Mono的JIT只在运行的时候将IL执行成机器码，意味着每一次运行都需要动态加载一些代码，而IL2CPP已经预先编译好了，可以利用现成的在各个平台的C++编译器对代码执行编译期优化，这样可以进一步减小最终游戏的尺寸并提高游戏运行速度。</p>
-<p>​    并且Cpp效率之快是大家都承认的。</p>
-</li>
-<li><p>CPP是静态的，那么还需要IL2CPP虚拟机干吗？</p>
-<p>​    虽然通过IL2CPP以后代码变成了静态的C++，但是内存管理这块还是遵循C#的方式，这也是为什么最后还要有一个 IL2CPP VM的原因：它负责提供诸如GC管理，线程创建这类的服务性工作。但是由于去除了IL加载和动态解析的工作，使得IL2CPP VM可以做的很小，并且使得游戏载入时间缩短。</p>
-</li>
-</ol>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>​    C#是一种高级语言，需要编译转换成中间语言，通过不同平台的CLR解释成机器码，才能运行。</p>
-<p>​    现在在Unity3D中，我们可以选择Mono和IL2CPP两种编译方式，各有优缺点，而一般都在开发阶段选择Mono，在发布的时候选择IL2CPP。</p>
-<p>​    不过呢，据说现在IL2CPP的成熟程度挺高，也有人推荐开发阶段使用。</p>
-<p><img src="https://pic4.zhimg.com/1ac61dcf8ccdf4c3f80ed81afcac5fe3_b.jpg" alt="img"><img src="https://pic2.zhimg.com/127145eba0473bbe7ae9fd371cf28d85_b.jpg" alt="img"></p>
-<center>Unite 2014上官方给出的性能测试截图（数字越小表示运行得越快）</center>
-
-<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><p><a href="https://www.jianshu.com/p/dd430c991d0b">用Unity做游戏，你需要深入了解一下IL2CPP</a></p>
-<p><a href="">Unity将来时：IL2CPP是什么？</a> <a href="https://www.cnblogs.com/lancidie/p/6258154.html">https://www.cnblogs.com/lancidie/p/6258154.html</a>)</p>
-<p><a href="https://www.cnblogs.com/zjoch/p/6197025.html">魅力 .NET：从 Mono、.NET Core 说起</a></p>
+        <h2 id="什么是大数"><a href="#什么是大数" class="headerlink" title="什么是大数"></a>什么是大数</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">node</span>&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">char</span> data;</span><br><span class="line">    <span class="built_in">vector</span>&lt;node&gt; <span class="built_in">list</span>;</span><br><span class="line">    <span class="keyword">bool</span> isEnd;</span><br><span class="line">    node(<span class="keyword">char</span> d)</span><br><span class="line">    &#123;</span><br><span class="line">        data=d;</span><br><span class="line">        isEnd=<span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">find</span><span class="params">(<span class="keyword">char</span> data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="built_in">list</span>.size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">list</span>[i].data==data)</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="keyword">char</span> data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">list</span>.push_back(data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Trie</span> &#123;</span></span><br><span class="line">    node* tree=<span class="keyword">new</span> node(<span class="string">'c'</span>);</span><br><span class="line">     node* cur=<span class="literal">NULL</span>;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">/** Initialize your data structure here. */</span></span><br><span class="line">    Trie() &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Inserts a word into the trie. */</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index;</span><br><span class="line">        cur=tree;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;word.size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            index=cur-&gt;find(word[i]);</span><br><span class="line">            <span class="keyword">if</span>(index==<span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                cur-&gt;insert(word[i]);</span><br><span class="line">                cur=&amp;(cur-&gt;<span class="built_in">list</span>.back());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                cur=&amp;(cur-&gt;<span class="built_in">list</span>[index]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        cur-&gt;isEnd=<span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Returns if the word is in the trie. */</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">search</span><span class="params">(<span class="built_in">string</span> word)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index;</span><br><span class="line">        cur=tree;</span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;word.size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            index=cur-&gt;find(word[i]);</span><br><span class="line">            <span class="keyword">if</span>(index==<span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                cur=&amp;(cur-&gt;<span class="built_in">list</span>[index]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(!cur-&gt;isEnd&amp;&amp;cur-&gt;<span class="built_in">list</span>.size()&gt;<span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/** Returns if there is any word in the trie that starts with the given prefix. */</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">startsWith</span><span class="params">(<span class="built_in">string</span> prefix)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> index;</span><br><span class="line">        cur=tree;</span><br><span class="line">         <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;prefix.size();i++)</span><br><span class="line">        &#123;</span><br><span class="line">            index=cur-&gt;find(prefix[i]);</span><br><span class="line">            <span class="keyword">if</span>(index==<span class="number">-1</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                cur=&amp;(cur-&gt;<span class="built_in">list</span>[index]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your Trie object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * Trie* obj = new Trie();</span></span><br><span class="line"><span class="comment"> * obj-&gt;insert(word);</span></span><br><span class="line"><span class="comment"> * bool param_2 = obj-&gt;search(word);</span></span><br><span class="line"><span class="comment"> * bool param_3 = obj-&gt;startsWith(prefix);</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -627,35 +538,6 @@
 	<div>
       
         ﻿
-<div class="my_post_copyright">
-  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-  
-  <!-- JS库 sweetalert 可修改路径 -->
-  <script src="https://cdn.bootcss.com/jquery/2.0.0/jquery.min.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-  <p><span>本文标题:</span><a href="/2019/MyLearn-Mono&IL2CPP/">简单了解Mono和IL2CPP</a></p>
-  <p><span>文章作者:</span><a href="/" title="访问 ConfuseL 的个人博客">ConfuseL</a></p>
-  <p><span>发布时间:</span>2019年05月13日 - 14:05</p>
-  <p><span>最后更新:</span>2019年05月13日 - 17:05</p>
-  <p><span>原始链接:</span><a href="/2019/MyLearn-Mono&IL2CPP/" title="简单了解Mono和IL2CPP">https://confusel.tech/2019/MyLearn-Mono&IL2CPP/</a>
-    <span class="copy-path" title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="https://confusel.tech/2019/MyLearn-Mono&IL2CPP/" aria-label="复制成功！"></i></span>
-  </p>
-  <p><span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" title="Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)">署名-非商业性使用-禁止演绎 4.0 国际</a> 转载请保留原文链接及作者。</p>  
-</div>
-<script> 
-    var clipboard = new Clipboard('.fa-clipboard');
-    $(".fa-clipboard").click(function(){
-      clipboard.on('success', function(){
-        swal({   
-          title: "",   
-          text: '复制成功',
-          icon: "success", 
-          showConfirmButton: true
-          });
-    });
-    });  
-</script>
-
 
 
       
@@ -674,7 +556,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/知识总结/" rel="tag"># 知识总结</a>
+            <a href="/tags/算法学习/" rel="tag"># 算法学习</a>
           
         </div>
       
@@ -687,8 +569,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/MyLearn-STL-2/" rel="next" title="《STL源码剖析》之迭代器相关">
-                <i class="fa fa-chevron-left"></i> 《STL源码剖析》之迭代器相关
+              <a href="/2019/MyLearn-Anima2D/" rel="next" title="Unity Anima2D编辑器的轻量骨骼动画和换装使用">
+                <i class="fa fa-chevron-left"></i> Unity Anima2D编辑器的轻量骨骼动画和换装使用
               </a>
             
           </div>
@@ -697,9 +579,9 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/MyLearn-STL-3/" rel="prev" title="《STL源码剖析》之序列式容器vector">
-                《STL源码剖析》之序列式容器vector <i class="fa fa-chevron-right"></i>
-              </a>
+              <a href="/2019/MyAlgorithm-bigNum/" rel="prev" title="<常用算法的C++实现>大整数字符串的加减乘(含负数)">
+                <常用算法的c++实现>大整数字符串的加减乘(含负数) <i class="fa fa-chevron-right"></i>
+              </常用算法的c++实现></a>
             
           </div>
         </div>
@@ -878,7 +760,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#NET-应用程序是怎么运行的？"><span class="nav-number">1.</span> <span class="nav-text">.NET 应用程序是怎么运行的？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#跨平台需求"><span class="nav-number">1.1.</span> <span class="nav-text">跨平台需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CIL，公共中间语言（Common-Intermediate-Language）"><span class="nav-number">1.2.</span> <span class="nav-text">CIL，公共中间语言（Common Intermediate Language）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLR，公共语言运行时（Common-Language-Runtime）"><span class="nav-number">1.3.</span> <span class="nav-text">CLR，公共语言运行时（Common Language Runtime）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-的执行过程"><span class="nav-number">1.4.</span> <span class="nav-text">C#的执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Net-Framework和Mono"><span class="nav-number">2.</span> <span class="nav-text">.Net Framework和Mono</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Mono"><span class="nav-number">3.</span> <span class="nav-text">Mono</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的组成"><span class="nav-number">3.1.</span> <span class="nav-text">Mono的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的执行流程"><span class="nav-number">3.2.</span> <span class="nav-text">Mono的执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的优点"><span class="nav-number">3.3.</span> <span class="nav-text">Mono的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mono的缺点"><span class="nav-number">3.4.</span> <span class="nav-text">Mono的缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IL2CPP"><span class="nav-number">4.</span> <span class="nav-text">IL2CPP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的组成"><span class="nav-number">4.1.</span> <span class="nav-text">IL2CPP的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的执行流程"><span class="nav-number">4.2.</span> <span class="nav-text">IL2CPP的执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的优点"><span class="nav-number">4.3.</span> <span class="nav-text">IL2CPP的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IL2CPP的缺点"><span class="nav-number">4.4.</span> <span class="nav-text">IL2CPP的缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可能产生的疑问"><span class="nav-number">4.5.</span> <span class="nav-text">可能产生的疑问</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number"></span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文章"><span class="nav-number"></span> <span class="nav-text">参考文章</span></a></li></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是大数"><span class="nav-number">1.</span> <span class="nav-text">什么是大数</span></a></li></ol></div>
             
 
           </div>
